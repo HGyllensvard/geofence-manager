@@ -1,4 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'hgyllensvard'
+    groupId = 'com.hgyllensvard'
+    artifactId = 'geofence-manager'
+    publishVersion = '0.0.2'
+    desc = 'Library to help managing geofences in a graphical maner.'
+    website = 'https://github.com/HGyllensvard/geofence-manager'
+}
 
 android {
     compileSdkVersion 25
@@ -7,7 +17,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
