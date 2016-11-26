@@ -1,9 +1,12 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def projectVersion = '0.0.0.4'
-def libraryName = 'geofence-manager'
+ext {
+    projectVersion = '0.0.0.6'
+    libraryName = 'geofence-manager'
+}
+
+apply from: new File(project.rootDir, 'bintray.gradle')
 
 android {
     compileSdkVersion 25
@@ -28,35 +31,6 @@ android {
 group = 'com.hgyllensvard'
 version = projectVersion
 project.archivesBaseName = libraryName
-
-// Settings necessary for synchronisation with jcenter
-bintray {
-    user = bintrayUser
-    key = bintrayApiKey
-    configurations = ['archives']
-
-    pkg {
-        repo = 'maven'
-        name = libraryName
-        userOrg = 'hgyllensvard'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/HGyllensvard/geofence-manager.git'
-        publish = true
-        publicDownloadNumbers = true
-
-        version {
-            name = projectVersion
-            desc = 'Library to help managing geofences in a graphical maner'
-            released = new Date()
-            vcsTag = projectVersion
-
-            gpg {
-                sign = true
-                passphrase = bintrayGpgPassword
-            }
-        }
-    }
-}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

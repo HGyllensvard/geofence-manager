@@ -1,0 +1,30 @@
+apply plugin: 'com.jfrog.bintray'
+
+// Settings necessary for synchronisation with jcenter
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    configurations = ['archives']
+
+    pkg {
+        repo = 'maven'
+        name = libraryName
+        userOrg = 'hgyllensvard'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/HGyllensvard/geofence-manager.git'
+        publish = true
+        publicDownloadNumbers = true
+
+        version {
+            name = projectVersion
+            desc = 'Library to help managing geofences in a graphical maner'
+            released = new Date()
+            vcsTag = projectVersion
+
+            gpg {
+                sign = true
+                passphrase = bintrayGpgPassword
+            }
+        }
+    }
+}
