@@ -1,10 +1,10 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-
 ext {
     projectVersion = '0.0.0.6'
     libraryName = 'geofence-manager'
 }
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
 apply from: new File(project.rootDir, 'bintray.gradle')
 

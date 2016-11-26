@@ -1,6 +1,10 @@
 apply plugin: 'com.jfrog.bintray'
 
-// Settings necessary for synchronisation with jcenter
+/** Settings necessary for synchronisation with JCenter
+ *
+ * Note of warning, if the pom-default.xml is missing, don't forget to run
+ * ./gradlew install first.
+ */
 bintray {
     user = bintrayUser
     key = bintrayApiKey
