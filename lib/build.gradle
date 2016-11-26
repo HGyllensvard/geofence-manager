@@ -4,6 +4,7 @@ ext {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'android-apt'
 apply plugin: 'com.github.dcendents.android-maven'
 
 apply from: new File(project.rootDir, 'bintray.gradle')
@@ -34,7 +35,13 @@ project.archivesBaseName = libraryName
 
 dependencies {
 
+    // Google support libraries
     compile 'com.android.support:appcompat-v7:25.0.1'
+
+    // Dependency Injection
+    compile 'com.google.dagger:dagger:2.7'
+    apt 'com.google.dagger:dagger-compiler:2.7'
+
 
     testCompile 'junit:junit:4.12'
 

@@ -1,4 +1,4 @@
-package com.henrikgyllensvard.geofencemanager.ui;
+package com.henrikgyllensvard.geofencemanager.buildingBlocks.ui;
 
 public interface Presenter {
 

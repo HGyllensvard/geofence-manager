@@ -1,4 +1,4 @@
-package com.henrikgyllensvard.geofencemanager.geofence;
+package com.henrikgyllensvard.geofencemanager.geofence.view;
 
 import android.support.v7.app.AppCompatActivity;
 
@@ -8,7 +8,6 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     public GeofenceManagerViewManager(AppCompatActivity activity) {
         this.activity = activity;
-
     }
 
     @Override
