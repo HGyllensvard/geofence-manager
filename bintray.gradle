@@ -15,7 +15,7 @@ bintray {
         name = libraryName
         userOrg = 'hgyllensvard'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/HGyllensvard/geofence-manager.git'
+        vcsUrl = 'https://github.com/HGyllensvard/geofencemanager.git'
         publish = true
         publicDownloadNumbers = true
 
