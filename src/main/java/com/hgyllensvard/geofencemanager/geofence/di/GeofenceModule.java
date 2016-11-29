@@ -12,7 +12,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-class GeofenceModule {
+public class GeofenceModule {
 
     private AppCompatActivity activity;
 
