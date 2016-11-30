@@ -26,7 +26,9 @@ public class GeofenceModule {
             GeofenceManagerView geofenceView,
             LocationPermissionRequester locationPermissionRequester
     ) {
-        return new GeofenceManagerPresenter(geofenceView, locationPermissionRequester);
+        return new GeofenceManagerPresenter(geofenceView,
+                activity,
+                locationPermissionRequester);
     }
 
     @PerActivity

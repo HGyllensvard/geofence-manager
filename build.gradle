@@ -42,7 +42,13 @@ group = 'com.hgyllensvard'
 version = projectVersion
 project.archivesBaseName = libraryName
 
+
+def googleServicesVersion = '9.6.1'
+
 dependencies {
+
+    // Play Services
+    compile "com.google.android.gms:play-services-maps:$googleServicesVersion"
 
     // Google support libraries
     compile 'com.android.support:appcompat-v7:25.0.1'
