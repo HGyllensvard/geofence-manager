@@ -12,10 +12,8 @@ import com.hannesdorfmann.fragmentargs.FragmentArgs;
 import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
 import io.reactivex.Single;
+import timber.log.Timber;
 
 @FragmentWithArgs
 public class ReactiveAlertDialogue extends DialogFragment {
@@ -28,33 +26,26 @@ public class ReactiveAlertDialogue extends DialogFragment {
     @StringRes
     int positiveMessageRes;
 
-    private FlowableEmitter<ReactiveDialogueResponse> push;
-    private Flowable<ReactiveDialogueResponse> mDialogResponse;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FragmentArgs.inject(this);
-
-        mDialogResponse = Flowable.create(emitter -> push = emitter,
-                BackpressureStrategy.BUFFER);
-    }
+    private AlertDialog.Builder builder;
+    private Single<ReactiveDialogueResponse> mDialogResponse;
 
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(dialogMessageRes)
-                .setPositiveButton(positiveMessageRes, (dialog, id) -> {
-                    if (!push.isCancelled()) {
-                        push.onNext(ReactiveDialogueResponse.POSITIVE);
-                    }
-                });
+        FragmentArgs.inject(this);
+
+        mDialogResponse = Single.create(emitter -> {
+            builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(dialogMessageRes)
+                    .setPositiveButton(positiveMessageRes, (dialog, id) -> {
+                        emitter.onSuccess(ReactiveDialogueResponse.POSITIVE);
+                    });
+        });
+
         return builder.create();
     }
 
     public Single<ReactiveDialogueResponse> dialogResponse() {
-        return mDialogResponse
-                .singleOrError();
+        return mDialogResponse;
     }
 }
