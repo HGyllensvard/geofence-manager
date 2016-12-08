@@ -1,5 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.di;
 
+import android.content.Context;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
@@ -24,10 +26,12 @@ public class GeofenceModule {
     @Provides
     GeofenceManagerPresenter providesGeofencePresenter(
             GeofenceManagerView geofenceView,
+            LocationManager locationManager,
             LocationPermissionRequester locationPermissionRequester
     ) {
         return new GeofenceManagerPresenter(geofenceView,
                 activity,
+                locationManager,
                 locationPermissionRequester);
     }
 
@@ -41,5 +45,11 @@ public class GeofenceModule {
     @Provides
     LocationPermissionRequester privatesLocationPermissionRequester() {
         return new LocationPermissionRequester(activity);
+    }
+
+    @PerActivity
+    @Provides
+    LocationManager privatesLocationManager() {
+        return (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
     }
 }

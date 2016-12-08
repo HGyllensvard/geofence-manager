@@ -3,6 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.view;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.hgyllensvard.geofencemanager.R;
@@ -11,6 +12,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import timber.log.Timber;
 
 public class GeofenceManagerViewManager implements GeofenceManagerView {
 
@@ -46,7 +48,19 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
                                 .beginTransaction()
                                 .remove(mapFragment)
                                 .commit())
+                .doOnSuccess(disposable -> {
+                    try {
+                        googleMap.setMyLocationEnabled(true);
+                    } catch (SecurityException e) {
+                        Timber.e(e, "Unexpected error");
+                    }
+                })
                 .subscribeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public void animateCameraTo(CameraUpdate cameraUpdate) {
+        googleMap.animateCamera(cameraUpdate);
     }
 
     @Override
