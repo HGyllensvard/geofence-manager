@@ -24,6 +24,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private final AppCompatActivity activity;
 
     private Disposable displayMap;
+    private Disposable longClick;
 
     public GeofenceManagerPresenter(
             GeofenceManagerView viewActions,
@@ -52,6 +53,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     public void onPause() {
         super.onPause();
 
+        displayMap.dispose();
     }
 
     private void managePermissionResult(RequestPermissionResult permissionResult) {
@@ -70,7 +72,17 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private void loadMap() {
         displayMap = viewActions.displayMap()
                 .doOnSuccess(aBoolean -> zoomToUserPosition())
+                .doOnSuccess(aBoolean -> subscribeLongClick())
+                .doOnDispose(() -> longClick.dispose())
                 .subscribe();
+    }
+
+    private void subscribeLongClick() {
+        longClick = viewActions
+                .longClick()
+                .subscribe(latLng -> {
+                    viewActions.addGeofence(latLng);
+                });
     }
 
     private void zoomToUserPosition() {

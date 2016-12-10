@@ -1,13 +1,18 @@
 package com.hgyllensvard.geofencemanager.geofence.view;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -20,6 +25,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     private final SupportMapFragment mapFragment;
     private final Single<Boolean> displayMap;
 
+    private Flowable<LatLng> longClickFlowable;
     private GoogleMap googleMap;
 
     public GeofenceManagerViewManager(AppCompatActivity activity) {
@@ -34,6 +40,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
                 mapFragment.getMapAsync(map -> {
                     googleMap = map;
+                    longClickFlowable = createLongPressEmitter();
                     e.onSuccess(true);
                 });
             }
@@ -64,6 +71,20 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     }
 
     @Override
+    public void addGeofence(LatLng latLng) {
+        googleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
+    }
+
+    /**
+     * Will be until the displayMap has returned
+     */
+    @Override
+    @Nullable
+    public Flowable<LatLng> longClick() {
+        return longClickFlowable;
+    }
+
+    @Override
     public void destroy() {
 
     }
@@ -75,5 +96,12 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
         fragmentTransaction.add(R.id.geofence_map_container, mapFragment);
         fragmentTransaction.commit();
+    }
+
+    private Flowable<LatLng> createLongPressEmitter() {
+        return Flowable.create(emitter -> {
+            googleMap.setOnMapLongClickListener(emitter::onNext);
+            emitter.setCancellable(() -> googleMap.setOnMapLongClickListener(null));
+        }, BackpressureStrategy.BUFFER);
     }
 }
