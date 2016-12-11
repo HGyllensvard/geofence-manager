@@ -76,7 +76,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     }
 
     /**
-     * Will be until the displayMap has returned
+     * Will be null until the displayMap has returned
      */
     @Override
     @Nullable

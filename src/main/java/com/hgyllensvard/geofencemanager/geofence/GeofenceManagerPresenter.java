@@ -11,49 +11,55 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerView> {
 
-    private final LocationPermissionRequester locationPermissionRequester;
-    private final LocationManager locationManager;
     private final AppCompatActivity activity;
+    private final LocationManager locationManager;
+    private final GeofenceManager geofenceManager;
+    private final LocationPermissionRequester locationPermissionRequester;
 
-    private Disposable displayMap;
-    private Disposable longClick;
+    private final CompositeDisposable disposableContainer;
 
     public GeofenceManagerPresenter(
             GeofenceManagerView viewActions,
             AppCompatActivity activity,
             LocationManager locationManager,
+            GeofenceManager geofenceManager,
             LocationPermissionRequester locationPermissionRequester
     ) {
         super(viewActions);
 
         this.activity = activity;
         this.locationManager = locationManager;
+        this.geofenceManager = geofenceManager;
         this.locationPermissionRequester = locationPermissionRequester;
+
+        disposableContainer = new CompositeDisposable();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        locationPermissionRequester.request()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::managePermissionResult,
-                        throwable -> Timber.e(throwable, "Unexpected error"));
+        disposableContainer.add(
+                locationPermissionRequester.request()
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(this::managePermissionResult,
+                                throwable -> Timber.e(throwable, "Unexpected error")));
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        displayMap.dispose();
+        disposableContainer.clear();
     }
 
     private void managePermissionResult(RequestPermissionResult permissionResult) {
@@ -70,35 +76,33 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     }
 
     private void loadMap() {
-        displayMap = viewActions.displayMap()
-                .doOnSuccess(aBoolean -> zoomToUserPosition())
-                .doOnSuccess(aBoolean -> subscribeLongClick())
-                .doOnDispose(() -> longClick.dispose())
-                .subscribe();
+        disposableContainer.add(
+                viewActions.displayMap()
+                        .doOnSuccess(aBoolean -> zoomToUserPosition())
+                        .doOnSuccess(aBoolean -> subscribeLongClick())
+                        .subscribe());
     }
 
     private void subscribeLongClick() {
-        longClick = viewActions
-                .longClick()
-                .subscribe(latLng -> {
-                    viewActions.addGeofence(latLng);
-                });
+        disposableContainer.add(
+                viewActions
+                        .longClick()
+                        .flatMap(geofenceManager::addGeofence)
+                        .subscribe(latLng -> {
+                            viewActions.addGeofence(latLng);
+                        }));
     }
 
-    private void zoomToUserPosition() {
+    private void zoomToUserPosition() throws SecurityException {
         Criteria criteria = new Criteria();
 
-        try {
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            if (location != null) {
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .zoom(16)
-                        .build();
-                viewActions.animateCameraTo(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        } catch (SecurityException e) {
-            Timber.e(e, "Could not zoom to users position, the location permission should already have been given");
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        if (location != null) {
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .zoom(16)
+                    .build();
+            viewActions.animateCameraTo(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
 }

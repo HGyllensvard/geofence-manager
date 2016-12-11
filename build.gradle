@@ -61,16 +61,19 @@ version = projectVersion
 project.archivesBaseName = libraryName
 
 
-def googleServicesVersion = '9.6.0'
+def googleServicesVersion = '10.0.1'
 def dagger2Version = '2.7'
 def butterKnife = '8.4.0'
 def rxJava = '2.0.1'
 def fragmentArgs = '3.0.2'
+def autoValue = '1.2'
 
 dependencies {
 
     // Play Services
     compile "com.google.android.gms:play-services-maps:$googleServicesVersion"
+    compile "com.google.android.gms:play-services-location:$googleServicesVersion"
+    compile "com.google.android.gms:play-services-gcm:$googleServicesVersion"
 
     // Google support libraries
     compile 'com.android.support:appcompat-v7:25.0.1'
@@ -82,6 +85,10 @@ dependencies {
     // View and resource binding
     compile "com.jakewharton:butterknife:$butterKnife"
     apt "com.jakewharton:butterknife-compiler:$butterKnife"
+
+    // Auto Value
+    compile "com.google.auto.value:auto-value:$autoValue"
+    apt "com.google.auto.value:auto-value:$autoValue"
 
     // Reactive programming
     compile "io.reactivex.rxjava2:rxjava:$rxJava"
