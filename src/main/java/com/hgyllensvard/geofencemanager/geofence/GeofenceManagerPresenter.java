@@ -14,6 +14,8 @@ import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionRes
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -85,12 +87,16 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
 
     private void subscribeLongClick() {
         disposableContainer.add(
-                viewActions
-                        .longClick()
-                        .flatMap(geofenceManager::addGeofence)
-                        .subscribe(latLng -> {
-                            viewActions.addGeofence(latLng);
-                        }));
+                viewActions.longClick()
+                        .debounce(1, TimeUnit.SECONDS)
+                        .subscribe(this::addGeofence));
+    }
+
+    private void addGeofence(LatLng latLng) {
+        disposableContainer.add(
+                geofenceManager.addGeofence("GeofenceName", latLng)
+                        .doOnSuccess(latLng1 -> viewActions.addGeofence(latLng1))
+                        .subscribe());
     }
 
     private void zoomToUserPosition() throws SecurityException {
