@@ -8,20 +8,28 @@ import io.reactivex.Single;
 public class PlayServicesGeofenceManager {
 
     private final PlayApiManager playApiManager;
-    private final ActivateGeofenceManager activateGeofenceManager;
+    private final AddPlayGeofenceManager addPlayGeofenceManager;
+    private final RemovePlayGeofenceManager removePlayGeofenceManager;
 
     public PlayServicesGeofenceManager(
             PlayApiManager playApiManager,
-            ActivateGeofenceManager activateGeofenceManager
+            AddPlayGeofenceManager activatePlayGeofenceManager,
+            RemovePlayGeofenceManager removePlayGeofenceManager
     ) {
         this.playApiManager = playApiManager;
-        this.activateGeofenceManager = activateGeofenceManager;
+        this.addPlayGeofenceManager = activatePlayGeofenceManager;
+        this.removePlayGeofenceManager = removePlayGeofenceManager;
     }
 
     public Single<Boolean> activateGeofence(String name, LatLng latLng) {
         return playApiManager.connectToPlayServices()
                 .flatMap(googleApiClient -> Single.just(assembleGeofence(name, latLng, 100))
-                        .flatMap(geofence -> activateGeofenceManager.activateGeofence(geofence, googleApiClient)));
+                        .flatMap(geofence -> addPlayGeofenceManager.addGeofence(geofence, googleApiClient)));
+    }
+
+    public Single<Boolean> removeGeofence(String name) {
+        return playApiManager.connectToPlayServices()
+                .flatMap(googleApiClient -> removePlayGeofenceManager.removeGeofence(googleApiClient, name));
     }
 
     private Geofence assembleGeofence(String geofenceId, LatLng latLng, float radius) {

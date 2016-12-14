@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence.playIntegration;
+package com.hgyllensvard.geofencemanager.geofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.auto.value.AutoValue;

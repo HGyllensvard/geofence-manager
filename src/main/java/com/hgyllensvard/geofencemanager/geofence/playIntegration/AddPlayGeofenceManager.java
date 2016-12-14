@@ -11,19 +11,18 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
-public class ActivateGeofenceManager {
+class AddPlayGeofenceManager {
 
-    private Context context;
+    private final Context context;
 
-    public ActivateGeofenceManager(Context context) {
+    AddPlayGeofenceManager(Context context) {
         this.context = context;
     }
 
-    public Single<Boolean> activateGeofence(
+    Single<Boolean> addGeofence(
             Geofence geofence,
             GoogleApiClient googleApiClient
     ) throws SecurityException {

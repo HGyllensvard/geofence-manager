@@ -1,8 +1,9 @@
-package com.hgyllensvard.geofencemanager.geofence.playIntegration;
+package com.hgyllensvard.geofencemanager.geofence;
 
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
 import io.reactivex.Single;
 
@@ -19,9 +20,10 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    public Single<Boolean> addGeofence(String name, LatLng latLng) {
+    public Single<GeofenceData> addGeofence(String name, LatLng latLng) {
         return playServicesGeofenceManager.activateGeofence(name, latLng)
-                .flatMap(aBoolean -> geofenceRepository.save(name, latLng));
+                .flatMap(successfullyActivatedGeofence -> geofenceRepository.save(name, latLng))
+                .map(successfullyPersistedGeofence -> GeofenceData.create(name, latLng));
     }
 
     public Single<Boolean> removeGeofence(String name) {

@@ -13,11 +13,11 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class PlayApiManager {
+class PlayApiManager {
 
     private final GoogleApiClient googleApiClient;
 
-    public PlayApiManager(
+    PlayApiManager(
             Context context
     ) {
         googleApiClient = new GoogleApiClient.Builder(context)
@@ -25,7 +25,7 @@ public class PlayApiManager {
                 .build();
     }
 
-    public Single<GoogleApiClient> connectToPlayServices() {
+    Single<GoogleApiClient> connectToPlayServices() {
         if (googleApiClient.isConnected()) {
             return Single.just(googleApiClient);
         }

@@ -8,7 +8,7 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManagerPresenter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
-import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerViewManager;
@@ -72,12 +72,6 @@ public class GeofenceModule {
     @PerActivity
     @Provides
     GeofenceRepository providesGeofenceRepository() {
-        return new GeofenceRepository();
-    }
-
-    @PerActivity
-    @Provides
-    PlayServicesGeofenceManager providesPlayGeofenceManager() {
-        return new PlayServicesGeofenceManager();
+        return new GeofenceRepository(activity);
     }
 }

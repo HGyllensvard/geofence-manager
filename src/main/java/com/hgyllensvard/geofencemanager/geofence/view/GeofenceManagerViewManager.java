@@ -10,6 +10,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -71,8 +72,10 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     }
 
     @Override
-    public void addGeofence(LatLng latLng) {
-        googleMap.addMarker(new MarkerOptions().position(latLng).draggable(true));
+    public void addGeofence(GeofenceData geofenceData) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(geofenceData.latLng())
+                .draggable(true));
     }
 
     /**

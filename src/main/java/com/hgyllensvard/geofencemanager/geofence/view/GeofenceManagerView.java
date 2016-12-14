@@ -3,6 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.view;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -13,7 +14,7 @@ public interface GeofenceManagerView extends View {
 
     void animateCameraTo(CameraUpdate cameraUpdate);
 
-    void addGeofence(LatLng latLng);
+    void addGeofence(GeofenceData geofenceData);
 
     Flowable<LatLng> longClick();
 }

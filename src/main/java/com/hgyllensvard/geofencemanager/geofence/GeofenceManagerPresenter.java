@@ -11,7 +11,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
-import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 
 import java.util.concurrent.TimeUnit;
@@ -95,8 +94,8 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
                 geofenceManager.addGeofence("GeofenceName", latLng)
-                        .doOnSuccess(latLng1 -> viewActions.addGeofence(latLng1))
-                        .subscribe());
+                        .subscribe(geofenceData -> viewActions.addGeofence(geofenceData),
+                                Timber::e));
     }
 
     private void zoomToUserPosition() throws SecurityException {
