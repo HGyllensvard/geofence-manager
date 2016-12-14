@@ -9,7 +9,7 @@ import com.hgyllensvard.geofencemanager.geofence.GeofenceManagerPresenter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayGeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerViewManager;
 
@@ -62,11 +62,11 @@ public class GeofenceModule {
     @Provides
     GeofenceManager providesGeofenceManager(
             GeofenceRepository geofenceRepository,
-            PlayGeofenceManager playGeofenceManager
+            PlayServicesGeofenceManager playServicesGeofenceManager
     ) {
         return new GeofenceManager(
                 geofenceRepository,
-                playGeofenceManager);
+                playServicesGeofenceManager);
     }
 
     @PerActivity
@@ -77,7 +77,7 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    PlayGeofenceManager providesPlayGeofenceManager() {
-        return new PlayGeofenceManager();
+    PlayServicesGeofenceManager providesPlayGeofenceManager() {
+        return new PlayServicesGeofenceManager();
     }
 }

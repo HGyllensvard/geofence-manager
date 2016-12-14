@@ -9,11 +9,7 @@ public class GeofenceModel extends RealmObject {
     @PrimaryKey
     public String name;
 
-    public long latitude;
+    public double latitude;
 
-    public long longitude;
-
-
-
-
+    public double longitude;
 }
