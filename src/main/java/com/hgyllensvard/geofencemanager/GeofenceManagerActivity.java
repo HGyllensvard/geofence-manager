@@ -7,6 +7,8 @@ import android.support.v7.widget.Toolbar;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManagerPresenter;
 import com.hgyllensvard.geofencemanager.geofence.di.DaggerGeofenceComponent;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
+import com.hgyllensvard.geofencemanager.geofence.persistence.GeofencePersistenceModule;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayGeofenceModule;
 
 import javax.inject.Inject;
 
@@ -35,6 +37,8 @@ public class GeofenceManagerActivity extends AppCompatActivity {
 
         DaggerGeofenceComponent.builder()
                 .geofenceModule(new GeofenceModule(this))
+                .playGeofenceModule(new PlayGeofenceModule(this))
+                .geofencePersistenceModule(new GeofencePersistenceModule(this))
                 .build()
                 .inject(this);
     }

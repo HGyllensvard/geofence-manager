@@ -68,10 +68,4 @@ public class GeofenceModule {
                 geofenceRepository,
                 playServicesGeofenceManager);
     }
-
-    @PerActivity
-    @Provides
-    GeofenceRepository providesGeofenceRepository() {
-        return new GeofenceRepository(activity);
-    }
 }

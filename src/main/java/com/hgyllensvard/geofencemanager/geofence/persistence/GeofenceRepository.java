@@ -4,45 +4,66 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 import android.content.Context;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 public class GeofenceRepository {
 
-    private Realm realm;
-    private Context context;
+    private static final String NAME = "name";
+
+    private final Context context;
+    private final GeofenceMapper geofenceMapper;
+
+    private Realm geofenceRealm;
+    private Flowable<List<GeofenceData>> geofenceFlowable;
 
     public GeofenceRepository(
-            Context context
-    ) {
+            Context context,
+            GeofenceMapper geofenceMapper) {
         this.context = context;
+        this.geofenceMapper = geofenceMapper;
+
+        createGeofenceFlowable();
     }
 
-    public Flowable<List<GeofenceModel>> listenGeofences() {
-        return null;
+    public Flowable<List<GeofenceData>> listenGeofences() {
+        return geofenceFlowable;
     }
 
     public Single<Boolean> delete(String name) {
-        return null;
+        return Single.fromCallable(() -> {
+            Realm realm = openRealm();
+
+            boolean result = realm.where(GeofenceModel.class)
+                    .equalTo(NAME, name).findAll()
+                    .deleteAllFromRealm();
+
+            realm.close();
+
+            return result;
+        });
     }
 
     public Single<Boolean> save(String name, LatLng latLng) {
         return Single.fromCallable(() -> {
             Realm realm = openRealm();
 
-            GeofenceModel geofenceModel = new GeofenceModel();
-            geofenceModel.name = name;
-            geofenceModel.latitude = latLng.latitude;
-            geofenceModel.longitude = latLng.longitude;
-            realm.copyToRealm(geofenceModel);
+            GeofenceModel model = geofenceMapper.toModel(name, latLng);
 
-            boolean result = realm.copyToRealm(geofenceModel) != null;
+            boolean result = realm.copyToRealm(model) != null;
 
             realm.close();
 
@@ -52,5 +73,17 @@ public class GeofenceRepository {
 
     private Realm openRealm() {
         return Realm.getInstance(new RealmConfiguration.Builder(context).build());
+    }
+
+    private void createGeofenceFlowable() {
+        geofenceFlowable = Flowable.defer(() ->
+                RxJavaInterop.toV2Observable(geofenceRealm.where(GeofenceModel.class)
+                        .findAll()
+                        .asObservable())
+                        .map(geofenceMapper::toGeofences)
+                        .toFlowable(BackpressureStrategy.BUFFER)
+                        .doOnSubscribe(disposable -> geofenceRealm = openRealm())
+                        .doOnTerminate(() -> geofenceRealm.close())
+                        .share());
     }
 }

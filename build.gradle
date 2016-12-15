@@ -96,6 +96,8 @@ dependencies {
     // Reactive programming
     compile "io.reactivex.rxjava2:rxjava:$rxJava"
     compile "io.reactivex.rxjava2:rxandroid:$rxJava"
+    // Temporary library to convert between Rx1 and Rx2
+    compile "com.github.akarnokd:rxjava2-interop:0.7.2"
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.8.2@aar'
 
     // Sending arguments to fragments
@@ -103,7 +105,9 @@ dependencies {
     apt "com.hannesdorfmann.fragmentargs:processor:$fragmentArgs"
 
     // Logging helper
-    compile 'com.jakewharton.timber:timber:4.3.1'
+    compile 'com.jakewharton.timber:timber:4.4.0'
+
+    testCompile 'org.assertj:assertj-core:3.6.1'
 
     testCompile 'junit:junit:4.12'
 
