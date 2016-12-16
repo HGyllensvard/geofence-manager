@@ -37,8 +37,8 @@ public class GeofenceManagerActivity extends AppCompatActivity {
 
         DaggerGeofenceComponent.builder()
                 .geofenceModule(new GeofenceModule(this))
-                .playGeofenceModule(new PlayGeofenceModule(this))
-                .geofencePersistenceModule(new GeofencePersistenceModule(this))
+                .playGeofenceModule(new PlayGeofenceModule())
+                .geofencePersistenceModule(new GeofencePersistenceModule())
                 .build()
                 .inject(this);
     }

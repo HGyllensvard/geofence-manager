@@ -26,7 +26,6 @@ public class GeofenceMapperTest {
 
     @Test
     public void toModel() {
-
         LatLng latLng = new LatLng(LATITUDE, LONGITUDE);
 
         GeofenceModel model = mapper.toModel(NAME, latLng);

@@ -11,15 +11,10 @@ import dagger.Provides;
 @Module
 public class GeofencePersistenceModule {
 
-    private final Context context;
-
-    public GeofencePersistenceModule(Context context) {
-        this.context = context;
-    }
-
     @PerActivity
     @Provides
     GeofenceRepository providesGeofenceRepository(
+            Context context,
             GeofenceMapper geofenceMapper
     ) {
         return new GeofenceRepository(context, geofenceMapper);

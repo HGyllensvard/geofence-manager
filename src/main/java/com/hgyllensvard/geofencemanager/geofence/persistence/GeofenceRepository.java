@@ -5,20 +5,16 @@ import android.content.Context;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 
 public class GeofenceRepository {
 

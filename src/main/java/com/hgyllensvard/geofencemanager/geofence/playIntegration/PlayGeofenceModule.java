@@ -11,12 +11,6 @@ import dagger.Provides;
 @Module
 public class PlayGeofenceModule {
 
-    private Context context;
-
-    public PlayGeofenceModule(Context context) {
-        this.context = context;
-    }
-
     @PerActivity
     @Provides
     PlayServicesGeofenceManager providesPlayGeofenceManager(
@@ -38,13 +32,17 @@ public class PlayGeofenceModule {
 
     @PerActivity
     @Provides
-    AddPlayGeofenceManager providesActivateGeofenceManager() {
+    AddPlayGeofenceManager providesActivateGeofenceManager(
+            Context context
+    ) {
         return new AddPlayGeofenceManager(context);
     }
 
     @PerActivity
     @Provides
-    PlayApiManager providesPlayApiManager() {
+    PlayApiManager providesPlayApiManager(
+            Context context
+    ) {
         return new PlayApiManager(context);
     }
 

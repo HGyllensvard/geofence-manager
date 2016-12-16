@@ -65,7 +65,7 @@ project.archivesBaseName = libraryName
 
 
 def googleServicesVersion = '10.0.1'
-def dagger2Version = '2.7'
+def dagger2Version = '2.8'
 def butterKnife = '8.4.0'
 def rxJava = '2.0.1'
 def fragmentArgs = '3.0.2'
@@ -96,6 +96,7 @@ dependencies {
     // Reactive programming
     compile "io.reactivex.rxjava2:rxjava:$rxJava"
     compile "io.reactivex.rxjava2:rxandroid:$rxJava"
+
     // Temporary library to convert between Rx1 and Rx2
     compile "com.github.akarnokd:rxjava2-interop:0.7.2"
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.8.2@aar'
@@ -107,9 +108,15 @@ dependencies {
     // Logging helper
     compile 'com.jakewharton.timber:timber:4.4.0'
 
+
     testCompile 'org.assertj:assertj-core:3.6.1'
 
     testCompile 'junit:junit:4.12'
+
+    androidTestCompile 'org.assertj:assertj-core:3.6.1'
+
+    androidTestCompile "com.google.dagger:dagger:$dagger2Version"
+    androidTestApt "com.google.dagger:dagger-compiler:$dagger2Version"
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
