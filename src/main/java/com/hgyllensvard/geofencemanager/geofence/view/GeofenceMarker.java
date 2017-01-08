@@ -1,7 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence.view;
 
 import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
@@ -42,8 +41,15 @@ public class GeofenceMarker {
     }
 
     public void remove() {
-        marker.remove();
-        circle.remove();
+        if (marker != null) {
+            marker.remove();
+            marker = null;
+        }
+
+        if (circle != null) {
+            circle.remove();
+            circle = null;
+        }
     }
 
     public boolean isMarker(String markerId) {
