@@ -18,8 +18,8 @@ public class PlayServicesGeofenceManager {
         this.removePlayGeofenceManager = removePlayGeofenceManager;
     }
 
-    public Single<Boolean> activateGeofence(String name, LatLng latLng) {
-        return Single.just(assembleGeofence(name, latLng, 100))
+    public Single<Boolean> activateGeofence(String name, LatLng latLng, int radius) {
+        return Single.just(assembleGeofence(name, latLng, radius))
                 .flatMap(addPlayGeofenceManager::addGeofence);
     }
 

@@ -111,7 +111,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
 
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
-                geofenceManager.addGeofence("GeofenceName", latLng)
+                geofenceManager.addGeofence("GeofenceName", latLng, 100)
                         .subscribeOn(Schedulers.io())
                         .subscribe(geofenceData -> viewActions.addGeofence(geofenceData),
                                 Timber::e));

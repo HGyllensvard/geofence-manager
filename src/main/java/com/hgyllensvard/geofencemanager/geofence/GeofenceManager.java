@@ -30,10 +30,14 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    public Single<GeofenceData> addGeofence(String name, LatLng latLng) {
-        return playServicesGeofenceManager.activateGeofence(name, latLng)
-                .flatMap(successfullyActivatedGeofence -> geofenceRepository.save(name, latLng))
-                .map(successfullyPersistedGeofence -> GeofenceData.create(name, latLng))
+    public Single<GeofenceData> addGeofence(
+            String name,
+            LatLng latLng,
+            int radius
+    ) {
+        return playServicesGeofenceManager.activateGeofence(name, latLng, radius)
+                .flatMap(successfullyActivatedGeofence -> geofenceRepository.save(name, latLng, radius))
+                .map(successfullyPersistedGeofence -> GeofenceData.create(name, latLng, radius))
                 .subscribeOn(Schedulers.io());
     }
 
@@ -42,9 +46,9 @@ public class GeofenceManager {
                 .flatMap(aBoolean -> geofenceRepository.delete(name)).subscribeOn(Schedulers.io());
     }
 
-    public Single<GeofenceData> updateGeofence(String name, LatLng newLatlng) {
+    public Single<GeofenceData> updateGeofence(String name, LatLng newLatLng, int radius) {
         return removeGeofence(name)
-                .flatMap(successfullyRemoved -> addGeofence(name, newLatlng));
+                .flatMap(successfullyRemoved -> addGeofence(name, newLatLng, radius));
     }
 
     public Flowable<List<GeofenceData>> observeGeofences() {

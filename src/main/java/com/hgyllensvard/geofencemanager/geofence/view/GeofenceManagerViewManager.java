@@ -37,18 +37,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
         mapFragment = SupportMapFragment.newInstance();
 
-        displayMap = Single.create(new SingleOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(SingleEmitter<Boolean> e) throws Exception {
-                addMapFragment();
-
-                mapFragment.getMapAsync(map -> {
-                    googleMap = map;
-                    longClickFlowable = createLongPressEmitter();
-                    e.onSuccess(true);
-                });
-            }
-        });
+        displayMap = createMapObserver();
     }
 
     @Override
@@ -92,12 +81,26 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     @Override
     public void displayGeofences(List<GeofenceData> geofenceDatas) {
-        
     }
 
     @Override
     public void destroy() {
 
+    }
+
+    private Single<Boolean> createMapObserver() {
+        return Single.create(new SingleOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(SingleEmitter<Boolean> e) throws Exception {
+                addMapFragment();
+
+                mapFragment.getMapAsync(map -> {
+                    googleMap = map;
+                    longClickFlowable = createLongPressEmitter();
+                    e.onSuccess(true);
+                });
+            }
+        });
     }
 
     private void addMapFragment() {

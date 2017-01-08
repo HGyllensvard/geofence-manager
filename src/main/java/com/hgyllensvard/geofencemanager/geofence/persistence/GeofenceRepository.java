@@ -53,11 +53,11 @@ public class GeofenceRepository {
         });
     }
 
-    public Single<Boolean> save(String name, LatLng latLng) {
+    public Single<Boolean> save(String name, LatLng latLng, int radius) {
         return Single.fromCallable(() -> {
             Realm realm = openRealm();
 
-            GeofenceModel model = geofenceMapper.toModel(name, latLng);
+            GeofenceModel model = geofenceMapper.toModel(name, latLng, radius);
 
             boolean result = realm.copyToRealm(model) != null;
 

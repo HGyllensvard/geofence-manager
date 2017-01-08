@@ -9,11 +9,12 @@ import java.util.List;
 
 class GeofenceMapper {
 
-    GeofenceModel toModel(String name, LatLng latLng) {
+    GeofenceModel toModel(String name, LatLng latLng, int radius) {
         GeofenceModel geofenceModel = new GeofenceModel();
         geofenceModel.name = name;
         geofenceModel.latitude = latLng.latitude;
         geofenceModel.longitude = latLng.longitude;
+        geofenceModel.radius = radius;
 
         return geofenceModel;
     }
@@ -29,6 +30,9 @@ class GeofenceMapper {
     }
 
     GeofenceData toGeofence(GeofenceModel geofenceModel) {
-        return GeofenceData.create(geofenceModel.name, new LatLng(geofenceModel.latitude, geofenceModel.longitude));
+        return GeofenceData.create(
+                geofenceModel.name,
+                new LatLng(geofenceModel.latitude, geofenceModel.longitude),
+                geofenceModel.radius);
     }
 }

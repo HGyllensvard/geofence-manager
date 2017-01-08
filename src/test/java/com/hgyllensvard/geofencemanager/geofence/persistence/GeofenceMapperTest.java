@@ -16,6 +16,7 @@ public class GeofenceMapperTest {
     private static final String NAME = "A name";
     private static final double LATITUDE = 1d;
     private static final double LONGITUDE = 2d;
+    private static int RADIUS = 10;
 
     private GeofenceMapper mapper;
 
@@ -28,11 +29,12 @@ public class GeofenceMapperTest {
     public void toModel() {
         LatLng latLng = new LatLng(LATITUDE, LONGITUDE);
 
-        GeofenceModel model = mapper.toModel(NAME, latLng);
+        GeofenceModel model = mapper.toModel(NAME, latLng, RADIUS);
 
         assertThat(model.name).isEqualTo(NAME);
         assertThat(model.latitude).isEqualTo(LATITUDE);
         assertThat(model.longitude).isEqualTo(LONGITUDE);
+        assertThat(model.radius).isEqualTo(RADIUS);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class GeofenceMapperTest {
 
         GeofenceData geofence = mapper.toGeofence(model);
 
-        assertIsGeofence(geofence, NAME, LATITUDE, LONGITUDE);
+        assertIsGeofence(geofence, NAME, LATITUDE, LONGITUDE, RADIUS);
     }
 
     private void assertIsGeofence(
@@ -73,18 +75,21 @@ public class GeofenceMapperTest {
         assertIsGeofence(geofence,
                 model.name,
                 model.latitude,
-                model.longitude);
+                model.longitude,
+                model.radius);
     }
 
     private void assertIsGeofence(
             GeofenceData geofence,
             String name,
             double lat,
-            double log
+            double log,
+            int radius
     ) {
         assertThat(geofence.name()).isEqualTo(name);
         assertThat(geofence.latLng().latitude).isEqualTo(lat);
         assertThat(geofence.latLng().longitude).isEqualTo(log);
+        assertThat(geofence.radius()).isEqualTo(radius);
     }
 
     private GeofenceModel getGeofenceModel() {
@@ -92,6 +97,7 @@ public class GeofenceMapperTest {
         model.name = NAME;
         model.latitude = LATITUDE;
         model.longitude = LONGITUDE;
+        model.radius = RADIUS;
         return model;
     }
 }

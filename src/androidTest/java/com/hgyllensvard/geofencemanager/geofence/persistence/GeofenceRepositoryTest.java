@@ -41,12 +41,13 @@ public class GeofenceRepositoryTest {
         String name = "Some Geofence";
         double lat = 10d;
         double lng = 20d;
+        int radius = 1;
 
         LatLng latLng = new LatLng(lat, lng);
 
         TestSubscriber<List<GeofenceData>> testSubscriber = geofenceRepository.listenGeofences().test(1);
 
-        geofenceRepository.save(name, latLng);
+        geofenceRepository.save(name, latLng, radius);
 
         testSubscriber.awaitTerminalEvent();
         testSubscriber.assertNoErrors();
@@ -57,7 +58,8 @@ public class GeofenceRepositoryTest {
 
             return data.name().equals(name) &&
                     data.latLng().latitude == lat &&
-                    data.latLng().longitude == lng;
+                    data.latLng().longitude == lng &&
+                    data.radius() == radius;
         });
     }
 }
