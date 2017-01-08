@@ -9,3 +9,8 @@ CREATE TABLE geofence (
 select_all:
 SELECT *
 FROM geofence;
+
+select_with_id:
+SELECT *
+FROM geofence
+WHERE _id = ?;

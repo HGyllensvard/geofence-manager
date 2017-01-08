@@ -5,7 +5,7 @@ import com.squareup.sqldelight.RowMapper;
 
 @AutoValue
 public abstract class GeofenceModel implements GeofenceDbModel {
-    
+
     public static final Factory<GeofenceModel> FACTORY = new Factory<>(AutoValue_GeofenceModel::new);
 
     public static final RowMapper<GeofenceModel> SELECT_ALL_MAPPER = FACTORY.select_allMapper();

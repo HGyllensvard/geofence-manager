@@ -65,4 +65,8 @@ public class GeofenceManager {
     public Flowable<List<GeofenceData>> observeGeofences() {
         return geofenceRepository.listenGeofences();
     }
+
+    public Single<GeofenceData> getGeofence(int identifier) {
+        return geofenceRepository.getGeofence(identifier);
+    }
 }

@@ -4,6 +4,7 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
+import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import org.junit.After;
@@ -111,6 +112,24 @@ public class GeofenceRepositoryTest {
                 .test()
                 .assertError(IllegalStateException.class)
                 .assertNoValues();
+    }
+
+    @Test
+    public void shouldFetchGeofenceWithId() {
+        GeofenceData geofence = repository.insert(testGeofence)
+                .blockingGet();
+
+        GeofenceData fetchedGeofence = repository.getGeofence(geofence.id())
+                .blockingGet();
+
+        assertThat(fetchedGeofence).isEqualTo(geofence);
+    }
+
+    @Test
+    public void shouldThrowErrorIfCantFetchGeofence() {
+        repository.getGeofence(1)
+                .test()
+                .assertError(NoSuchGeofenceExistException.class);
     }
 
     @Test

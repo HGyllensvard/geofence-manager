@@ -1,9 +1,11 @@
 package com.hgyllensvard.geofencemanager.geofence.persistence;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
+import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import java.util.List;
@@ -11,7 +13,6 @@ import java.util.List;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class GeofenceRepository {
@@ -72,5 +73,25 @@ public class GeofenceRepository {
                 .map(geofenceMapper::toGeofences)
                 .subscribeOn(Schedulers.io())
                 .share();
+    }
+
+    public Single<GeofenceData> getGeofence(long identifier) {
+        return Single.fromCallable(() -> {
+
+            Cursor cursor = database.query(GeofenceDbModel.SELECT_WITH_ID, String.valueOf(identifier));
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        final GeofenceModel eventModel = GeofenceModel.SELECT_ALL_MAPPER.map(cursor);
+                        return geofenceMapper.toGeofence(eventModel);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
+            throw new NoSuchGeofenceExistException("No geofence found for ID: " + identifier);
+        });
     }
 }
