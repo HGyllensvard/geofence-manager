@@ -1,8 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
@@ -10,7 +8,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
+import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
@@ -28,7 +26,6 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     private final LocationManager locationManager;
     private final GeofenceManager geofenceManager;
     private final GeofenceMapOptions mapOptions;
-    private final LocationPermissionRequester locationPermissionRequester;
 
     private final CompositeDisposable disposableContainer;
 
@@ -36,14 +33,12 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
             AppCompatActivity activity,
             LocationManager locationManager,
             GeofenceManager geofenceManager,
-            GeofenceMapOptions mapOptions,
-            LocationPermissionRequester locationPermissionRequester
+            GeofenceMapOptions mapOptions
     ) {
         this.activity = activity;
         this.locationManager = locationManager;
         this.geofenceManager = geofenceManager;
         this.mapOptions = mapOptions;
-        this.locationPermissionRequester = locationPermissionRequester;
 
         disposableContainer = new CompositeDisposable();
     }
@@ -53,7 +48,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
         super.bindView(geofenceViews);
 
         disposableContainer.add(
-                locationPermissionRequester.request()
+                locationManager.request()
                         .subscribeOn(Schedulers.io())
                         .subscribe(this::managePermissionResult,
                                 Timber::e));
@@ -121,9 +116,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     }
 
     private void zoomToUserPosition() throws SecurityException {
-        Criteria criteria = new Criteria();
-
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        Location location = locationManager.getLocation();
         if (location != null) {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))

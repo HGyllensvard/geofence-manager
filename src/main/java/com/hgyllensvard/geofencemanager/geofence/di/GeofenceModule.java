@@ -2,7 +2,6 @@ package com.hgyllensvard.geofencemanager.geofence.di;
 
 import android.app.Activity;
 import android.content.Context;
-import android.location.LocationManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
@@ -10,7 +9,9 @@ import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewPresenter;
+import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
+import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
@@ -53,8 +54,7 @@ public class GeofenceModule {
                 activity,
                 locationManager,
                 geofenceManager,
-                mapOptions,
-                locationPermissionRequester);
+                mapOptions);
     }
 
     @PerActivity
@@ -80,8 +80,19 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    LocationManager providesLocationManager() {
-        return (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+    LocationManager providesLocationManager(
+            android.location.LocationManager locationManager,
+            LocationPermissionRequester locationPermissionRequester
+    ) {
+        return new LocationManager(
+                locationManager,
+                locationPermissionRequester);
+    }
+
+    @PerActivity
+    @Provides
+    android.location.LocationManager providesAndroidLocationManager() {
+        return (android.location.LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
     }
 
     @PerActivity
