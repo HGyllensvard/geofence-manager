@@ -54,10 +54,10 @@ public class GeofenceModule {
     GeofenceMapOptions providesGeofenceMapOptions(
             Context context
     ) {
-        return GeofenceMapOptions.create(
-                ContextCompat.getColor(context, R.color.colorPrimary),
-                ContextCompat.getColor(context, R.color.colorPrimary),
-                100);
+        return GeofenceMapOptions.create()
+                .strokeColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .fillColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .build();
     }
 
     @PerActivity

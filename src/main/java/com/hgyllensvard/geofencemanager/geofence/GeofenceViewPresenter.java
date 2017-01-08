@@ -1,11 +1,9 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
@@ -118,7 +116,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
-                geofenceManager.addGeofence(GeofenceData.create("GeofenceName", latLng, mapOptions.defaultRadius()))
+                geofenceManager.addGeofence(GeofenceData.create(mapOptions.defaultName(), latLng, mapOptions.defaultRadius()))
                         .subscribeOn(Schedulers.io())
                         .subscribe(geofenceData -> {
                                 },
