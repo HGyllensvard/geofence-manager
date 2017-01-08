@@ -2,10 +2,10 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
@@ -17,15 +17,20 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
+    private static final int LONG_CLICK_DEBOUNCE_TIMER = 1;
+    private static final TimeUnit LONG_CLICK_DEBOUNCE_TIMER_UNIT = TimeUnit.SECONDS;
+
     private final AppCompatActivity activity;
     private final LocationManager locationManager;
     private final GeofenceManager geofenceManager;
     private final GeofenceMapOptions mapOptions;
+    private final MapCameraManager mapCameraManager;
 
     private final CompositeDisposable disposableContainer;
 
@@ -33,12 +38,14 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
             AppCompatActivity activity,
             LocationManager locationManager,
             GeofenceManager geofenceManager,
-            GeofenceMapOptions mapOptions
+            GeofenceMapOptions mapOptions,
+            MapCameraManager mapCameraManager
     ) {
         this.activity = activity;
         this.locationManager = locationManager;
         this.geofenceManager = geofenceManager;
         this.mapOptions = mapOptions;
+        this.mapCameraManager = mapCameraManager;
 
         disposableContainer = new CompositeDisposable();
     }
@@ -47,11 +54,12 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     public void bindView(@NonNull GeofenceViews geofenceViews) {
         super.bindView(geofenceViews);
 
-        disposableContainer.add(
-                locationManager.request()
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(this::managePermissionResult,
-                                Timber::e));
+        Disposable disposable = locationManager.request()
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::managePermissionResult,
+                        Timber::e);
+
+        disposableContainer.add(disposable);
     }
 
     @Override
@@ -75,35 +83,37 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     }
 
     private void loadMap() {
-        disposableContainer.add(
-                viewActions.displayMap()
-                        .doOnSuccess(ignored -> zoomToUserPosition())
-                        .observeOn(Schedulers.io())
-                        .doOnSuccess(ignored -> subscribeLongClick())
-                        .doOnSuccess(ignored -> subscribeExistingGeofences())
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .subscribe(ignored -> {
-                                },
-                                Timber::e));
+        Disposable disposable = viewActions.displayMap()
+                .doOnSuccess(ignored -> zoomToUserPosition())
+                .observeOn(Schedulers.io())
+                .doOnSuccess(ignored -> subscribeLongClick())
+                .doOnSuccess(ignored -> subscribeExistingGeofences())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(ignored -> {
+                        },
+                        Timber::e);
+
+        disposableContainer.add(disposable);
     }
 
     private void subscribeExistingGeofences() {
-        disposableContainer.add(
-                geofenceManager.observeGeofences()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(geofenceDatas -> viewActions.displayGeofences(geofenceDatas),
-                                Timber::e)
-        );
+        Disposable disposable = geofenceManager.observeGeofences()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(geofenceDatas -> viewActions.displayGeofences(geofenceDatas),
+                        Timber::e);
+
+        disposableContainer.add(disposable);
     }
 
     private void subscribeLongClick() {
-        disposableContainer.add(
-                viewActions.observerLongClick()
-                        .observeOn(Schedulers.io())
-                        .debounce(1, TimeUnit.SECONDS)
-                        .subscribe(this::addGeofence,
-                                Timber::e));
+        Disposable disposable = viewActions.observerLongClick()
+                .observeOn(Schedulers.io())
+                .debounce(LONG_CLICK_DEBOUNCE_TIMER, LONG_CLICK_DEBOUNCE_TIMER_UNIT)
+                .subscribe(this::addGeofence,
+                        Timber::e);
+
+        disposableContainer.add(disposable);
     }
 
     private void addGeofence(LatLng latLng) {
@@ -116,13 +126,11 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     }
 
     private void zoomToUserPosition() throws SecurityException {
-        Location location = locationManager.getLocation();
-        if (location != null) {
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .zoom(16)
-                    .build();
-            viewActions.animateCameraTo(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
+        viewActions.animateCameraTo(mapCameraManager.userPosition());
+    }
+
+    @VisibleForTesting
+    CompositeDisposable getSubscriptions() {
+        return disposableContainer;
     }
 }

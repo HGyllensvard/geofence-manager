@@ -2,6 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.permission;
 
 import android.location.Criteria;
 import android.location.Location;
+import android.support.annotation.Nullable;
 
 import io.reactivex.Single;
 
@@ -23,8 +24,9 @@ public class LocationManager {
         return locationPermissionRequester.request();
     }
 
+    @Nullable
     public Location getLocation() throws SecurityException {
-        Criteria criteria = new Criteria();
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        return locationManager.getLastKnownLocation(
+                locationManager.getBestProvider(new Criteria(), false));
     }
 }

@@ -9,14 +9,16 @@ import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewPresenter;
+import com.hgyllensvard.geofencemanager.geofence.MapCameraManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
-import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViewsManager;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
+
+import java.util.Map;
 
 import dagger.Module;
 import dagger.Provides;
@@ -48,13 +50,14 @@ public class GeofenceModule {
             GeofenceManager geofenceManager,
             LocationManager locationManager,
             GeofenceMapOptions mapOptions,
-            LocationPermissionRequester locationPermissionRequester
+            MapCameraManager mapCameraManager
     ) {
         return new GeofenceViewPresenter(
                 activity,
                 locationManager,
                 geofenceManager,
-                mapOptions);
+                mapOptions,
+                mapCameraManager);
     }
 
     @PerActivity
@@ -104,5 +107,13 @@ public class GeofenceModule {
         return new GeofenceManager(
                 geofenceRepository,
                 playServicesGeofenceManager);
+    }
+
+    @PerActivity
+    @Provides
+    MapCameraManager providesMapCameraManager(
+            LocationManager locationManager
+    ) {
+        return new MapCameraManager(locationManager);
     }
 }
