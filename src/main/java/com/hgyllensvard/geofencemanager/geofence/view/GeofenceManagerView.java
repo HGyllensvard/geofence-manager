@@ -16,8 +16,6 @@ public interface GeofenceManagerView extends View {
 
     void animateCameraTo(CameraUpdate cameraUpdate);
 
-    void addGeofence(GeofenceData geofenceData);
-
     Flowable<LatLng> observerLongClick();
 
     void displayGeofences(List<GeofenceData> geofenceDatas);

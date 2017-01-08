@@ -8,11 +8,13 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -31,6 +33,8 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     private Flowable<LatLng> longClickFlowable;
     private GoogleMap googleMap;
+
+    private Map<GeofenceData, Marker> markers;
 
     public GeofenceManagerViewManager(AppCompatActivity activity) {
         this.activity = activity;
@@ -63,13 +67,6 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
         googleMap.animateCamera(cameraUpdate);
     }
 
-    @Override
-    public void addGeofence(GeofenceData geofenceData) {
-        googleMap.addMarker(new MarkerOptions()
-                .position(geofenceData.latLng())
-                .draggable(true));
-    }
-
     /**
      * Will be null until the displayMap has returned
      */
@@ -81,6 +78,19 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     @Override
     public void displayGeofences(List<GeofenceData> geofenceDatas) {
+        for (Map.Entry<GeofenceData, Marker> geofenceDataMarkerEntry : markers.entrySet()) {
+            geofenceDataMarkerEntry.getValue().remove();
+        }
+
+        markers.clear();
+
+        for (GeofenceData geofenceData : geofenceDatas) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(geofenceData.latLng())
+                    .draggable(true));
+
+            markers.put(geofenceData, marker);
+        }
     }
 
     @Override
