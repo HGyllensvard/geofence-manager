@@ -20,8 +20,6 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
-import io.reactivex.SingleOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
@@ -34,7 +32,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     private Flowable<LatLng> longClickFlowable;
     private GoogleMap googleMap;
 
-    private Map<GeofenceData, Marker> markers;
+    private Map<GeofenceData, GeofenceMarker> markers;
 
     public GeofenceManagerViewManager(AppCompatActivity activity) {
         this.activity = activity;
@@ -78,17 +76,15 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     @Override
     public void displayGeofences(List<GeofenceData> geofenceDatas) {
-        for (Map.Entry<GeofenceData, Marker> geofenceDataMarkerEntry : markers.entrySet()) {
+        for (Map.Entry<GeofenceData, GeofenceMarker> geofenceDataMarkerEntry : markers.entrySet()) {
             geofenceDataMarkerEntry.getValue().remove();
         }
 
         markers.clear();
 
         for (GeofenceData geofenceData : geofenceDatas) {
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .position(geofenceData.latLng())
-                    .draggable(true));
-
+            GeofenceMarker marker = new GeofenceMarker(geofenceData);
+            marker.display(googleMap);
             markers.put(geofenceData, marker);
         }
     }
@@ -99,17 +95,15 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     }
 
     private Single<Boolean> createMapObserver() {
-        return Single.create(new SingleOnSubscribe<Boolean>() {
-            @Override
-            public void subscribe(SingleEmitter<Boolean> e) throws Exception {
-                addMapFragment();
+        return Single.create(e -> {
+            addMapFragment();
 
-                mapFragment.getMapAsync(map -> {
-                    googleMap = map;
-                    longClickFlowable = createLongPressEmitter();
-                    e.onSuccess(true);
-                });
-            }
+            mapFragment.getMapAsync(map -> {
+                googleMap = map;
+                longClickFlowable = createLongPressEmitter();
+                e.onSuccess(true);
+            });
+
         });
     }
 
