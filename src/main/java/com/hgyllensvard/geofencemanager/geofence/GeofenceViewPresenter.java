@@ -3,6 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,7 +21,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceViews> {
+public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
     private final AppCompatActivity activity;
     private final LocationManager locationManager;
@@ -29,15 +30,12 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceViews> {
 
     private final CompositeDisposable disposableContainer;
 
-    public GeofenceManagerPresenter(
-            GeofenceViews viewActions,
+    public GeofenceViewPresenter(
             AppCompatActivity activity,
             LocationManager locationManager,
             GeofenceManager geofenceManager,
             LocationPermissionRequester locationPermissionRequester
     ) {
-        super(viewActions);
-
         this.activity = activity;
         this.locationManager = locationManager;
         this.geofenceManager = geofenceManager;
@@ -47,8 +45,8 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceViews> {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void bindView(@NonNull GeofenceViews geofenceViews) {
+        super.bindView(geofenceViews);
 
         disposableContainer.add(
                 locationPermissionRequester.request()
@@ -58,8 +56,8 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceViews> {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void unbindView() {
+        super.unbindView();
 
         disposableContainer.clear();
     }

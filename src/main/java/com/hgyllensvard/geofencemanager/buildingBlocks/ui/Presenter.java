@@ -1,15 +1,10 @@
 package com.hgyllensvard.geofencemanager.buildingBlocks.ui;
 
-public interface Presenter {
+import android.support.annotation.NonNull;
 
-    void onStart();
+public interface Presenter<T extends View> {
 
-    void onResume();
+    void bindView(@NonNull T viewActions);
 
-    void onPause();
-
-    void onStop();
-
-    void onDestroy();
-
+    void unbindView();
 }
