@@ -15,6 +15,7 @@ import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -80,15 +81,29 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
         disposableContainer.add(
                 viewActions.displayMap()
                         .doOnSuccess(ignored -> zoomToUserPosition())
+                        .observeOn(Schedulers.io())
                         .doOnSuccess(ignored -> subscribeLongClick())
+                        .doOnSuccess(ignored -> subscribeExistingGeofences())
+                        .subscribeOn(AndroidSchedulers.mainThread())
                         .subscribe(ignored -> {
                                 },
                                 Timber::e));
     }
 
+    private void subscribeExistingGeofences() {
+        disposableContainer.add(
+                geofenceManager.observeGeofences()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(geofenceDatas -> viewActions.displayGeofences(geofenceDatas),
+                                Timber::e)
+        );
+    }
+
     private void subscribeLongClick() {
         disposableContainer.add(
-                viewActions.longClick()
+                viewActions.observerLongClick()
+                        .observeOn(Schedulers.io())
                         .debounce(1, TimeUnit.SECONDS)
                         .subscribe(this::addGeofence,
                                 Timber::e));
@@ -97,6 +112,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
                 geofenceManager.addGeofence("GeofenceName", latLng)
+                        .subscribeOn(Schedulers.io())
                         .subscribe(geofenceData -> viewActions.addGeofence(geofenceData),
                                 Timber::e));
     }

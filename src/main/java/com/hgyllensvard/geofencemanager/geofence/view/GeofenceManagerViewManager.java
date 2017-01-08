@@ -12,8 +12,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
+import java.util.List;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -83,8 +86,13 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
      */
     @Override
     @Nullable
-    public Flowable<LatLng> longClick() {
+    public Flowable<LatLng> observerLongClick() {
         return longClickFlowable;
+    }
+
+    @Override
+    public void displayGeofences(List<GeofenceData> geofenceDatas) {
+        
     }
 
     @Override
@@ -102,9 +110,10 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
     }
 
     private Flowable<LatLng> createLongPressEmitter() {
-        return Flowable.create(emitter -> {
+        return Flowable.create((FlowableOnSubscribe<LatLng>) emitter -> {
             googleMap.setOnMapLongClickListener(emitter::onNext);
             emitter.setCancellable(() -> googleMap.setOnMapLongClickListener(null));
-        }, BackpressureStrategy.BUFFER);
+        }, BackpressureStrategy.BUFFER)
+                .subscribeOn(AndroidSchedulers.mainThread());
     }
 }
