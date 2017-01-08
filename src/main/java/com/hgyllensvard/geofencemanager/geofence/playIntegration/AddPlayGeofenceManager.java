@@ -7,8 +7,8 @@ import android.content.Intent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingApi;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
@@ -17,9 +17,14 @@ import io.reactivex.schedulers.Schedulers;
 class AddPlayGeofenceManager {
 
     private final Context context;
+    private GeofencingApi geofencingApi;
 
-    AddPlayGeofenceManager(Context context) {
+    AddPlayGeofenceManager(
+            Context context,
+            GeofencingApi geofencingApi
+    ) {
         this.context = context;
+        this.geofencingApi = geofencingApi;
     }
 
     Single<Boolean> addGeofence(
@@ -27,7 +32,7 @@ class AddPlayGeofenceManager {
             GoogleApiClient googleApiClient
     ) throws SecurityException {
         return Single.create((SingleOnSubscribe<Boolean>) emitter ->
-                LocationServices.GeofencingApi.addGeofences(
+                geofencingApi.addGeofences(
                         googleApiClient,
                         getGeofencingRequest(geofence),
                         getGeofencePendingIntent()
