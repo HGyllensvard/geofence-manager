@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
@@ -37,6 +39,8 @@ public class GeofenceViewsManager implements GeofenceViews {
 
     private GoogleMap googleMap;
     private GeofenceData selectedGeofence;
+    private Unbinder unbinder;
+
 
     @BindView(R2.id.geofence_map_selected_geofence)
     View selecedGeofenceOptions;
@@ -47,6 +51,8 @@ public class GeofenceViewsManager implements GeofenceViews {
     ) {
         this.activity = activity;
         this.mapOptions = mapOptions;
+
+        unbinder = ButterKnife.bind(this, activity);
 
         markers = new HashMap<>();
         mapFragment = SupportMapFragment.newInstance();
@@ -106,7 +112,7 @@ public class GeofenceViewsManager implements GeofenceViews {
 
     @Override
     public void destroy() {
-
+        unbinder.unbind();
     }
 
     private Single<Boolean> createMapObserver() {

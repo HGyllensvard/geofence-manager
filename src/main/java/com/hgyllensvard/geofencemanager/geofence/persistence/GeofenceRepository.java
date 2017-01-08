@@ -8,9 +8,9 @@ import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import java.util.List;
 
-import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
@@ -59,7 +59,9 @@ public class GeofenceRepository {
 
             GeofenceModel model = geofenceMapper.toModel(name, latLng, radius);
 
+            realm.beginTransaction();
             boolean result = realm.copyToRealm(model) != null;
+            realm.commitTransaction();
 
             realm.close();
 
@@ -72,14 +74,17 @@ public class GeofenceRepository {
     }
 
     private void createGeofenceFlowable() {
-        geofenceFlowable = Flowable.defer(() ->
-                RxJavaInterop.toV2Observable(geofenceRealm.where(GeofenceModel.class)
-                        .findAll()
-                        .asObservable())
-                        .map(geofenceMapper::toGeofences)
-                        .toFlowable(BackpressureStrategy.BUFFER)
-                        .doOnSubscribe(disposable -> geofenceRealm = openRealm())
-                        .doOnTerminate(() -> geofenceRealm.close())
-                        .share());
+        geofenceFlowable = Flowable.create((FlowableOnSubscribe<List<GeofenceModel>>) e ->
+                        e.onNext(geofenceRealm.where(GeofenceModel.class)
+                                .findAll()),
+                BackpressureStrategy.BUFFER)
+                .map(geofenceMapper::toGeofences)
+                .doOnSubscribe(disposable -> geofenceRealm = openRealm())
+                .doOnTerminate(() -> {
+                    geofenceRealm.close();
+                    geofenceRealm = null;
+                })
+                .subscribeOn(Schedulers.io())
+                .share();
     }
 }

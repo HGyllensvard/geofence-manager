@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 
+import timber.log.Timber;
+
 public class MapCameraManager {
 
     public static final int DEFAULT_ZOOM_LEVEL = 16;
@@ -28,7 +30,9 @@ public class MapCameraManager {
     @NonNull
     public CameraUpdate userPosition() throws SecurityException {
         Location location = locationManager.getLocation();
+
         if (location == null) {
+            Timber.w("Could not fetch the latest position");
             return CameraUpdateFactory.zoomOut();
         }
 

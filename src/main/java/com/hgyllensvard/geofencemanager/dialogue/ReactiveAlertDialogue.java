@@ -13,7 +13,7 @@ import com.hannesdorfmann.fragmentargs.annotation.Arg;
 import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
 
 import io.reactivex.Single;
-import timber.log.Timber;
+import io.reactivex.SingleEmitter;
 
 @FragmentWithArgs
 public class ReactiveAlertDialogue extends DialogFragment {
@@ -26,22 +26,31 @@ public class ReactiveAlertDialogue extends DialogFragment {
     @StringRes
     int positiveMessageRes;
 
-    private AlertDialog.Builder builder;
+    private SingleEmitter<ReactiveDialogueResponse> push;
     private Single<ReactiveDialogueResponse> mDialogResponse;
+
+    public ReactiveAlertDialogue() {
+        mDialogResponse = Single.create(emitter -> push = emitter);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentArgs.inject(this);
+    }
 
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         FragmentArgs.inject(this);
 
-        mDialogResponse = Single.create(emitter -> {
-            builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(dialogMessageRes)
-                    .setPositiveButton(positiveMessageRes, (dialog, id) -> {
-                        emitter.onSuccess(ReactiveDialogueResponse.POSITIVE);
-                    });
-        });
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(dialogMessageRes)
+                .setPositiveButton(positiveMessageRes, (dialog, id) -> {
+                    if (!push.isDisposed()) {
+                        push.onSuccess(ReactiveDialogueResponse.POSITIVE);
+                    }
+                });
         return builder.create();
     }
 
