@@ -11,6 +11,7 @@ import java.util.List;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class GeofenceRepository {
@@ -34,12 +35,6 @@ public class GeofenceRepository {
         return geofenceFlowable;
     }
 
-    public Single<Boolean> delete(GeofenceData geofenceData) {
-        return Single.fromCallable(() ->
-                database.delete(GeofenceModel.TABLE_NAME, GeofenceDbModel._ID + " = " + geofenceData.id()) != 0)
-                .subscribeOn(Schedulers.io());
-    }
-
     public Single<GeofenceData> insert(@NonNull final GeofenceData geofence) {
         return Single.fromCallable(() -> {
             long id = database.insert(GeofenceModel.TABLE_NAME, geofenceMapper.toContentValues(geofence));
@@ -50,6 +45,22 @@ public class GeofenceRepository {
                 throw new InsertFailedException("Couldn't save geofence: " + geofence);
             }
         }).subscribeOn(Schedulers.io());
+    }
+
+    public Single<Boolean> delete(GeofenceData geofenceData) {
+        return Single.fromCallable(() ->
+                database.delete(GeofenceModel.TABLE_NAME, GeofenceDbModel._ID + " = " + geofenceData.id()) != 0)
+                .subscribeOn(Schedulers.io());
+    }
+
+    public Single<Boolean> update(GeofenceData geofenceData) {
+        return Single.fromCallable(() -> database.update(
+                GeofenceModel.TABLE_NAME,
+                geofenceMapper.toContentValues(geofenceData),
+                GeofenceDbModel._ID + " = " + geofenceData.id()
+
+        )).map(integer -> integer == 1)
+                .subscribeOn(Schedulers.io());
     }
 
     private void createGeofenceFlowable() {

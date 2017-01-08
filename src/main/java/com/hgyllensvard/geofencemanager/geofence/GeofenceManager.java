@@ -1,6 +1,8 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
 
+import android.support.annotation.NonNull;
+
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
@@ -44,8 +46,20 @@ public class GeofenceManager {
     }
 
     public Single<GeofenceData> updateGeofence(GeofenceData oldGeofenceData, GeofenceData updatedGeofenceData) {
-        return removeGeofence(oldGeofenceData)
-                .flatMap(successfullyRemoved -> addGeofence(updatedGeofenceData));
+        return Single.fromCallable(() -> validateUpdateGeofenceInput(oldGeofenceData, updatedGeofenceData))
+                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofenceData))
+                .flatMap(ignored -> playServicesGeofenceManager.activateGeofence(updatedGeofenceData))
+                .flatMap(successfullyRemoved -> geofenceRepository.update(updatedGeofenceData))
+                .map(aBoolean -> updatedGeofenceData);
+    }
+
+    @NonNull
+    private Boolean validateUpdateGeofenceInput(GeofenceData oldGeofenceData, GeofenceData updatedGeofenceData) {
+        if (oldGeofenceData.id() != updatedGeofenceData.id()) {
+            throw new IllegalArgumentException("Not updating the same geofence, old: " + oldGeofenceData + ", new: " + updatedGeofenceData);
+        }
+
+        return true;
     }
 
     public Flowable<List<GeofenceData>> observeGeofences() {

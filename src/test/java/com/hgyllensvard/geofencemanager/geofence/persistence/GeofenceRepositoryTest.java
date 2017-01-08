@@ -114,6 +114,30 @@ public class GeofenceRepositoryTest {
     }
 
     @Test
+    public void shouldUpdateGeofenceData() {
+        GeofenceData geofence = repository.insert(testGeofence)
+                .blockingGet();
+
+        String newName = "Some newName";
+        repository.update(geofence.withName(newName))
+                .test()
+                .assertValues(true);
+
+        repository.listenGeofences()
+                .test()
+                .assertValueCount(1)
+                .assertValueAt(0, testGeofences -> testGeofences.size() == 1 &&
+                        testGeofences.get(0).equals(testGeofence.withName(newName)));
+    }
+
+    @Test
+    public void shouldNotUpdateNonExistingGeofence() {
+        repository.update(testGeofence)
+                .test()
+                .assertValues(false);
+    }
+
+    @Test
     public void shouldFetchKnownGeofencesWhenSubscribing() {
         repository.insert(testGeofence)
                 .test()
