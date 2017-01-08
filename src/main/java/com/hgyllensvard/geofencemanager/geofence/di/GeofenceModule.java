@@ -46,12 +46,14 @@ public class GeofenceModule {
     GeofenceViewPresenter providesGeofencePresenter(
             GeofenceManager geofenceManager,
             LocationManager locationManager,
+            GeofenceMapOptions mapOptions,
             LocationPermissionRequester locationPermissionRequester
     ) {
         return new GeofenceViewPresenter(
                 activity,
                 locationManager,
                 geofenceManager,
+                mapOptions,
                 locationPermissionRequester);
     }
 
@@ -66,7 +68,8 @@ public class GeofenceModule {
     GeofenceMapOptions providesGeofenceMapOptions() {
         return GeofenceMapOptions.create(
                 ContextCompat.getColor(activity, R.color.colorPrimary),
-                ContextCompat.getColor(activity, R.color.colorPrimary));
+                ContextCompat.getColor(activity, R.color.colorPrimary),
+                100);
     }
 
     @PerActivity

@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
 
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
     private final AppCompatActivity activity;
     private final LocationManager locationManager;
     private final GeofenceManager geofenceManager;
+    private final GeofenceMapOptions mapOptions;
     private final LocationPermissionRequester locationPermissionRequester;
 
     private final CompositeDisposable disposableContainer;
@@ -34,11 +36,13 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
             AppCompatActivity activity,
             LocationManager locationManager,
             GeofenceManager geofenceManager,
+            GeofenceMapOptions mapOptions,
             LocationPermissionRequester locationPermissionRequester
     ) {
         this.activity = activity;
         this.locationManager = locationManager;
         this.geofenceManager = geofenceManager;
+        this.mapOptions = mapOptions;
         this.locationPermissionRequester = locationPermissionRequester;
 
         disposableContainer = new CompositeDisposable();
@@ -109,7 +113,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
-                geofenceManager.addGeofence("GeofenceName", latLng, 100)
+                geofenceManager.addGeofence(GeofenceData.create("GeofenceName", latLng, mapOptions.defaultRadius()))
                         .subscribeOn(Schedulers.io())
                         .subscribe(geofenceData -> {
                                 },
