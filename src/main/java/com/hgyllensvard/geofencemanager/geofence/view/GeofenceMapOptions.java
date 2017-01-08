@@ -19,18 +19,18 @@ public abstract class GeofenceMapOptions {
     /**
      * @return Default geofence radius in meters
      */
-    public abstract int defaultRadius();
+    public abstract int geofenceCreatedRadius();
 
     /**
      * @return Default name a geofence is given when created, several geofences can have the same
      * name, they are uniquely distinguishably by their ID.
      */
-    public abstract String defaultName();
+    public abstract String geofenceCreatedName();
 
     public static GeofenceMapOptions.Builder create() {
         return new AutoValue_GeofenceMapOptions.Builder()
-                .defaultRadius(DEFAULT_PREDEFINED_GEOFENCE_RADIUS)
-                .defaultName(DEFAULT_PREDEFINED_GEOFENCE_NAME);
+                .geofenceCreatedRadius(DEFAULT_PREDEFINED_GEOFENCE_RADIUS)
+                .geofenceCreatedName(DEFAULT_PREDEFINED_GEOFENCE_NAME);
     }
 
     @AutoValue.Builder
@@ -40,9 +40,9 @@ public abstract class GeofenceMapOptions {
 
         public abstract GeofenceMapOptions.Builder fillColor(@ColorInt int fillColor);
 
-        public abstract GeofenceMapOptions.Builder defaultRadius(int defaultRadius);
+        public abstract GeofenceMapOptions.Builder geofenceCreatedRadius(int radius);
 
-        public abstract GeofenceMapOptions.Builder defaultName(String defaultGeofenceName);
+        public abstract GeofenceMapOptions.Builder geofenceCreatedName(String name);
 
         public abstract GeofenceMapOptions build();
     }

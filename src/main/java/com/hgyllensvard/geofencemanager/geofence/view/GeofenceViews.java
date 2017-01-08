@@ -19,4 +19,10 @@ public interface GeofenceViews extends View {
     Flowable<LatLng> observerLongClick();
 
     void displayGeofences(List<GeofenceData> geofenceDatas);
+
+    Flowable<SelectedGeofence> observeGeofenceSelected();
+
+    void displaySelectedGeofenceOptions();
+
+    void hideSelectedGeofenceOptions();
 }

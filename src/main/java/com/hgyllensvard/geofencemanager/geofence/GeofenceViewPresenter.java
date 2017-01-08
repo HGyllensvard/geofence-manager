@@ -32,6 +32,8 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
     private final CompositeDisposable disposableContainer;
 
+    private GeofenceData selectedGeofence;
+
     public GeofenceViewPresenter(
             AppCompatActivity activity,
             LocationManager locationManager,
@@ -86,6 +88,7 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
                 .observeOn(Schedulers.io())
                 .doOnSuccess(ignored -> subscribeLongClick())
                 .doOnSuccess(ignored -> subscribeExistingGeofences())
+                .doOnSuccess(ignored -> subscribeSelectedGeofence())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> {
                         },
@@ -116,11 +119,41 @@ public class GeofenceViewPresenter extends PresenterAdapter<GeofenceViews> {
 
     private void addGeofence(LatLng latLng) {
         disposableContainer.add(
-                geofenceManager.addGeofence(GeofenceData.create(mapOptions.defaultName(), latLng, mapOptions.defaultRadius()))
+                geofenceManager.addGeofence(createNewGeofence(latLng))
                         .subscribeOn(Schedulers.io())
                         .subscribe(geofenceData -> {
                                 },
                                 Timber::e));
+    }
+
+    private void subscribeSelectedGeofence() {
+        Disposable disposable = viewActions.observeGeofenceSelected()
+                .subscribe(newlySelectedGeofence -> {
+                    if (newlySelectedGeofence.isGeofenceSelected()) {
+                        selectedGeofence = newlySelectedGeofence.selectedGeofence();
+                        viewActions.displaySelectedGeofenceOptions();
+                    } else {
+                        selectedGeofence = null;
+                        viewActions.hideSelectedGeofenceOptions();
+                    }
+                }, Timber::e);
+
+        disposableContainer.add(disposable);
+    }
+
+    private void renameSelectedGeofence(
+            GeofenceData geofence,
+            String newName
+    ) {
+        Disposable disposable = geofenceManager.updateGeofence(geofence, geofence.withName(newName))
+                .subscribe(updatedGeofence -> Timber.v("Updated geofence to: %s", updatedGeofence),
+                        Timber::e);
+
+        disposableContainer.add(disposable);
+    }
+
+    private GeofenceData createNewGeofence(LatLng latLng) {
+        return GeofenceData.create(mapOptions.geofenceCreatedName(), latLng, mapOptions.geofenceCreatedRadius());
     }
 
     private void zoomToUserPosition() throws SecurityException {

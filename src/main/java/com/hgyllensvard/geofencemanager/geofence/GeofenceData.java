@@ -46,6 +46,10 @@ public abstract class GeofenceData {
         return toBuilder().id(id).build();
     }
 
+    public GeofenceData withName(String name) {
+        return toBuilder().name(name).build();
+    }
+
     @AutoValue.Builder
     abstract static class Builder {
         abstract Builder id(long id);

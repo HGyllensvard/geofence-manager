@@ -25,6 +25,7 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.processors.PublishProcessor;
 import timber.log.Timber;
 
 public class GeofenceViewsManager implements GeofenceViews {
@@ -34,13 +35,12 @@ public class GeofenceViewsManager implements GeofenceViews {
     private final SupportMapFragment mapFragment;
     private final Single<Boolean> displayMap;
     private final Map<GeofenceData, GeofenceMarker> markers;
+    private final PublishProcessor<SelectedGeofence> selectedGeofenceSubject;
 
     private Flowable<LatLng> longClickFlowable;
 
     private GoogleMap googleMap;
-    private GeofenceData selectedGeofence;
     private Unbinder unbinder;
-
 
     @BindView(R2.id.geofence_map_selected_geofence)
     View selecedGeofenceOptions;
@@ -55,6 +55,8 @@ public class GeofenceViewsManager implements GeofenceViews {
         unbinder = ButterKnife.bind(this, activity);
 
         markers = new HashMap<>();
+        selectedGeofenceSubject = PublishProcessor.create();
+
         mapFragment = SupportMapFragment.newInstance();
 
         displayMap = createMapObserver();
@@ -111,6 +113,11 @@ public class GeofenceViewsManager implements GeofenceViews {
     }
 
     @Override
+    public Flowable<SelectedGeofence> observeGeofenceSelected() {
+        return selectedGeofenceSubject;
+    }
+
+    @Override
     public void destroy() {
         unbinder.unbind();
     }
@@ -131,15 +138,15 @@ public class GeofenceViewsManager implements GeofenceViews {
     }
 
     private void cameraMoveStartedListener() {
-        googleMap.setOnCameraMoveStartedListener(i -> selecedGeofenceOptions.setVisibility(View.GONE));
+        googleMap.setOnCameraMoveStartedListener(i ->
+                selectedGeofenceSubject.onNext(SelectedGeofence.noGeofenceSelected()));
     }
 
     private void selectedMarkerListener() {
         googleMap.setOnMarkerClickListener(marker -> {
-            for (Map.Entry<GeofenceData, GeofenceMarker> geofenceDataGeofenceMarkerEntry : markers.entrySet()) {
-                if (geofenceDataGeofenceMarkerEntry.getValue().isMarker(marker.getId())) {
-                    selectedGeofence = geofenceDataGeofenceMarkerEntry.getKey();
-                    displaySelectedGeofenceOptions();
+            for (Map.Entry<GeofenceData, GeofenceMarker> entry : markers.entrySet()) {
+                if (entry.getValue().isMarker(marker.getId())) {
+                    selectedGeofenceSubject.onNext(SelectedGeofence.geofenceSelected(entry.getKey()));
                     return true;
                 }
             }
@@ -148,8 +155,14 @@ public class GeofenceViewsManager implements GeofenceViews {
         });
     }
 
-    private void displaySelectedGeofenceOptions() {
+    @Override
+    public void displaySelectedGeofenceOptions() {
         selecedGeofenceOptions.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideSelectedGeofenceOptions() {
+        selecedGeofenceOptions.setVisibility(View.GONE);
     }
 
     private void addMapFragment() {
