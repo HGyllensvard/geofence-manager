@@ -19,6 +19,7 @@ class PlayApiManager {
 
     private final GoogleApiClient googleApiClient;
 
+//    TODO Need to improve so that the play services is destroyed when unsubscribed. (share it)
     PlayApiManager(
             Context context
     ) {
