@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +20,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerView> {
+public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceViews> {
 
     private final AppCompatActivity activity;
     private final LocationManager locationManager;
@@ -30,7 +30,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private final CompositeDisposable disposableContainer;
 
     public GeofenceManagerPresenter(
-            GeofenceManagerView viewActions,
+            GeofenceViews viewActions,
             AppCompatActivity activity,
             LocationManager locationManager,
             GeofenceManager geofenceManager,

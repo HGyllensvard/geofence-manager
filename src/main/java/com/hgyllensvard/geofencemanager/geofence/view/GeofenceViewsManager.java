@@ -22,7 +22,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
-public class GeofenceManagerViewManager implements GeofenceManagerView {
+public class GeofenceViewsManager implements GeofenceViews {
 
     private final AppCompatActivity activity;
     private final GeofenceMapOptions mapOptions;
@@ -34,7 +34,7 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     private GoogleMap googleMap;
 
-    public GeofenceManagerViewManager(
+    public GeofenceViewsManager(
             AppCompatActivity activity,
             GeofenceMapOptions mapOptions
     ) {

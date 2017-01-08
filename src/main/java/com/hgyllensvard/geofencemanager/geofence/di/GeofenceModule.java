@@ -13,8 +13,8 @@ import com.hgyllensvard.geofencemanager.geofence.GeofenceManagerPresenter;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerViewManager;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViewsManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 
 import dagger.Module;
@@ -44,7 +44,7 @@ public class GeofenceModule {
     @PerActivity
     @Provides
     GeofenceManagerPresenter providesGeofencePresenter(
-            GeofenceManagerView geofenceView,
+            GeofenceViews geofenceView,
             GeofenceManager geofenceManager,
             LocationManager locationManager,
             LocationPermissionRequester locationPermissionRequester
@@ -58,8 +58,8 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    GeofenceManagerView providesGeofenceView(GeofenceMapOptions mapOptions) {
-        return new GeofenceManagerViewManager(activity, mapOptions);
+    GeofenceViews providesGeofenceView(GeofenceMapOptions mapOptions) {
+        return new GeofenceViewsManager(activity, mapOptions);
     }
 
     @PerActivity

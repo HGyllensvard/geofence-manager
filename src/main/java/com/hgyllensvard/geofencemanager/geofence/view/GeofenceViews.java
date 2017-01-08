@@ -10,7 +10,7 @@ import java.util.List;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
-public interface GeofenceManagerView extends View {
+public interface GeofenceViews extends View {
 
     Single<Boolean> displayMap();
 
