@@ -8,11 +8,10 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,17 +25,23 @@ import timber.log.Timber;
 public class GeofenceManagerViewManager implements GeofenceManagerView {
 
     private final AppCompatActivity activity;
+    private final GeofenceMapOptions mapOptions;
     private final SupportMapFragment mapFragment;
     private final Single<Boolean> displayMap;
+    private final Map<GeofenceData, GeofenceMarker> markers;
 
     private Flowable<LatLng> longClickFlowable;
+
     private GoogleMap googleMap;
 
-    private Map<GeofenceData, GeofenceMarker> markers;
-
-    public GeofenceManagerViewManager(AppCompatActivity activity) {
+    public GeofenceManagerViewManager(
+            AppCompatActivity activity,
+            GeofenceMapOptions mapOptions
+    ) {
         this.activity = activity;
+        this.mapOptions = mapOptions;
 
+        markers = new HashMap<>();
         mapFragment = SupportMapFragment.newInstance();
 
         displayMap = createMapObserver();
@@ -83,7 +88,10 @@ public class GeofenceManagerViewManager implements GeofenceManagerView {
         markers.clear();
 
         for (GeofenceData geofenceData : geofenceDatas) {
-            GeofenceMarker marker = new GeofenceMarker(geofenceData);
+            GeofenceMarker marker = new GeofenceMarker(geofenceData,
+                    mapOptions.fillColor(),
+                    mapOptions.strokeColor());
+            
             marker.display(googleMap);
             markers.put(geofenceData, marker);
         }

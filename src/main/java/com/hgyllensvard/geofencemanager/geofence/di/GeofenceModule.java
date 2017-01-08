@@ -3,8 +3,10 @@ package com.hgyllensvard.geofencemanager.geofence.di;
 import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManagerPresenter;
@@ -13,6 +15,7 @@ import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerView;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceManagerViewManager;
+import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 
 import dagger.Module;
 import dagger.Provides;
@@ -55,8 +58,16 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    GeofenceManagerView providesGeofenceView() {
-        return new GeofenceManagerViewManager(activity);
+    GeofenceManagerView providesGeofenceView(GeofenceMapOptions mapOptions) {
+        return new GeofenceManagerViewManager(activity, mapOptions);
+    }
+
+    @PerActivity
+    @Provides
+    GeofenceMapOptions providesGeofenceMapOptions() {
+        return GeofenceMapOptions.create(
+                ContextCompat.getColor(activity, R.color.colorPrimary),
+                ContextCompat.getColor(activity, R.color.colorPrimary));
     }
 
     @PerActivity
