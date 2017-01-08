@@ -16,12 +16,10 @@ public class PlayGeofenceModule {
     @PerActivity
     @Provides
     PlayServicesGeofenceManager providesPlayGeofenceManager(
-            PlayApiManager playApiManager,
             AddPlayGeofenceManager addPlayGeofenceManager,
             RemovePlayGeofenceManager removePlayGeofenceManager
     ) {
         return new PlayServicesGeofenceManager(
-                playApiManager,
                 addPlayGeofenceManager,
                 removePlayGeofenceManager);
     }
@@ -29,18 +27,20 @@ public class PlayGeofenceModule {
     @PerActivity
     @Provides
     RemovePlayGeofenceManager providesRemoveGeofenceManager(
-            GeofencingApi geofencingApi
+            GeofencingApi geofencingApi,
+            PlayApiManager playApiManager
     ) {
-        return new RemovePlayGeofenceManager(geofencingApi);
+        return new RemovePlayGeofenceManager(geofencingApi, playApiManager);
     }
 
     @PerActivity
     @Provides
     AddPlayGeofenceManager providesActivateGeofenceManager(
             Context context,
-            GeofencingApi geofencingApi
+            GeofencingApi geofencingApi,
+            PlayApiManager playApiManager
     ) {
-        return new AddPlayGeofenceManager(context, geofencingApi);
+        return new AddPlayGeofenceManager(context, geofencingApi, playApiManager);
     }
 
     @PerActivity

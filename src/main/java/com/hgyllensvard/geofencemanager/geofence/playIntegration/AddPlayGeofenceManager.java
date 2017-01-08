@@ -12,46 +12,51 @@ import com.google.android.gms.location.GeofencingRequest;
 
 import io.reactivex.Single;
 import io.reactivex.SingleOnSubscribe;
+import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 class AddPlayGeofenceManager {
 
     private final Context context;
-    private GeofencingApi geofencingApi;
+    private final GeofencingApi geofencingApi;
+    private final PlayApiManager playApiManager;
 
     AddPlayGeofenceManager(
             Context context,
-            GeofencingApi geofencingApi
+            GeofencingApi geofencingApi,
+            PlayApiManager playApiManager
     ) {
         this.context = context;
         this.geofencingApi = geofencingApi;
+        this.playApiManager = playApiManager;
     }
 
     Single<Boolean> addGeofence(
-            Geofence geofence,
-            GoogleApiClient googleApiClient
+            Geofence geofence
     ) throws SecurityException {
-        return Single.create((SingleOnSubscribe<Boolean>) emitter -> {
-            if (emitter.isDisposed()) {
-                return;
-            }
+        return playApiManager.connectToPlayServices()
+                .flatMap(googleApiClient -> Single.create((SingleOnSubscribe<Boolean>) emitter -> {
+                    if (emitter.isDisposed()) {
+                        return;
+                    }
 
-            geofencingApi.addGeofences(
-                    googleApiClient,
-                    getGeofencingRequest(geofence),
-                    getGeofencePendingIntent()
-            ).setResultCallback(status -> {
-                if (emitter.isDisposed()) {
-                    return;
-                }
+                    geofencingApi.addGeofences(
+                            googleApiClient,
+                            getGeofencingRequest(geofence),
+                            getGeofencePendingIntent()
+                    ).setResultCallback(status -> {
+                        if (emitter.isDisposed()) {
+                            return;
+                        }
 
-                if (status.isSuccess()) {
-                    emitter.onSuccess(true);
-                } else {
-                    emitter.onError(new IllegalStateException("Failed to save"));
-                }
-            });
-        }).subscribeOn(Schedulers.io());
+                        if (status.isSuccess()) {
+                            emitter.onSuccess(true);
+                        } else {
+                            emitter.onError(new IllegalStateException("Failed to save"));
+                        }
+                    });
+                })).subscribeOn(Schedulers.io());
     }
 
     /**
