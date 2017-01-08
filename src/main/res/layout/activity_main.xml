@@ -23,4 +23,12 @@
         android:layout_below="@id/geofence_toolbar"
     />
 
+    <View
+        android:id="@+id/geofence_map_selected_geofence"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#ff00ff"
+        android:visibility="gone"
+    />
+
 </RelativeLayout>

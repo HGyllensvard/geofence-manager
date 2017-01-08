@@ -45,4 +45,8 @@ public class GeofenceMarker {
         marker.remove();
         circle.remove();
     }
+
+    public boolean isMarker(String markerId) {
+        return marker.getId().equals(markerId);
+    }
 }

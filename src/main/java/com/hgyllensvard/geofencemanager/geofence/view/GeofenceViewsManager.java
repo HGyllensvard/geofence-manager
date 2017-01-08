@@ -3,18 +3,21 @@ package com.hgyllensvard.geofencemanager.geofence.view;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.R;
+import com.hgyllensvard.geofencemanager.R2;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
@@ -33,6 +36,10 @@ public class GeofenceViewsManager implements GeofenceViews {
     private Flowable<LatLng> longClickFlowable;
 
     private GoogleMap googleMap;
+    private GeofenceData selectedGeofence;
+
+    @BindView(R2.id.geofence_map_selected_geofence)
+    View selecedGeofenceOptions;
 
     public GeofenceViewsManager(
             AppCompatActivity activity,
@@ -91,7 +98,7 @@ public class GeofenceViewsManager implements GeofenceViews {
             GeofenceMarker marker = new GeofenceMarker(geofenceData,
                     mapOptions.fillColor(),
                     mapOptions.strokeColor());
-            
+
             marker.display(googleMap);
             markers.put(geofenceData, marker);
         }
@@ -109,10 +116,34 @@ public class GeofenceViewsManager implements GeofenceViews {
             mapFragment.getMapAsync(map -> {
                 googleMap = map;
                 longClickFlowable = createLongPressEmitter();
+                selectedMarkerListener();
+                cameraMoveStartedListener();
                 e.onSuccess(true);
             });
 
         });
+    }
+
+    private void cameraMoveStartedListener() {
+        googleMap.setOnCameraMoveStartedListener(i -> selecedGeofenceOptions.setVisibility(View.GONE));
+    }
+
+    private void selectedMarkerListener() {
+        googleMap.setOnMarkerClickListener(marker -> {
+            for (Map.Entry<GeofenceData, GeofenceMarker> geofenceDataGeofenceMarkerEntry : markers.entrySet()) {
+                if (geofenceDataGeofenceMarkerEntry.getValue().isMarker(marker.getId())) {
+                    selectedGeofence = geofenceDataGeofenceMarkerEntry.getKey();
+                    displaySelectedGeofenceOptions();
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    private void displaySelectedGeofenceOptions() {
+        selecedGeofenceOptions.setVisibility(View.VISIBLE);
     }
 
     private void addMapFragment() {
