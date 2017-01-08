@@ -1,7 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
 
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
@@ -33,29 +32,23 @@ public class GeofenceManager {
     public Single<GeofenceData> addGeofence(
             GeofenceData geofenceData
     ) {
-        String name = geofenceData.name();
-        LatLng latLng = geofenceData.latLng();
-        int radius = geofenceData.radius();
-
-        return playServicesGeofenceManager.activateGeofence(name, latLng, radius)
-                .flatMap(successfullyActivatedGeofence -> geofenceRepository.save(name, latLng, radius))
-                .map(successfullyPersistedGeofence -> GeofenceData.create(name, latLng, radius))
+        return playServicesGeofenceManager.activateGeofence(geofenceData)
+                .flatMap(successfullyActivatedGeofence -> geofenceRepository.insert(geofenceData))
+                .map(successfullyPersistedGeofence -> geofenceData)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<Boolean> removeGeofence(String name) {
-        return playServicesGeofenceManager.removeGeofence(name)
-                .flatMap(aBoolean -> geofenceRepository.delete(name)).subscribeOn(Schedulers.io());
+    public Single<Boolean> removeGeofence(GeofenceData geofenceData) {
+        return playServicesGeofenceManager.removeGeofence(geofenceData)
+                .flatMap(aBoolean -> geofenceRepository.delete(geofenceData)).subscribeOn(Schedulers.io());
     }
 
-    public Single<GeofenceData> updateGeofence(String name, LatLng newLatLng, int radius) {
-        return removeGeofence(name)
-                .flatMap(successfullyRemoved -> addGeofence(GeofenceData.create(name, newLatLng, radius)));
+    public Single<GeofenceData> updateGeofence(GeofenceData oldGeofenceData, GeofenceData updatedGeofenceData) {
+        return removeGeofence(oldGeofenceData)
+                .flatMap(successfullyRemoved -> addGeofence(updatedGeofenceData));
     }
 
     public Flowable<List<GeofenceData>> observeGeofences() {
         return geofenceRepository.listenGeofences();
     }
-
-
 }

@@ -1,0 +1,11 @@
+CREATE TABLE geofence (
+  _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL PRIMARY KEY,
+  latitude REAL NOT NULL,
+  longitude REAL NOT NULL,
+  radius REAL NOT NULL
+);
+
+select_all:
+SELECT *
+FROM geofence;

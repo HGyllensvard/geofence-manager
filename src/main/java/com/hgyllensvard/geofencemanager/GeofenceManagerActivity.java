@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewPresenter;
 import com.hgyllensvard.geofencemanager.geofence.di.DaggerGeofenceComponent;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
@@ -40,7 +41,8 @@ public class GeofenceManagerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         DaggerGeofenceComponent.builder()
-                .geofenceModule(new GeofenceModule(this))
+                .activityModule(new ActivityModule(this))
+                .geofenceModule(new GeofenceModule())
                 .playGeofenceModule(new PlayGeofenceModule())
                 .geofencePersistenceModule(new GeofencePersistenceModule())
                 .build()

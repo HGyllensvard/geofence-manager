@@ -1,17 +1,16 @@
 package com.hgyllensvard.geofencemanager.geofence.persistence;
 
+import com.google.auto.value.AutoValue;
+import com.squareup.sqldelight.RowMapper;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+@AutoValue
+public abstract class GeofenceModel implements GeofenceDbModel {
+    
+    public static final Factory<GeofenceModel> FACTORY = new Factory<>(AutoValue_GeofenceModel::new);
 
-public class GeofenceModel extends RealmObject {
+    public static final RowMapper<GeofenceModel> SELECT_ALL_MAPPER = FACTORY.select_allMapper();
 
-    @PrimaryKey
-    public String name;
-
-    public double latitude;
-
-    public double longitude;
-
-    public int radius;
+    public static Marshal marshal() {
+        return new Marshal(null);
+    }
 }

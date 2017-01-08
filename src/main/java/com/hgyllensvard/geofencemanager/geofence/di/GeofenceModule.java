@@ -1,6 +1,5 @@
 package com.hgyllensvard.geofencemanager.geofence.di;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,35 +17,16 @@ import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
 import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViewsManager;
 
-import java.util.Map;
-
 import dagger.Module;
 import dagger.Provides;
 
 @Module
 public class GeofenceModule {
 
-    private AppCompatActivity activity;
-
-    public GeofenceModule(AppCompatActivity activity) {
-        this.activity = activity;
-    }
-
-    @PerActivity
-    @Provides
-    Activity providesActivity() {
-        return activity;
-    }
-
-    @PerActivity
-    @Provides
-    Context providesContext() {
-        return activity;
-    }
-
     @PerActivity
     @Provides
     GeofenceViewPresenter providesGeofencePresenter(
+            AppCompatActivity activity,
             GeofenceManager geofenceManager,
             LocationManager locationManager,
             GeofenceMapOptions mapOptions,
@@ -62,22 +42,29 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    GeofenceViews providesGeofenceView(GeofenceMapOptions mapOptions) {
+    GeofenceViews providesGeofenceView(
+            AppCompatActivity activity,
+            GeofenceMapOptions mapOptions
+    ) {
         return new GeofenceViewsManager(activity, mapOptions);
     }
 
     @PerActivity
     @Provides
-    GeofenceMapOptions providesGeofenceMapOptions() {
+    GeofenceMapOptions providesGeofenceMapOptions(
+            Context context
+    ) {
         return GeofenceMapOptions.create(
-                ContextCompat.getColor(activity, R.color.colorPrimary),
-                ContextCompat.getColor(activity, R.color.colorPrimary),
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                ContextCompat.getColor(context, R.color.colorPrimary),
                 100);
     }
 
     @PerActivity
     @Provides
-    LocationPermissionRequester providesLocationPermissionRequester() {
+    LocationPermissionRequester providesLocationPermissionRequester(
+            AppCompatActivity activity
+    ) {
         return new LocationPermissionRequester(activity);
     }
 
@@ -92,11 +79,6 @@ public class GeofenceModule {
                 locationPermissionRequester);
     }
 
-    @PerActivity
-    @Provides
-    android.location.LocationManager providesAndroidLocationManager() {
-        return (android.location.LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-    }
 
     @PerActivity
     @Provides

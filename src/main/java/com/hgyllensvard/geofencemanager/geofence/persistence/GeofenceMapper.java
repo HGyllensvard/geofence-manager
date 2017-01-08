@@ -1,6 +1,9 @@
 package com.hgyllensvard.geofencemanager.geofence.persistence;
 
 
+import android.content.ContentValues;
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
@@ -9,21 +12,11 @@ import java.util.List;
 
 class GeofenceMapper {
 
-    GeofenceModel toModel(String name, LatLng latLng, int radius) {
-        GeofenceModel geofenceModel = new GeofenceModel();
-        geofenceModel.name = name;
-        geofenceModel.latitude = latLng.latitude;
-        geofenceModel.longitude = latLng.longitude;
-        geofenceModel.radius = radius;
-
-        return geofenceModel;
-    }
-
-    List<GeofenceData> toGeofences(List<GeofenceModel> geofenceModels) {
+    List<GeofenceData> toGeofences(List<GeofenceModel> geofenceModelOlds) {
         List<GeofenceData> geofenceDatas = new ArrayList<>();
 
-        for (GeofenceModel geofenceModel : geofenceModels) {
-            geofenceDatas.add(toGeofence(geofenceModel));
+        for (GeofenceModel geofenceModelOld : geofenceModelOlds) {
+            geofenceDatas.add(toGeofence(geofenceModelOld));
         }
 
         return geofenceDatas;
@@ -31,8 +24,22 @@ class GeofenceMapper {
 
     GeofenceData toGeofence(GeofenceModel geofenceModel) {
         return GeofenceData.create(
-                geofenceModel.name,
-                new LatLng(geofenceModel.latitude, geofenceModel.longitude),
-                geofenceModel.radius);
+                geofenceModel.name(),
+                new LatLng(geofenceModel.latitude(), geofenceModel.longitude()),
+                (float) geofenceModel.radius());
+    }
+
+    ContentValues toContentValues(@NonNull GeofenceData download) {
+        final GeofenceModel.Marshal marshal = GeofenceModel.marshal()
+                .name(download.name())
+                .latitude(download.latLng().latitude)
+                .longitude(download.latLng().longitude)
+                .radius(download.radius());
+
+        if (download.id() != GeofenceData.NO_ID) {
+            marshal._id(download.id());
+        }
+
+        return marshal.asContentValues();
     }
 }

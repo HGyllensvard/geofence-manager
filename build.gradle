@@ -15,7 +15,7 @@ buildscript {
 
         classpath "com.jakewharton:butterknife-gradle-plugin:8.4.0"
 
-        classpath "io.realm:realm-gradle-plugin:2.2.1"
+        classpath "com.squareup.sqldelight:gradle-plugin:0.5.1"
     }
 }
 
@@ -28,8 +28,8 @@ ext {
 apply plugin: 'com.android.library'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'android-apt'
-apply plugin: 'realm-android'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.squareup.sqldelight'
 apply plugin: 'com.github.dcendents.android-maven'
 
 apply from: new File('bintray.gradle')
@@ -108,15 +108,32 @@ dependencies {
     // Logging helper
     compile 'com.jakewharton.timber:timber:4.4.0'
 
+    //Reactive database
+    compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
 
+    /**
+     * Unit Tests
+     */
+
+    testApt "com.google.dagger:dagger-compiler:$dagger2Version"
+    testCompile "com.google.dagger:dagger-compiler:$dagger2Version"
+
+    // Allows unit testing Android parts.
+    testCompile "org.robolectric:robolectric:3.1.4"
+
+    // Improved assertions in tests
     testCompile 'org.assertj:assertj-core:3.6.1'
+
+    // Mocking library
     testCompile "org.mockito:mockito-core:2.2.0"
     testCompile 'junit:junit:4.12'
 
-    androidTestCompile 'org.assertj:assertj-core:3.6.1'
+    /**
+     * Instrumentation Tests
+     */
 
-    androidTestCompile "com.google.dagger:dagger:$dagger2Version"
     androidTestApt "com.google.dagger:dagger-compiler:$dagger2Version"
+    androidTestCompile "com.google.dagger:dagger-compiler:$dagger2Version"
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

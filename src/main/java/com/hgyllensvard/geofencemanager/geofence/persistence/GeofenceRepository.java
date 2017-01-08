@@ -1,35 +1,30 @@
 package com.hgyllensvard.geofencemanager.geofence.persistence;
 
+import android.support.annotation.NonNull;
 
-import android.content.Context;
-
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
+import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
+import com.squareup.sqlbrite.BriteDatabase;
 
 import java.util.List;
 
-import io.reactivex.BackpressureStrategy;
+import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class GeofenceRepository {
 
-    private static final String NAME = "name";
-
-    private final Context context;
     private final GeofenceMapper geofenceMapper;
 
-    private Realm geofenceRealm;
+    private final BriteDatabase database;
     private Flowable<List<GeofenceData>> geofenceFlowable;
 
     public GeofenceRepository(
-            Context context,
-            GeofenceMapper geofenceMapper) {
-        this.context = context;
+            BriteDatabase database,
+            GeofenceMapper geofenceMapper
+    ) {
+        this.database = database;
         this.geofenceMapper = geofenceMapper;
 
         createGeofenceFlowable();
@@ -39,51 +34,31 @@ public class GeofenceRepository {
         return geofenceFlowable;
     }
 
-    public Single<Boolean> delete(String name) {
-        return Single.fromCallable(() -> {
-            Realm realm = openRealm();
-
-            boolean result = realm.where(GeofenceModel.class)
-                    .equalTo(NAME, name).findAll()
-                    .deleteAllFromRealm();
-
-            realm.close();
-
-            return result;
-        });
+    public Single<Boolean> delete(GeofenceData geofenceData) {
+        return Single.fromCallable(() ->
+                database.delete(GeofenceModel.TABLE_NAME, GeofenceDbModel._ID + " = " + geofenceData.id()) != 0)
+                .subscribeOn(Schedulers.io());
     }
 
-    public Single<Boolean> save(String name, LatLng latLng, int radius) {
+    public Single<GeofenceData> insert(@NonNull final GeofenceData geofence) {
         return Single.fromCallable(() -> {
-            Realm realm = openRealm();
+            long id = database.insert(GeofenceModel.TABLE_NAME, geofenceMapper.toContentValues(geofence));
 
-            GeofenceModel model = geofenceMapper.toModel(name, latLng, radius);
-
-            realm.beginTransaction();
-            boolean result = realm.copyToRealm(model) != null;
-            realm.commitTransaction();
-
-            realm.close();
-
-            return result;
+            if (id != -1) {
+                return geofence.withId(id);
+            } else {
+                throw new InsertFailedException("Couldn't save geofence: " + geofence);
+            }
         }).subscribeOn(Schedulers.io());
     }
 
-    private Realm openRealm() {
-        return Realm.getInstance(new RealmConfiguration.Builder(context).build());
-    }
-
     private void createGeofenceFlowable() {
-        geofenceFlowable = Flowable.create((FlowableOnSubscribe<List<GeofenceModel>>) e ->
-                        e.onNext(geofenceRealm.where(GeofenceModel.class)
-                                .findAll()),
-                BackpressureStrategy.BUFFER)
+        geofenceFlowable = RxJavaInterop.toV2Flowable(database.createQuery(
+                GeofenceModel.TABLE_NAME,
+                GeofenceDbModel.SELECT_ALL,
+                new String[]{})
+                .mapToList(GeofenceModel.SELECT_ALL_MAPPER::map))
                 .map(geofenceMapper::toGeofences)
-                .doOnSubscribe(disposable -> geofenceRealm = openRealm())
-                .doOnTerminate(() -> {
-                    geofenceRealm.close();
-                    geofenceRealm = null;
-                })
                 .subscribeOn(Schedulers.io())
                 .share();
     }

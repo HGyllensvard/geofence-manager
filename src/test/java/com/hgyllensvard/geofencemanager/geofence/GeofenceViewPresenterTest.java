@@ -28,8 +28,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class GeofenceViewPresenterTest {
-
-
+    
     @Mock
     AppCompatActivity appCompatActivity;
 

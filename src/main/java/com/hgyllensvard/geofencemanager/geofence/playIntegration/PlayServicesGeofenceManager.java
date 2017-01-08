@@ -2,8 +2,11 @@ package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
 
 import io.reactivex.Single;
+
+import static android.R.attr.radius;
 
 public class PlayServicesGeofenceManager {
 
@@ -18,22 +21,22 @@ public class PlayServicesGeofenceManager {
         this.removePlayGeofenceManager = removePlayGeofenceManager;
     }
 
-    public Single<Boolean> activateGeofence(String name, LatLng latLng, int radius) {
-        return Single.just(assembleGeofence(name, latLng, radius))
+    public Single<Boolean> activateGeofence(GeofenceData geofenceData) {
+        return Single.just(assembleGeofence(geofenceData.name(), geofenceData.latLng(), radius))
                 .flatMap(addPlayGeofenceManager::addGeofence);
     }
 
-    public Single<Boolean> removeGeofence(String name) {
-        return removePlayGeofenceManager.removeGeofence(name);
+    public Single<Boolean> removeGeofence(GeofenceData geofenceData) {
+        return removePlayGeofenceManager.removeGeofence(geofenceData.name());
     }
 
-    private Geofence assembleGeofence(String geofenceId, LatLng latLng, float radius) {
+    private Geofence assembleGeofence(String geofenceId, LatLng latLng, double radius) {
         return new Geofence.Builder()
                 .setRequestId(geofenceId)
                 .setCircularRegion(
                         latLng.latitude,
                         latLng.longitude,
-                        radius
+                        (float) radius
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)

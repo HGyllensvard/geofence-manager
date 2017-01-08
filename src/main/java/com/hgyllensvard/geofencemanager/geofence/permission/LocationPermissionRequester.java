@@ -45,7 +45,7 @@ public class LocationPermissionRequester {
     private Single<Boolean> informUserWhyPermissionNeeded() {
         ReactiveAlertDialogue fragment = new ReactiveAlertDialogueBuilder(R.string.location, R.string.ok).build();
         fragment.show(activity.getSupportFragmentManager(), fragment.getTag());
-
+//
         return fragment.dialogResponse()
                 .map(reactiveDialogueResponse ->
                         reactiveDialogueResponse == ReactiveDialogueResponse.POSITIVE);
