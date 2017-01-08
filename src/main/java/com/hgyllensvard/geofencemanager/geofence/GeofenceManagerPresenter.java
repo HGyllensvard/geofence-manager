@@ -53,7 +53,7 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
                 locationPermissionRequester.request()
                         .subscribeOn(Schedulers.io())
                         .subscribe(this::managePermissionResult,
-                                throwable -> Timber.e(throwable, "Unexpected error")));
+                                Timber::e));
     }
 
     @Override
@@ -79,16 +79,19 @@ public class GeofenceManagerPresenter extends PresenterAdapter<GeofenceManagerVi
     private void loadMap() {
         disposableContainer.add(
                 viewActions.displayMap()
-                        .doOnSuccess(aBoolean -> zoomToUserPosition())
-                        .doOnSuccess(aBoolean -> subscribeLongClick())
-                        .subscribe());
+                        .doOnSuccess(ignored -> zoomToUserPosition())
+                        .doOnSuccess(ignored -> subscribeLongClick())
+                        .subscribe(ignored -> {
+                                },
+                                Timber::e));
     }
 
     private void subscribeLongClick() {
         disposableContainer.add(
                 viewActions.longClick()
                         .debounce(1, TimeUnit.SECONDS)
-                        .subscribe(this::addGeofence));
+                        .subscribe(this::addGeofence,
+                                Timber::e));
     }
 
     private void addGeofence(LatLng latLng) {
