@@ -31,18 +31,27 @@ class AddPlayGeofenceManager {
             Geofence geofence,
             GoogleApiClient googleApiClient
     ) throws SecurityException {
-        return Single.create((SingleOnSubscribe<Boolean>) emitter ->
-                geofencingApi.addGeofences(
-                        googleApiClient,
-                        getGeofencingRequest(geofence),
-                        getGeofencePendingIntent()
-                ).setResultCallback(status -> {
-                    if (status.isSuccess()) {
-                        emitter.onSuccess(true);
-                    } else {
-                        emitter.onError(new IllegalStateException("Failed to save"));
-                    }
-                })).subscribeOn(Schedulers.io());
+        return Single.create((SingleOnSubscribe<Boolean>) emitter -> {
+            if (emitter.isDisposed()) {
+                return;
+            }
+
+            geofencingApi.addGeofences(
+                    googleApiClient,
+                    getGeofencingRequest(geofence),
+                    getGeofencePendingIntent()
+            ).setResultCallback(status -> {
+                if (emitter.isDisposed()) {
+                    return;
+                }
+
+                if (status.isSuccess()) {
+                    emitter.onSuccess(true);
+                } else {
+                    emitter.onError(new IllegalStateException("Failed to save"));
+                }
+            });
+        }).subscribeOn(Schedulers.io());
     }
 
     /**

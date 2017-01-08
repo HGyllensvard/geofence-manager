@@ -3,22 +3,17 @@ package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
-import static com.google.android.gms.common.api.GoogleApiClient.*;
+import static com.google.android.gms.common.api.GoogleApiClient.Builder;
+import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 
 class PlayApiManager {
 
@@ -50,6 +45,10 @@ class PlayApiManager {
 
                 @Override
                 public void onConnectionSuspended(int i) {
+                    if (emitter.isDisposed()) {
+                        return;
+                    }
+
                     emitter.onError(new IllegalStateException("Connection to play services suspended"));
                 }
             });
@@ -58,6 +57,9 @@ class PlayApiManager {
                 if (result.hasResolution()) {
 //                TODO Manage to try and resolve situation
                 } else {
+                    if (emitter.isDisposed()) {
+                        return;
+                    }
                     emitter.onError(new IllegalStateException(result.getErrorMessage()));
                 }
             });
