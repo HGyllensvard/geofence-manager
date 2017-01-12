@@ -5,20 +5,20 @@ import android.support.annotation.NonNull;
 
 public abstract class PresenterAdapter<T extends View> implements Presenter<T> {
 
-    protected T viewActions;
+    protected T view;
 
     public PresenterAdapter() {
     }
 
     @Override
     @CallSuper
-    public void bindView(@NonNull T viewActions) {
-        this.viewActions = viewActions;
+    public void bindView(@NonNull T view) {
+        this.view = view;
     }
 
     @Override
     @CallSuper
     public void unbindView() {
-        viewActions = null;
+        view = null;
     }
 }

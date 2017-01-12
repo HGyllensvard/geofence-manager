@@ -31,42 +31,42 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    public Single<GeofenceData> addGeofence(
-            GeofenceData geofenceData
+    public Single<Geofence> addGeofence(
+            Geofence geofence
     ) {
-        return playServicesGeofenceManager.activateGeofence(geofenceData)
-                .flatMap(successfullyActivatedGeofence -> geofenceRepository.insert(geofenceData))
-                .map(successfullyPersistedGeofence -> geofenceData)
+        return playServicesGeofenceManager.activateGeofence(geofence)
+                .flatMap(successfullyActivatedGeofence -> geofenceRepository.insert(geofence))
+                .map(successfullyPersistedGeofence -> geofence)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<Boolean> removeGeofence(GeofenceData geofenceData) {
-        return playServicesGeofenceManager.removeGeofence(geofenceData)
-                .flatMap(aBoolean -> geofenceRepository.delete(geofenceData)).subscribeOn(Schedulers.io());
+    public Single<Boolean> removeGeofence(Geofence geofence) {
+        return playServicesGeofenceManager.removeGeofence(geofence)
+                .flatMap(aBoolean -> geofenceRepository.delete(geofence)).subscribeOn(Schedulers.io());
     }
 
-    public Single<GeofenceData> updateGeofence(GeofenceData oldGeofenceData, GeofenceData updatedGeofenceData) {
-        return Single.fromCallable(() -> validateUpdateGeofenceInput(oldGeofenceData, updatedGeofenceData))
-                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofenceData))
-                .flatMap(ignored -> playServicesGeofenceManager.activateGeofence(updatedGeofenceData))
-                .flatMap(successfullyRemoved -> geofenceRepository.update(updatedGeofenceData))
-                .map(aBoolean -> updatedGeofenceData);
+    public Single<Geofence> updateGeofence(Geofence oldGeofence, Geofence updatedGeofence) {
+        return Single.fromCallable(() -> validateUpdateGeofenceInput(oldGeofence, updatedGeofence))
+                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofence))
+                .flatMap(ignored -> playServicesGeofenceManager.activateGeofence(updatedGeofence))
+                .flatMap(successfullyRemoved -> geofenceRepository.update(updatedGeofence))
+                .map(aBoolean -> updatedGeofence);
     }
 
     @NonNull
-    private Boolean validateUpdateGeofenceInput(GeofenceData oldGeofenceData, GeofenceData updatedGeofenceData) {
-        if (oldGeofenceData.id() != updatedGeofenceData.id()) {
-            throw new IllegalArgumentException("Not updating the same geofence, old: " + oldGeofenceData + ", new: " + updatedGeofenceData);
+    private Boolean validateUpdateGeofenceInput(Geofence oldGeofence, Geofence updatedGeofence) {
+        if (oldGeofence.id() != updatedGeofence.id()) {
+            throw new IllegalArgumentException("Not updating the same geofence, old: " + oldGeofence + ", new: " + updatedGeofence);
         }
 
         return true;
     }
 
-    public Flowable<List<GeofenceData>> observeGeofences() {
+    public Flowable<List<Geofence>> observeGeofences() {
         return geofenceRepository.listenGeofences();
     }
 
-    public Single<GeofenceData> getGeofence(int identifier) {
+    public Single<Geofence> getGeofence(int identifier) {
         return geofenceRepository.getGeofence(identifier);
     }
 }

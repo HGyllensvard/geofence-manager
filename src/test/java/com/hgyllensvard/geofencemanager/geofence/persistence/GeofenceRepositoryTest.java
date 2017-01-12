@@ -2,7 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
+import com.hgyllensvard.geofencemanager.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -45,7 +45,7 @@ public class GeofenceRepositoryTest {
     private static final long LONGITUDE = 12;
     private static final long RADIUS = 1;
 
-    private GeofenceData testGeofence;
+    private Geofence testGeofence;
 
     @Before
     public void setUp() throws Exception {
@@ -58,7 +58,7 @@ public class GeofenceRepositoryTest {
 
         clearDatabase();
 
-        testGeofence = GeofenceData.create(NAME, LATITUDE, LONGITUDE, RADIUS);
+        testGeofence = Geofence.create(NAME, LATITUDE, LONGITUDE, RADIUS);
     }
 
     @After
@@ -75,7 +75,7 @@ public class GeofenceRepositoryTest {
 
     @Test
     public void shouldDeleteGeofence() {
-        GeofenceData insertedGeofence = repository.insert(testGeofence)
+        Geofence insertedGeofence = repository.insert(testGeofence)
                 .blockingGet();
 
         assertThat(insertedGeofence).isNotNull();
@@ -93,7 +93,7 @@ public class GeofenceRepositoryTest {
 
     @Test
     public void shouldNotDeleteGeofenceTwice() {
-        GeofenceData result = repository.insert(testGeofence)
+        Geofence result = repository.insert(testGeofence)
                 .blockingGet();
 
         assertThat(result).isNotNull();
@@ -108,7 +108,7 @@ public class GeofenceRepositoryTest {
 
     @Test
     public void shouldNotInsertGeofenceWithoutData() {
-        repository.insert(GeofenceData.create(null, 1, 1, 1))
+        repository.insert(Geofence.create(null, 1, 1, 1))
                 .test()
                 .assertError(IllegalStateException.class)
                 .assertNoValues();
@@ -116,10 +116,10 @@ public class GeofenceRepositoryTest {
 
     @Test
     public void shouldFetchGeofenceWithId() {
-        GeofenceData geofence = repository.insert(testGeofence)
+        Geofence geofence = repository.insert(testGeofence)
                 .blockingGet();
 
-        GeofenceData fetchedGeofence = repository.getGeofence(geofence.id())
+        Geofence fetchedGeofence = repository.getGeofence(geofence.id())
                 .blockingGet();
 
         assertThat(fetchedGeofence).isEqualTo(geofence);
@@ -134,7 +134,7 @@ public class GeofenceRepositoryTest {
 
     @Test
     public void shouldUpdateGeofenceData() {
-        GeofenceData geofence = repository.insert(testGeofence)
+        Geofence geofence = repository.insert(testGeofence)
                 .blockingGet();
 
         String newName = "Some newName";
@@ -168,7 +168,7 @@ public class GeofenceRepositoryTest {
                 .assertValueAt(0, testGeofences -> testGeofences.size() == 1 &&
                         testGeofences.get(0).equals(testGeofence.withId(1)));
 
-        GeofenceData geofenceTwo = GeofenceData.create("New Geofence", 2, 2, 2);
+        Geofence geofenceTwo = Geofence.create("New Geofence", 2, 2, 2);
         repository.insert(geofenceTwo)
                 .test()
                 .assertValues(geofenceTwo.withId(2));

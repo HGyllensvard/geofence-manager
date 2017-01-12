@@ -1,8 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
-import com.google.android.gms.location.Geofence;
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
+import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
 import io.reactivex.Single;
 
@@ -21,25 +20,25 @@ public class PlayServicesGeofenceManager {
         this.removePlayGeofenceManager = removePlayGeofenceManager;
     }
 
-    public Single<Boolean> activateGeofence(GeofenceData geofenceData) {
-        return Single.just(assembleGeofence(geofenceData.name(), geofenceData.latLng(), radius))
+    public Single<Boolean> activateGeofence(Geofence geofence) {
+        return Single.just(assembleGeofence(geofence.name(), geofence.latLng(), radius))
                 .flatMap(addPlayGeofenceManager::addGeofence);
     }
 
-    public Single<Boolean> removeGeofence(GeofenceData geofenceData) {
-        return removePlayGeofenceManager.removeGeofence(geofenceData.name());
+    public Single<Boolean> removeGeofence(Geofence geofence) {
+        return removePlayGeofenceManager.removeGeofence(geofence.name());
     }
 
-    private Geofence assembleGeofence(String geofenceId, LatLng latLng, double radius) {
-        return new Geofence.Builder()
+    private com.google.android.gms.location.Geofence assembleGeofence(String geofenceId, LatLng latLng, double radius) {
+        return new com.google.android.gms.location.Geofence.Builder()
                 .setRequestId(geofenceId)
                 .setCircularRegion(
                         latLng.latitude,
                         latLng.longitude,
                         (float) radius
                 )
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setExpirationDuration(com.google.android.gms.location.Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER | com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
     }
 }

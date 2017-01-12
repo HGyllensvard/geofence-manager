@@ -5,17 +5,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceViewPresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceViews;
 import com.hgyllensvard.geofencemanager.geofence.di.DaggerGeofenceComponent;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
+import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofencePersistenceModule;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayGeofenceModule;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.disposables.DisposableContainer;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class GeofenceManagerActivity extends AppCompatActivity {
 
@@ -23,14 +34,33 @@ public class GeofenceManagerActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     @Inject
-    GeofenceViewPresenter geofenceViewPresenter;
+    LocationPermissionRequester locationPermissionRequester;
 
     @Inject
-    GeofenceViews geofenceViews;
+    DisplayGeofencePresenter displayGeofencePresenter;
+
+    @Inject
+    DisplayGeofenceViews displayGeofenceViews;
+
+    @Inject
+    AddGeofencePresenter addGeofencePresenter;
+
+    @Inject
+    AddGeofenceViews addGeofenceViews;
+
+    @Inject
+    EditGeofencePresenter editGeofencePresenter;
+
+    @Inject
+    EditGeofenceViews editGeofenceViews;
+
+    private DisposableContainer disposableContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        disposableContainer = new CompositeDisposable();
 
         setContentView(R.layout.activity_main);
 
@@ -53,13 +83,39 @@ public class GeofenceManagerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        geofenceViewPresenter.bindView(geofenceViews);
+        Disposable disposable = locationPermissionRequester.request()
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::managePermissionResult,
+                        Timber::e);
+
+        disposableContainer.add(disposable);
+    }
+
+    private void managePermissionResult(RequestPermissionResult permissionResult) {
+        switch (permissionResult) {
+            case DENIED:
+                finish();
+                break;
+            case GRANTED:
+                loadPresenters();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected argument");
+        }
+    }
+
+    private void loadPresenters() {
+        displayGeofencePresenter.bindView(displayGeofenceViews);
+        addGeofencePresenter.bindView(addGeofenceViews);
+        editGeofencePresenter.bindView(editGeofenceViews);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        geofenceViewPresenter.unbindView();
+        displayGeofencePresenter.unbindView();
+        addGeofencePresenter.unbindView();
+        editGeofencePresenter.unbindView();
     }
 }

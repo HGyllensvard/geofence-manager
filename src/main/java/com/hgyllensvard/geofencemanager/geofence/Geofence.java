@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class GeofenceData {
+public abstract class Geofence {
 
     public static final long NO_ID = -1;
 
@@ -16,7 +16,7 @@ public abstract class GeofenceData {
 
     public abstract float radius();
 
-    public static GeofenceData create(
+    public static Geofence create(
             String name,
             long latitude,
             long longitude,
@@ -27,12 +27,12 @@ public abstract class GeofenceData {
                 radius);
     }
 
-    public static GeofenceData create(
+    public static Geofence create(
             String name,
             LatLng latLng,
             float radius
     ) {
-        return new AutoValue_GeofenceData.Builder()
+        return new AutoValue_Geofence.Builder()
                 .id(NO_ID)
                 .name(name)
                 .latLng(latLng)
@@ -42,11 +42,11 @@ public abstract class GeofenceData {
 
     abstract Builder toBuilder();
 
-    public GeofenceData withId(long id) {
+    public Geofence withId(long id) {
         return toBuilder().id(id).build();
     }
 
-    public GeofenceData withName(String name) {
+    public Geofence withName(String name) {
         return toBuilder().name(name).build();
     }
 
@@ -60,6 +60,6 @@ public abstract class GeofenceData {
 
         abstract Builder radius(float radius);
 
-        abstract GeofenceData build();
+        abstract Geofence build();
     }
 }

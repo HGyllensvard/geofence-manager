@@ -5,38 +5,38 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceData;
+import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class GeofenceMapper {
 
-    List<GeofenceData> toGeofences(List<GeofenceModel> geofenceModelOlds) {
-        List<GeofenceData> geofenceDatas = new ArrayList<>();
+    List<Geofence> toGeofences(List<GeofenceModel> geofenceModelOlds) {
+        List<Geofence> geofences = new ArrayList<>();
 
         for (GeofenceModel geofenceModelOld : geofenceModelOlds) {
-            geofenceDatas.add(toGeofence(geofenceModelOld));
+            geofences.add(toGeofence(geofenceModelOld));
         }
 
-        return geofenceDatas;
+        return geofences;
     }
 
-    GeofenceData toGeofence(GeofenceModel geofenceModel) {
-        return GeofenceData.create(
+    Geofence toGeofence(GeofenceModel geofenceModel) {
+        return Geofence.create(
                 geofenceModel.name(),
                 new LatLng(geofenceModel.latitude(), geofenceModel.longitude()),
                 (float) geofenceModel.radius());
     }
 
-    ContentValues toContentValues(@NonNull GeofenceData download) {
+    ContentValues toContentValues(@NonNull Geofence download) {
         final GeofenceModel.Marshal marshal = GeofenceModel.marshal()
                 .name(download.name())
                 .latitude(download.latLng().latitude)
                 .longitude(download.latLng().longitude)
                 .radius(download.radius());
 
-        if (download.id() != GeofenceData.NO_ID) {
+        if (download.id() != Geofence.NO_ID) {
             marshal._id(download.id());
         }
 

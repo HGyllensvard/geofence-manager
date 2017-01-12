@@ -7,15 +7,23 @@ import android.support.v7.app.AppCompatActivity;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceViewPresenter;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.MapCameraManager;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMarkerManager;
+import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceMapOptions;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViews;
-import com.hgyllensvard.geofencemanager.geofence.view.GeofenceViewsManager;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,28 +33,78 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    GeofenceViewPresenter providesGeofencePresenter(
-            AppCompatActivity activity,
-            GeofenceManager geofenceManager,
-            LocationManager locationManager,
-            GeofenceMapOptions mapOptions,
-            MapCameraManager mapCameraManager
+    DisplayGeofenceViews providesGeofenceView(
+            MapView mapView
     ) {
-        return new GeofenceViewPresenter(
-                activity,
-                locationManager,
-                geofenceManager,
-                mapOptions,
-                mapCameraManager);
+        return new DisplayGeofenceView(mapView);
     }
 
     @PerActivity
     @Provides
-    GeofenceViews providesGeofenceView(
-            AppCompatActivity activity,
-            GeofenceMapOptions mapOptions
+    MapView providiesMapView(
+            AppCompatActivity appCompatActivity
     ) {
-        return new GeofenceViewsManager(activity, mapOptions);
+        return new MapView(appCompatActivity, R.id.geofence_map_container);
+    }
+
+    @PerActivity
+    @Provides
+    DisplayGeofencePresenter providesDisplayGeofencePresenter(
+            GeofenceManager geofenceManager,
+            MapCameraManager mapCameraManager,
+            GeofenceMarkerManager geofenceMarkerManager
+    ) {
+        return new DisplayGeofencePresenter(
+                geofenceManager,
+                mapCameraManager,
+                geofenceMarkerManager);
+    }
+
+    @PerActivity
+    @Provides
+    GeofenceMarkerManager providesGeofenceMarkerManager(
+            GeofenceMapOptions geofenceMapOptions
+    ) {
+        return new GeofenceMarkerManager(geofenceMapOptions);
+    }
+
+    @PerActivity
+    @Provides
+    AddGeofenceViews providesAddGeofenceViews(
+            MapView mapView
+    ) {
+        return new AddGeofenceView(mapView);
+    }
+
+    @PerActivity
+    @Provides
+    AddGeofencePresenter providesAddGeofencePresenter(
+            GeofenceManager geofenceManager,
+            GeofenceMapOptions geofenceMapOptions
+    ) {
+        return new AddGeofencePresenter(
+                geofenceManager,
+                geofenceMapOptions);
+    }
+
+    @PerActivity
+    @Provides
+    EditGeofenceViews providesEditGeofenceViews(
+            AppCompatActivity activity,
+            MapView mapView
+    ) {
+        return new EditGeofenceView(activity, mapView);
+    }
+
+    @PerActivity
+    @Provides
+    EditGeofencePresenter providesEditGeofencePresenter(
+            GeofenceManager geofenceManager,
+            GeofenceMarkerManager geofenceMarkerManager
+    ) {
+        return new EditGeofencePresenter(
+                geofenceManager,
+                geofenceMarkerManager);
     }
 
     @PerActivity
