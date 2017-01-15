@@ -40,14 +40,14 @@ public class GeofenceManager {
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<Boolean> removeGeofence(Geofence geofence) {
-        return playServicesGeofenceManager.removeGeofence(geofence)
-                .flatMap(aBoolean -> geofenceRepository.delete(geofence)).subscribeOn(Schedulers.io());
+    public Single<Boolean> removeGeofence(long geofenceId) {
+        return playServicesGeofenceManager.removeGeofence(geofenceId)
+                .flatMap(aBoolean -> geofenceRepository.delete(geofenceId)).subscribeOn(Schedulers.io());
     }
 
     public Single<Geofence> updateGeofence(Geofence oldGeofence, Geofence updatedGeofence) {
         return Single.fromCallable(() -> validateUpdateGeofenceInput(oldGeofence, updatedGeofence))
-                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofence))
+                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofence.id()))
                 .flatMap(ignored -> playServicesGeofenceManager.activateGeofence(updatedGeofence))
                 .flatMap(successfullyRemoved -> geofenceRepository.update(updatedGeofence))
                 .map(aBoolean -> updatedGeofence);
@@ -66,7 +66,7 @@ public class GeofenceManager {
         return geofenceRepository.listenGeofences();
     }
 
-    public Single<Geofence> getGeofence(int identifier) {
+    public Single<Geofence> getGeofence(long identifier) {
         return geofenceRepository.getGeofence(identifier);
     }
 }

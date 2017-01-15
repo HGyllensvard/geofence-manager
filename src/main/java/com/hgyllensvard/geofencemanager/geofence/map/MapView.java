@@ -94,6 +94,9 @@ public class MapView {
                             .remove(mapFragment)
                             .commit();
                 })
+                .doOnNext(ignored -> {
+                    googleMap.getUiSettings().setMapToolbarEnabled(false);
+                })
                 .doOnNext(ignored -> enableUserLocation())
                 .doOnNext(ignored -> longClickFlowable = createLongPressMapFlowable())
                 .doOnNext(ignored -> selectMarkerFlowable = createSelectedMarkerFlowable())
@@ -143,7 +146,6 @@ public class MapView {
                 return false;
             });
 
-//            emitter.setCancellable(() -> activity.runOnUiThread(() -> googleMap.setOnMarkerClickListener(null)));
             emitter.setCancellable(() -> googleMap.setOnMarkerClickListener(null));
         }, BackpressureStrategy.BUFFER);
     }

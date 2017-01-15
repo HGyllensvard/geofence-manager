@@ -31,7 +31,7 @@ public class GeofenceMarker {
     public void display(GoogleMap map) {
         marker = map.addMarker(new MarkerOptions()
                 .position(geofence.latLng())
-                .draggable(true));
+                .draggable(false));
 
         circle = map.addCircle(new CircleOptions()
                 .fillColor(fillColor)

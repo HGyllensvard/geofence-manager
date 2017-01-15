@@ -21,17 +21,17 @@ public class PlayServicesGeofenceManager {
     }
 
     public Single<Boolean> activateGeofence(Geofence geofence) {
-        return Single.just(assembleGeofence(geofence.name(), geofence.latLng(), radius))
+        return Single.just(assembleGeofence(geofence.id(), geofence.latLng(), radius))
                 .flatMap(addPlayGeofenceManager::addGeofence);
     }
 
-    public Single<Boolean> removeGeofence(Geofence geofence) {
-        return removePlayGeofenceManager.removeGeofence(geofence.name());
+    public Single<Boolean> removeGeofence(long geofenceId) {
+        return removePlayGeofenceManager.removeGeofence(String.valueOf(geofenceId));
     }
 
-    private com.google.android.gms.location.Geofence assembleGeofence(String geofenceId, LatLng latLng, double radius) {
+    private com.google.android.gms.location.Geofence assembleGeofence(long geofenceId, LatLng latLng, double radius) {
         return new com.google.android.gms.location.Geofence.Builder()
-                .setRequestId(geofenceId)
+                .setRequestId(String.valueOf(geofenceId))
                 .setCircularRegion(
                         latLng.latitude,
                         latLng.longitude,

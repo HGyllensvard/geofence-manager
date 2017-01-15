@@ -18,4 +18,8 @@ public interface EditGeofenceViews extends View {
     void hideSelectedGeofenceOptions();
 
     void displaySelectedGeofenceOptions();
+
+    Flowable<Boolean> observeRenameGeofence();
+
+    Flowable<Boolean> observeDeleteGeofence();
 }

@@ -93,13 +93,25 @@ dependencies {
     compile "com.google.auto.value:auto-value:$autoValue"
     apt "com.google.auto.value:auto-value:$autoValue"
 
+    /** Reactive libraries */
+
     // Reactive programming
     compile "io.reactivex.rxjava2:rxjava:$rxJava"
     compile "io.reactivex.rxjava2:rxandroid:$rxJava"
 
+    // Reactive Android views
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+
     // Temporary library to convert between Rx1 and Rx2
     compile "com.github.akarnokd:rxjava2-interop:0.7.2"
+
+    // Reactive wrapper around Android's permission system
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.8.2@aar'
+
+    //Reactive database
+    compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
+
+    /** End reactive libraries */
 
     // Sending arguments to fragments
     compile "com.hannesdorfmann.fragmentargs:annotation:$fragmentArgs"
@@ -108,8 +120,8 @@ dependencies {
     // Logging helper
     compile 'com.jakewharton.timber:timber:4.4.0'
 
-    //Reactive database
-    compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
+    // Floating action bar library
+    compile 'com.github.clans:fab:1.6.4'
 
     /**
      * Unit Tests

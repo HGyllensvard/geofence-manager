@@ -3,4 +3,6 @@
 
     <string name="location">To suppose any geofence </string>
     <string name="ok">OK</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Remove</string>
 </resources>

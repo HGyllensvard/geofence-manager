@@ -47,6 +47,8 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
                 .subscribe(ignored -> {
                             subscribeSelectedGeofence();
                             subscribeDeselectGeofence();
+                            subscribeRenameGeofence();
+                            subscribeDeleteGeofence();
                         },
                         Timber::e);
     }
@@ -73,6 +75,18 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
                     selectedGeofenceId = NO_SELECTION;
                     view.hideSelectedGeofenceOptions();
                 }, Timber::e);
+
+        disposableContainer.add(disposable);
+    }
+
+    private void subscribeRenameGeofence() {
+
+    }
+
+    private void subscribeDeleteGeofence() {
+        Disposable disposable = geofenceManager.removeGeofence(selectedGeofenceId)
+                .subscribe(deletedGeofence -> Timber.v("Removed geofence: %s", deletedGeofence),
+                        Timber::e);
 
         disposableContainer.add(disposable);
     }

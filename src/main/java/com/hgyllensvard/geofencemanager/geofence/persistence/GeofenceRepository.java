@@ -48,9 +48,9 @@ public class GeofenceRepository {
         }).subscribeOn(Schedulers.io());
     }
 
-    public Single<Boolean> delete(Geofence geofence) {
+    public Single<Boolean> delete(long geofenceId) {
         return Single.fromCallable(() ->
-                database.delete(GeofenceModel.TABLE_NAME, GeofenceDbModel._ID + " = " + geofence.id()) != 0)
+                database.delete(GeofenceModel.TABLE_NAME, GeofenceDbModel._ID + " = " + geofenceId) != 0)
                 .subscribeOn(Schedulers.io());
     }
 
