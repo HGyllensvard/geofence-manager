@@ -23,6 +23,20 @@
         android:layout_below="@id/geofence_toolbar"
         />
 
+    <EditText
+        android:id="@+id/geofence_rename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/geofence_toolbar"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:background="@color/white"
+        android:inputType="text"
+        android:padding="7dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        />
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/edit_geofence_menu"
         android:layout_width="wrap_content"
@@ -30,8 +44,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
         fab:menu_icon="@drawable/ic_menu_black_24dp"
-        android:layout_marginEnd="10dp">
+        >
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/geofence_menu_delete_geofence"
@@ -39,15 +54,18 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete_black_24dp"
             fab:fab_label="@string/delete"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini"
+            />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/geofence_menu_rename_geofence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:labelFor="@+id/geofence_rename"
             android:src="@drawable/ic_edit_black_24dp"
             fab:fab_label="@string/rename"
-            fab:fab_size="mini"/>
+            fab:fab_size="mini"
+            />
 
     </com.github.clans.fab.FloatingActionMenu>
 

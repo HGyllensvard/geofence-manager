@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
@@ -68,7 +69,7 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
 
     private void subscribeDeselectGeofence() {
         Disposable disposable = view.observeCameraStartedMoving()
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .filter(integer -> selectedGeofenceId != NO_SELECTION)
                 .subscribe(reason -> {
                     Timber.v("Geofence deselected");
@@ -80,11 +81,24 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
     }
 
     private void subscribeRenameGeofence() {
+        Disposable disposable = view.observeRenameGeofence()
+                .observeOn(Schedulers.io())
+                .filter(integer -> selectedGeofenceId != NO_SELECTION)
+                .flatMap(ignored -> geofenceManager.getGeofence(selectedGeofenceId)
+                        .toFlowable())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(geofence -> view.displayRenameGeofence(geofence.name()),
+                        Timber::e);
 
+        disposableContainer.add(disposable);
     }
 
     private void subscribeDeleteGeofence() {
-        Disposable disposable = geofenceManager.removeGeofence(selectedGeofenceId)
+        Disposable disposable = view.observeDeleteGeofence()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .map(ignored -> geofenceManager.removeGeofence(selectedGeofenceId))
                 .subscribe(deletedGeofence -> Timber.v("Removed geofence: %s", deletedGeofence),
                         Timber::e);
 
