@@ -17,14 +17,17 @@ public abstract class Geofence {
     public abstract float radius();
 
     public static Geofence create(
+            long id,
             String name,
-            long latitude,
-            long longitude,
+            LatLng latLng,
             float radius
     ) {
-        return create(name,
-                new LatLng(latitude, longitude),
-                radius);
+        return new AutoValue_Geofence.Builder()
+                .id(id)
+                .name(name)
+                .latLng(latLng)
+                .radius(radius)
+                .build();
     }
 
     public static Geofence create(
@@ -32,12 +35,10 @@ public abstract class Geofence {
             LatLng latLng,
             float radius
     ) {
-        return new AutoValue_Geofence.Builder()
-                .id(NO_ID)
-                .name(name)
-                .latLng(latLng)
-                .radius(radius)
-                .build();
+        return create(NO_ID,
+                name,
+                latLng,
+                radius);
     }
 
     abstract Builder toBuilder();

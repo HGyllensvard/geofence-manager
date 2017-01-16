@@ -24,6 +24,7 @@ class GeofenceMapper {
 
     Geofence toGeofence(GeofenceModel geofenceModel) {
         return Geofence.create(
+                geofenceModel._id(),
                 geofenceModel.name(),
                 new LatLng(geofenceModel.latitude(), geofenceModel.longitude()),
                 (float) geofenceModel.radius());
