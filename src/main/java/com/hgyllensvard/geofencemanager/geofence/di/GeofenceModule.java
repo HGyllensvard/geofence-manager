@@ -18,7 +18,7 @@ import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofence
 import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceViews;
-import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMarkerManager;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
@@ -44,7 +44,7 @@ public class GeofenceModule {
     MapView providiesMapView(
             AppCompatActivity appCompatActivity
     ) {
-        return new MapView(appCompatActivity, R.id.geofence_map_container);
+        return new MapView(appCompatActivity, R.id.geofence_map_container, geofenceMarkerManager);
     }
 
     @PerActivity
@@ -52,20 +52,20 @@ public class GeofenceModule {
     DisplayGeofencePresenter providesDisplayGeofencePresenter(
             GeofenceManager geofenceManager,
             MapCameraManager mapCameraManager,
-            GeofenceMarkerManager geofenceMarkerManager
+            GeofenceViewManager geofenceViewManager
     ) {
         return new DisplayGeofencePresenter(
                 geofenceManager,
                 mapCameraManager,
-                geofenceMarkerManager);
+                geofenceViewManager);
     }
 
     @PerActivity
     @Provides
-    GeofenceMarkerManager providesGeofenceMarkerManager(
+    GeofenceViewManager providesGeofenceMarkerManager(
             GeofenceMapOptions geofenceMapOptions
     ) {
-        return new GeofenceMarkerManager(geofenceMapOptions);
+        return new GeofenceViewManager(geofenceMapOptions);
     }
 
     @PerActivity
@@ -100,11 +100,11 @@ public class GeofenceModule {
     @Provides
     EditGeofencePresenter providesEditGeofencePresenter(
             GeofenceManager geofenceManager,
-            GeofenceMarkerManager geofenceMarkerManager
+            GeofenceViewManager geofenceViewManager
     ) {
         return new EditGeofencePresenter(
                 geofenceManager,
-                geofenceMarkerManager);
+                geofenceViewManager);
     }
 
     @PerActivity

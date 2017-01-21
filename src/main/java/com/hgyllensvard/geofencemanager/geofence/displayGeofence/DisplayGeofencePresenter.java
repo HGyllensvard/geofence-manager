@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.MapCameraManager;
-import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMarkerManager;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -18,18 +18,18 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
 
     private final GeofenceManager geofenceManager;
     private final MapCameraManager mapCameraManager;
-    private final GeofenceMarkerManager geofenceMarkerManager;
+    private final GeofenceViewManager geofenceViewManager;
 
     private final CompositeDisposable disposableContainer;
 
     public DisplayGeofencePresenter(
             GeofenceManager geofenceManager,
             MapCameraManager mapCameraManager,
-            GeofenceMarkerManager geofenceMarkerManager
+            GeofenceViewManager geofenceViewManager
     ) {
         this.geofenceManager = geofenceManager;
         this.mapCameraManager = mapCameraManager;
-        this.geofenceMarkerManager = geofenceMarkerManager;
+        this.geofenceViewManager = geofenceViewManager;
 
         disposableContainer = new CompositeDisposable();
     }
@@ -53,11 +53,13 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
     private void subscribeExistingGeofences() {
         Disposable disposable = geofenceManager.observeGeofences()
                 .subscribeOn(Schedulers.io())
-                .map(geofenceMarkerManager::createMarkers)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(geofenceMarkers -> Timber.v("Displaying geofences markers: %s", geofenceMarkers))
-                .subscribe(markers -> view.displayGeofences(markers),
-                        Timber::e);
+                .subscribe(geofences -> {
+                            Timber.v("Displaying geofences: %s", geofences);
+                            view.displayGeofences(geofences);
+                        },
+                        Timber::e
+                );
 
         disposableContainer.add(disposable);
     }

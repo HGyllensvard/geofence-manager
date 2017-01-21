@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.maps.model.Marker;
 import com.hgyllensvard.geofencemanager.R2;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 import com.jakewharton.rxbinding.view.RxView;
@@ -68,8 +67,8 @@ public class EditGeofenceView implements EditGeofenceViews {
     }
 
     @Override
-    public Flowable<Marker> observeMarkerSelected() {
-        return mapView.observeMarkerSelected();
+    public Flowable<Long> observeGeofenceSelected() {
+        return mapView.observeGeofenceSelected();
     }
 
     @Override
@@ -109,13 +108,22 @@ public class EditGeofenceView implements EditGeofenceViews {
         renameGeofence.setVisibility(View.VISIBLE);
         renameGeofence.setText(name);
 
-        // Ugly solution, could not get the keyboard to be displayed properly.
-        // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+        displayKeyboard();
+
+        renameGeofence.setSelection(name.length());
+    }
+
+    @Override
+    public void removeMarkerFromMap(long selectedGeofenceId) {
+
+    }
+
+    // Ugly solution, could not get the keyboard to be displayed properly.
+    // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+    private void displayKeyboard() {
         renameGeofence.postDelayed(() -> {
             renameGeofence.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
             renameGeofence.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
         }, SIMULATE_CLICK_DELAY);
-
-        renameGeofence.setSelection(name.length());
     }
 }

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMarkerManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,18 +22,15 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
     private static final TimeUnit SELECT_DEBOUNCE_TIMER_UNIT = TimeUnit.SECONDS;
 
     private final GeofenceManager geofenceManager;
-    private final GeofenceMarkerManager geofenceMarkerManager;
 
     private final CompositeDisposable disposableContainer;
 
     private long selectedGeofenceId = NO_SELECTION;
 
     public EditGeofencePresenter(
-            GeofenceManager geofenceManager,
-            GeofenceMarkerManager geofenceMarkerManager
+            GeofenceManager geofenceManager
     ) {
         this.geofenceManager = geofenceManager;
-        this.geofenceMarkerManager = geofenceMarkerManager;
 
         disposableContainer = new CompositeDisposable();
     }
@@ -55,11 +51,11 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
     }
 
     private void subscribeSelectedGeofence() {
-        Disposable disposable = view.observeMarkerSelected()
+        Disposable disposable = view.observeGeofenceSelected()
                 .debounce(SELECT_DEBOUNCE_TIMER, SELECT_DEBOUNCE_TIMER_UNIT)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(marker -> {
-                    selectedGeofenceId = geofenceMarkerManager.findGeofenceId(marker.getId());
+                .subscribe(geofenceId -> {
+                    selectedGeofenceId = geofenceId;
                     view.displaySelectedGeofenceOptions();
                     Timber.v("Selected Geofence with id: %s", selectedGeofenceId);
                 }, Timber::e);
@@ -96,11 +92,22 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
 
     private void subscribeDeleteGeofence() {
         Disposable disposable = view.observeDeleteGeofence()
+                .filter(integer -> selectedGeofenceId != NO_SELECTION)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .map(ignored -> geofenceManager.removeGeofence(selectedGeofenceId))
-                .subscribe(deletedGeofence -> Timber.v("Removed geofence: %s", deletedGeofence),
-                        Timber::e);
+                .flatMap(ignored -> geofenceManager.removeGeofence(selectedGeofenceId)
+                        .toFlowable())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(successfullyDeletedGeofence -> {
+                            if (successfullyDeletedGeofence) {
+                                view.hideSelectedGeofenceOptions();
+                                selectedGeofenceId = NO_SELECTION;
+                            }
+
+                            Timber.v("Deleted geofence: %s", successfullyDeletedGeofence);
+                        },
+                        Timber::e
+                );
 
         disposableContainer.add(disposable);
     }

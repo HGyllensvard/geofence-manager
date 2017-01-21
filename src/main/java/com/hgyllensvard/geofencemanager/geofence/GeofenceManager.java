@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Class is responsible for managing the connection to
- * Gogole Play Services Geofence API and it will then also
+ * Google Play Services Geofence API and it will then also
  * persist the Geofences that exist.
  */
 public class GeofenceManager {
@@ -42,7 +42,8 @@ public class GeofenceManager {
 
     public Single<Boolean> removeGeofence(long geofenceId) {
         return playServicesGeofenceManager.removeGeofence(geofenceId)
-                .flatMap(aBoolean -> geofenceRepository.delete(geofenceId)).subscribeOn(Schedulers.io());
+                .flatMap(aBoolean -> geofenceRepository.delete(geofenceId))
+                .subscribeOn(Schedulers.io());
     }
 
     public Single<Geofence> updateGeofence(Geofence oldGeofence, Geofence updatedGeofence) {

@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
-public class GeofenceMarker {
+public class GeofenceView {
 
     private final Geofence geofence;
     private final int fillColor;
@@ -18,7 +18,7 @@ public class GeofenceMarker {
     private Marker marker;
     private Circle circle;
 
-    public GeofenceMarker(
+    public GeofenceView(
             Geofence geofence,
             @ColorInt int fillColor,
             @ColorInt int strokeColor
@@ -60,12 +60,38 @@ public class GeofenceMarker {
         return marker.getId().equals(markerId);
     }
 
+    public void delete() {
+        marker.remove();
+        circle.remove();
+    }
+
     @Override
     public String toString() {
-        return "GeofenceMarker{" +
+        return "GeofenceView{" +
                 "geofence=" + geofence +
                 ", marker=" + marker +
                 ", circle=" + circle +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GeofenceView marker = (GeofenceView) o;
+
+        if (fillColor != marker.fillColor) return false;
+        if (strokeColor != marker.strokeColor) return false;
+        return geofence != null ? geofence.equals(marker.geofence) : marker.geofence == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = geofence != null ? geofence.hashCode() : 0;
+        result = 31 * result + fillColor;
+        result = 31 * result + strokeColor;
+        return result;
     }
 }

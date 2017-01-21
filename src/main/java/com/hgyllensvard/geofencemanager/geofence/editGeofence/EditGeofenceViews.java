@@ -10,7 +10,7 @@ public interface EditGeofenceViews extends View {
 
     Flowable<Boolean> displayMap();
 
-    Flowable<Marker> observeMarkerSelected();
+    Flowable<Long> observeGeofenceSelected();
 
     Flowable<Integer> observeCameraStartedMoving();
 
@@ -23,4 +23,6 @@ public interface EditGeofenceViews extends View {
     Flowable<Boolean> observeDeleteGeofence();
 
     void displayRenameGeofence(String name);
+
+    void removeMarkerFromMap(long selectedGeofenceId);
 }

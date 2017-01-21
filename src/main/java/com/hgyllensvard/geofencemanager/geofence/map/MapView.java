@@ -9,13 +9,16 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
+import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
 import java.util.List;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class MapView {
@@ -24,21 +27,26 @@ public class MapView {
     private final int mapContainer;
 
     private final SupportMapFragment mapFragment;
+    private final GeofenceViewManager geofenceViewManager;
 
     private Flowable<LatLng> longClickFlowable;
-    private Flowable<Marker> selectMarkerFlowable;
+    private Flowable<Long> selectMarkerFlowable;
     private Flowable<Integer> cameraMovedFlowable;
     private Flowable<Boolean> mapFlowable;
 
     private GoogleMap googleMap;
+    private CompositeDisposable disposables;
 
     public MapView(
             AppCompatActivity activity,
-            @IdRes int mapContainer
+            @IdRes int mapContainer,
+            GeofenceViewManager geofenceViewManager
     ) {
         this.activity = activity;
         this.mapContainer = mapContainer;
+        this.geofenceViewManager = geofenceViewManager;
 
+        disposables = new CompositeDisposable();
         mapFragment = SupportMapFragment.newInstance();
         mapFlowable = createMapFlowable(activity);
     }
@@ -51,10 +59,8 @@ public class MapView {
         googleMap.setMyLocationEnabled(true);
     }
 
-    public void displayMarkers(List<GeofenceMarker> markers) {
-        for (GeofenceMarker marker : markers) {
-            marker.display(googleMap);
-        }
+    public void displayGeofences(List<Geofence> geofences) {
+        geofenceViewManager.updateGeofenceViews(geofences);
     }
 
     public void animateCameraTo(CameraUpdate cameraUpdate) {
@@ -69,7 +75,7 @@ public class MapView {
         return longClickFlowable;
     }
 
-    public Flowable<Marker> observeMarkerSelected() {
+    public Flowable<Long> observeGeofenceSelected() {
         if (selectMarkerFlowable == null) {
             throw new MapNotInitialisedError();
         }
@@ -96,14 +102,36 @@ public class MapView {
                 })
                 .doOnNext(ignored -> {
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
+                    enableUserLocation();
+                    longClickFlowable = createLongPressMapFlowable();
+                    selectMarkerFlowable = createSelectedGeofenceFlowable();
+                    cameraMovedFlowable = createCameraMoveStartedFlowable();
+                    createUpdatedGeofenceViewsListener();
+                    createRemovedGeofenceViewsListener();
+                    Timber.i("Map View successfully setup");
                 })
-                .doOnNext(ignored -> enableUserLocation())
-                .doOnNext(ignored -> longClickFlowable = createLongPressMapFlowable())
-                .doOnNext(ignored -> selectMarkerFlowable = createSelectedMarkerFlowable())
-                .doOnNext(ignored -> cameraMovedFlowable = createCameraMoveStartedFlowable())
-                .doOnNext(ignored -> Timber.i("Map View successfully setup"))
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .share();
+    }
+
+    private void createRemovedGeofenceViewsListener() {
+        Disposable disposable = geofenceViewManager.observeRemovedGeofenceViews()
+                .filter(geofenceViews -> !geofenceViews.isEmpty())
+                .flatMap(Observable::fromIterable)
+                .subscribe(GeofenceView::delete,
+                        Timber::e);
+
+        disposables.add(disposable);
+    }
+
+    private void createUpdatedGeofenceViewsListener() {
+        Disposable disposable = geofenceViewManager.observeUpdatedGeofenceViews()
+                .filter(geofenceViews -> !geofenceViews.isEmpty())
+                .flatMap(Observable::fromIterable)
+                .subscribe(geofenceView -> geofenceView.display(googleMap),
+                        Timber::e);
+
+        disposables.add(disposable);
     }
 
     private Flowable<Boolean> loadMapAsync() {
@@ -137,10 +165,10 @@ public class MapView {
         }, BackpressureStrategy.BUFFER);
     }
 
-    private Flowable<Marker> createSelectedMarkerFlowable() {
+    private Flowable<Long> createSelectedGeofenceFlowable() {
         return Flowable.create(emitter -> {
             googleMap.setOnMarkerClickListener(marker -> {
-                emitter.onNext(marker);
+                emitter.onNext(geofenceViewManager.findGeofenceId(marker.getId()));
 
                 // Not the most effective solution, but I rather take implementation elegance here
                 return false;
