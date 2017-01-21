@@ -97,6 +97,8 @@ public class MapView {
                             .beginTransaction()
                             .remove(mapFragment)
                             .commit();
+
+                    disposables.clear();
                 })
                 .doOnNext(ignored -> {
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
