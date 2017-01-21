@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.map;
 
 import android.location.Location;
 import android.support.annotation.NonNull;

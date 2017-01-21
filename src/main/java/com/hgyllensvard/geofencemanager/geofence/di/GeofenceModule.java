@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceMapOptions;
-import com.hgyllensvard.geofencemanager.geofence.MapCameraManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
+import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
 import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceViews;
@@ -55,13 +55,11 @@ public class GeofenceModule {
     @Provides
     DisplayGeofencePresenter providesDisplayGeofencePresenter(
             GeofenceManager geofenceManager,
-            MapCameraManager mapCameraManager,
-            GeofenceViewManager geofenceViewManager
+            MapCameraManager mapCameraManager
     ) {
         return new DisplayGeofencePresenter(
                 geofenceManager,
-                mapCameraManager,
-                geofenceViewManager);
+                mapCameraManager);
     }
 
     @PerActivity

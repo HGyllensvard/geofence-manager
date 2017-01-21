@@ -67,7 +67,6 @@ project.archivesBaseName = libraryName
 def googleServicesVersion = '10.0.1'
 def dagger2Version = '2.8'
 def butterKnife = '8.4.0'
-def rxJava = '2.0.1'
 def fragmentArgs = '3.0.2'
 def autoValue = '1.2'
 
@@ -96,8 +95,8 @@ dependencies {
     /** Reactive libraries */
 
     // Reactive programming
-    compile "io.reactivex.rxjava2:rxjava:$rxJava"
-    compile "io.reactivex.rxjava2:rxandroid:$rxJava"
+    compile "io.reactivex.rxjava2:rxjava:2.0.4"
+    compile "io.reactivex.rxjava2:rxandroid:2.0.1"
 
     // Reactive Android views
     compile 'com.jakewharton.rxbinding:rxbinding:1.0.0'

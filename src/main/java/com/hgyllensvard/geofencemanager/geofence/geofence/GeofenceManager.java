@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -31,13 +32,28 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    public Single<Geofence> addGeofence(
+    public Single<AddGeofenceResult> addGeofence(
             Geofence geofence
     ) {
-        return playServicesGeofenceManager.activateGeofence(geofence)
-                .flatMap(successfullyActivatedGeofence -> geofenceRepository.insert(geofence))
-                .map(successfullyPersistedGeofence -> geofence)
+        return geofenceRepository.insert(geofence)
+                .flatMap(addedGeofence -> playServicesGeofenceManager.activateGeofence(addedGeofence)
+                        .flatMap(successfullyActivatedGeofence -> {
+                            if (successfullyActivatedGeofence) {
+                                return Single.just(AddGeofenceResult.success(addedGeofence));
+                            } else {
+                                return manageFailedToAddGeofence(addedGeofence);
+                            }
+                        }))
+                .onErrorReturn(AddGeofenceResult::failure)
                 .subscribeOn(Schedulers.io());
+    }
+
+    /*
+     * Try to clean up the database if the geofence couldn't be added to the play services.
+     */
+    private SingleSource<? extends AddGeofenceResult> manageFailedToAddGeofence(Geofence geofence) {
+        return geofenceRepository.delete(geofence.id())
+                .map(deleted -> AddGeofenceResult.failure(new FailedToAddGeofenceException()));
     }
 
     public Single<Boolean> removeGeofence(long geofenceId) {

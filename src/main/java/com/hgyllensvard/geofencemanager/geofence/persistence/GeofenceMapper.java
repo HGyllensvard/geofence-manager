@@ -5,7 +5,7 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import java.util.ArrayList;
 import java.util.List;

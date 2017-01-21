@@ -4,9 +4,8 @@ package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.MapCameraManager;
-import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -18,18 +17,15 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
 
     private final GeofenceManager geofenceManager;
     private final MapCameraManager mapCameraManager;
-    private final GeofenceViewManager geofenceViewManager;
 
     private final CompositeDisposable disposableContainer;
 
     public DisplayGeofencePresenter(
             GeofenceManager geofenceManager,
-            MapCameraManager mapCameraManager,
-            GeofenceViewManager geofenceViewManager
+            MapCameraManager mapCameraManager
     ) {
         this.geofenceManager = geofenceManager;
         this.mapCameraManager = mapCameraManager;
-        this.geofenceViewManager = geofenceViewManager;
 
         disposableContainer = new CompositeDisposable();
     }

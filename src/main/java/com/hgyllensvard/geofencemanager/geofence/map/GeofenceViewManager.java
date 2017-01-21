@@ -3,11 +3,11 @@ package com.hgyllensvard.geofencemanager.geofence.map;
 
 import android.annotation.SuppressLint;
 
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceMapOptions;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +15,7 @@ import java.util.Set;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 public class GeofenceViewManager {
 
@@ -40,7 +41,7 @@ public class GeofenceViewManager {
         List<GeofenceView> updatedGeofenceViews = new ArrayList<>();
         List<GeofenceView> removedGeofenceViews = new ArrayList<>();
 
-        Set<Long> keys = geofenceViews.keySet();
+        Set<Long> keys = new HashSet<>(geofenceViews.keySet());
 
         for (Geofence geofence : geofences) {
             GeofenceView geofenceView = geofenceViews.get(geofence.id());
@@ -60,7 +61,11 @@ public class GeofenceViewManager {
         }
 
         geofenceViewSubject.onNext(new ArrayList<>(geofenceViews.values()));
+
+        Timber.v("Added or updated geofences: %s", updatedGeofenceViews);
         updatedGeofenceViewSubject.onNext(updatedGeofenceViews);
+
+        Timber.v("Removing geofences: %s", removedGeofenceViews);
         removedGeofenceViewSubject.onNext(removedGeofenceViews);
     }
 

@@ -4,8 +4,8 @@ package com.hgyllensvard.geofencemanager.geofence.editGeofence;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -92,12 +92,12 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
 
     private void subscribeDeleteGeofence() {
         Disposable disposable = view.observeDeleteGeofence()
-                .filter(integer -> selectedGeofenceId != NO_SELECTION)
-                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
+                .filter(integer -> selectedGeofenceId != NO_SELECTION)
                 .flatMap(ignored -> geofenceManager.removeGeofence(selectedGeofenceId)
                         .toObservable())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(successfullyDeletedGeofence -> {
                             if (successfullyDeletedGeofence) {
                                 view.hideSelectedGeofenceOptions();

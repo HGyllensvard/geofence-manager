@@ -1,8 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.map;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceMapOptions;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import org.junit.After;
 import org.junit.Before;

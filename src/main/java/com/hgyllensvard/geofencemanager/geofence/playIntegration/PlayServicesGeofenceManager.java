@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import io.reactivex.Single;
 

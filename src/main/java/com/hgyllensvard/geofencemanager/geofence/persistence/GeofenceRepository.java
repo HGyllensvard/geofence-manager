@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;

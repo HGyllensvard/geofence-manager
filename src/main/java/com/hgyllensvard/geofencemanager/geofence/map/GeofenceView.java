@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 public class GeofenceView {
 

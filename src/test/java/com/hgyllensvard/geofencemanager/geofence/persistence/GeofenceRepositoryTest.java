@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;
