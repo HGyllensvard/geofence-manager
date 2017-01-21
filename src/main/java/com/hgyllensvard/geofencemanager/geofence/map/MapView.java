@@ -13,8 +13,6 @@ import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
 import java.util.List;
 
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -29,10 +27,10 @@ public class MapView {
     private final SupportMapFragment mapFragment;
     private final GeofenceViewManager geofenceViewManager;
 
-    private Flowable<LatLng> longClickFlowable;
-    private Flowable<Long> selectMarkerFlowable;
-    private Flowable<Integer> cameraMovedFlowable;
-    private Flowable<Boolean> mapFlowable;
+    private Observable<LatLng> longClickFlowable;
+    private Observable<Long> selectMarkerFlowable;
+    private Observable<Integer> cameraMovedFlowable;
+    private Observable<Boolean> mapFlowable;
 
     private GoogleMap googleMap;
     private CompositeDisposable disposables;
@@ -51,7 +49,7 @@ public class MapView {
         mapFlowable = createMapFlowable(activity);
     }
 
-    public Flowable<Boolean> initialiseAndDisplayMap() {
+    public Observable<Boolean> initialiseAndDisplayMap() {
         return mapFlowable;
     }
 
@@ -67,7 +65,7 @@ public class MapView {
         googleMap.animateCamera(cameraUpdate);
     }
 
-    public Flowable<LatLng> observerLongClick() {
+    public Observable<LatLng> observerLongClick() {
         if (longClickFlowable == null) {
             throw new MapNotInitialisedError();
         }
@@ -75,7 +73,7 @@ public class MapView {
         return longClickFlowable;
     }
 
-    public Flowable<Long> observeGeofenceSelected() {
+    public Observable<Long> observeGeofenceSelected() {
         if (selectMarkerFlowable == null) {
             throw new MapNotInitialisedError();
         }
@@ -83,7 +81,7 @@ public class MapView {
         return selectMarkerFlowable;
     }
 
-    public Flowable<Integer> observeCameraStartMoving() {
+    public Observable<Integer> observeCameraStartMoving() {
         if (cameraMovedFlowable == null) {
             throw new MapNotInitialisedError();
         }
@@ -91,7 +89,7 @@ public class MapView {
         return cameraMovedFlowable;
     }
 
-    private Flowable<Boolean> createMapFlowable(AppCompatActivity activity) {
+    private Observable<Boolean> createMapFlowable(AppCompatActivity activity) {
         return loadMapAsync()
                 .doOnTerminate(() -> {
                     Timber.d("Removing map fragment");
@@ -134,8 +132,8 @@ public class MapView {
         disposables.add(disposable);
     }
 
-    private Flowable<Boolean> loadMapAsync() {
-        return Flowable.create(e -> {
+    private Observable<Boolean> loadMapAsync() {
+        return Observable.create(e -> {
             addMapFragment();
 
             Timber.d("Fetching map asynchronously");
@@ -144,7 +142,7 @@ public class MapView {
                 googleMap = map;
                 e.onNext(true);
             });
-        }, BackpressureStrategy.BUFFER);
+        });
     }
 
     private void addMapFragment() {
@@ -158,15 +156,15 @@ public class MapView {
         fragmentTransaction.commit();
     }
 
-    private Flowable<LatLng> createLongPressMapFlowable() {
-        return Flowable.create(emitter -> {
+    private Observable<LatLng> createLongPressMapFlowable() {
+        return Observable.create(emitter -> {
             googleMap.setOnMapLongClickListener(emitter::onNext);
             emitter.setCancellable(() -> googleMap.setOnMapLongClickListener(null));
-        }, BackpressureStrategy.BUFFER);
+        });
     }
 
-    private Flowable<Long> createSelectedGeofenceFlowable() {
-        return Flowable.create(emitter -> {
+    private Observable<Long> createSelectedGeofenceFlowable() {
+        return Observable.create(emitter -> {
             googleMap.setOnMarkerClickListener(marker -> {
                 emitter.onNext(geofenceViewManager.findGeofenceId(marker.getId()));
 
@@ -175,13 +173,13 @@ public class MapView {
             });
 
             emitter.setCancellable(() -> googleMap.setOnMarkerClickListener(null));
-        }, BackpressureStrategy.BUFFER);
+        });
     }
 
-    private Flowable<Integer> createCameraMoveStartedFlowable() {
-        return Flowable.create(emitter -> {
+    private Observable<Integer> createCameraMoveStartedFlowable() {
+        return Observable.create(emitter -> {
             googleMap.setOnCameraMoveStartedListener(emitter::onNext);
             emitter.setCancellable(() -> googleMap.setOnCameraMoveStartedListener(null));
-        }, BackpressureStrategy.BUFFER);
+        });
     }
 }

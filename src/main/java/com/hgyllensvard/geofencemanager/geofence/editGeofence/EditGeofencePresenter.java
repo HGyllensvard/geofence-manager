@@ -81,7 +81,7 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
                 .observeOn(Schedulers.io())
                 .filter(integer -> selectedGeofenceId != NO_SELECTION)
                 .flatMap(ignored -> geofenceManager.getGeofence(selectedGeofenceId)
-                        .toFlowable())
+                        .toObservable())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(geofence -> view.displayRenameGeofence(geofence.name()),
@@ -96,7 +96,7 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .flatMap(ignored -> geofenceManager.removeGeofence(selectedGeofenceId)
-                        .toFlowable())
+                        .toObservable())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(successfullyDeletedGeofence -> {
                             if (successfullyDeletedGeofence) {

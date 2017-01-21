@@ -41,10 +41,14 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    MapView providiesMapView(
-            AppCompatActivity appCompatActivity
+    MapView providesMapView(
+            AppCompatActivity appCompatActivity,
+            GeofenceViewManager geofenceViewManager
     ) {
-        return new MapView(appCompatActivity, R.id.geofence_map_container, geofenceMarkerManager);
+        return new MapView(
+                appCompatActivity,
+                R.id.geofence_map_container,
+                geofenceViewManager);
     }
 
     @PerActivity
@@ -99,12 +103,9 @@ public class GeofenceModule {
     @PerActivity
     @Provides
     EditGeofencePresenter providesEditGeofencePresenter(
-            GeofenceManager geofenceManager,
-            GeofenceViewManager geofenceViewManager
+            GeofenceManager geofenceManager
     ) {
-        return new EditGeofencePresenter(
-                geofenceManager,
-                geofenceViewManager);
+        return new EditGeofencePresenter(geofenceManager);
     }
 
     @PerActivity

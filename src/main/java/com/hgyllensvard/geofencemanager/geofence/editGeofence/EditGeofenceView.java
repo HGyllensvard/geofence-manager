@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public class EditGeofenceView implements EditGeofenceViews {
 
@@ -40,8 +40,8 @@ public class EditGeofenceView implements EditGeofenceViews {
 
     private Unbinder unbinder;
 
-    private Flowable<Boolean> renameObservable;
-    private Flowable<Boolean> deleteFlowable;
+    private Observable<Boolean> renameObservable;
+    private Observable<Boolean> deleteFlowable;
 
     public EditGeofenceView(
             Activity activity,
@@ -52,27 +52,27 @@ public class EditGeofenceView implements EditGeofenceViews {
 
         unbinder = ButterKnife.bind(this, activity);
 
-        renameObservable = RxJavaInterop.toV2Flowable(RxView.clicks(renameGeofenceMenuAction)
+        renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
                 .map(aVoid -> true));
 
-        deleteFlowable = RxJavaInterop.toV2Flowable(RxView.clicks(deleteGeofenceMenuAction)
+        deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
                 .map(aVoid -> true));
 
         editGeofenceMenu.hideMenuButton(false);
     }
 
     @Override
-    public Flowable<Boolean> displayMap() {
+    public Observable<Boolean> displayMap() {
         return mapView.initialiseAndDisplayMap();
     }
 
     @Override
-    public Flowable<Long> observeGeofenceSelected() {
+    public Observable<Long> observeGeofenceSelected() {
         return mapView.observeGeofenceSelected();
     }
 
     @Override
-    public Flowable<Integer> observeCameraStartedMoving() {
+    public Observable<Integer> observeCameraStartedMoving() {
         return mapView.observeCameraStartMoving();
     }
 
@@ -94,12 +94,12 @@ public class EditGeofenceView implements EditGeofenceViews {
     }
 
     @Override
-    public Flowable<Boolean> observeRenameGeofence() {
+    public Observable<Boolean> observeRenameGeofence() {
         return renameObservable;
     }
 
     @Override
-    public Flowable<Boolean> observeDeleteGeofence() {
+    public Observable<Boolean> observeDeleteGeofence() {
         return deleteFlowable;
     }
 

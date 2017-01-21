@@ -1,26 +1,25 @@
 package com.hgyllensvard.geofencemanager.geofence.editGeofence;
 
 
-import com.google.android.gms.maps.model.Marker;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public interface EditGeofenceViews extends View {
 
-    Flowable<Boolean> displayMap();
+    Observable<Boolean> displayMap();
 
-    Flowable<Long> observeGeofenceSelected();
+    Observable<Long> observeGeofenceSelected();
 
-    Flowable<Integer> observeCameraStartedMoving();
+    Observable<Integer> observeCameraStartedMoving();
 
     void hideSelectedGeofenceOptions();
 
     void displaySelectedGeofenceOptions();
 
-    Flowable<Boolean> observeRenameGeofence();
+    Observable<Boolean> observeRenameGeofence();
 
-    Flowable<Boolean> observeDeleteGeofence();
+    Observable<Boolean> observeDeleteGeofence();
 
     void displayRenameGeofence(String name);
 

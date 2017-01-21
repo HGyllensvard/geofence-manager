@@ -7,7 +7,7 @@ import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public class DisplayGeofenceView implements DisplayGeofenceViews {
 
@@ -20,7 +20,7 @@ public class DisplayGeofenceView implements DisplayGeofenceViews {
     }
 
     @Override
-    public Flowable<Boolean> displayMap() {
+    public Observable<Boolean> displayMap() {
         return mapView.initialiseAndDisplayMap();
     }
 

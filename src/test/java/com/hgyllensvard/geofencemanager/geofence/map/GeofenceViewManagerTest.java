@@ -41,7 +41,7 @@ public class GeofenceViewManagerTest {
     public void tearDown() throws Exception {
 
     }
-    
+
     @Test
     public void createMarkers() throws Exception {
 

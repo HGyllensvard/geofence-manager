@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public class AddGeofenceView implements AddGeofenceViews {
 
@@ -16,12 +17,12 @@ public class AddGeofenceView implements AddGeofenceViews {
     }
 
     @Override
-    public Flowable<Boolean> displayMap() {
+    public Observable<Boolean> displayMap() {
         return mapView.initialiseAndDisplayMap();
     }
 
     @Override
-    public Flowable<LatLng> observerLongClick() {
+    public Observable<LatLng> observerLongClick() {
         return mapView.observerLongClick();
     }
 

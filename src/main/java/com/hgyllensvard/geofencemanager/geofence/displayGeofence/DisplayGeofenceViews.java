@@ -7,11 +7,11 @@ import com.hgyllensvard.geofencemanager.geofence.Geofence;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 public interface DisplayGeofenceViews extends View {
 
-    Flowable<Boolean> displayMap();
+    Observable<Boolean> displayMap();
 
     void displayGeofences(List<Geofence> markers);
 
