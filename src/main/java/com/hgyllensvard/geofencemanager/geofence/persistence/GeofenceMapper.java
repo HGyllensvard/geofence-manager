@@ -27,7 +27,8 @@ class GeofenceMapper {
                 geofenceModel._id(),
                 geofenceModel.name(),
                 new LatLng(geofenceModel.latitude(), geofenceModel.longitude()),
-                (float) geofenceModel.radius());
+                (float) geofenceModel.radius(),
+                geofenceModel.enabled() == 1);
     }
 
     ContentValues toContentValues(@NonNull Geofence download) {
@@ -35,7 +36,8 @@ class GeofenceMapper {
                 .name(download.name())
                 .latitude(download.latLng().latitude)
                 .longitude(download.latLng().longitude)
-                .radius(download.radius());
+                .radius(download.radius())
+                .enabled(download.active() ? 1 : 0);
 
         if (download.id() != Geofence.NO_ID) {
             marshal._id(download.id());

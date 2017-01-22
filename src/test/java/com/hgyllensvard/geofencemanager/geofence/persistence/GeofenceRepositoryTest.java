@@ -61,7 +61,7 @@ public class GeofenceRepositoryTest {
 
         clearDatabase();
 
-        testGeofence = Geofence.create(NAME, new LatLng(LATITUDE, LONGITUDE), RADIUS);
+        testGeofence = Geofence.create(NAME, new LatLng(LATITUDE, LONGITUDE), RADIUS, true);
     }
 
     @After
@@ -174,7 +174,7 @@ public class GeofenceRepositoryTest {
                 .assertValueAt(0, testGeofences -> testGeofences.size() == 1 &&
                         testGeofences.get(0).equals(testGeofence.withId(1)));
 
-        Geofence geofenceTwo = Geofence.create("New Geofence", new LatLng(2, 2), 2);
+        Geofence geofenceTwo = Geofence.create("New Geofence", new LatLng(2, 2), 2, true);
         repository.insert(geofenceTwo)
                 .test()
                 .awaitDone(1, TimeUnit.SECONDS)

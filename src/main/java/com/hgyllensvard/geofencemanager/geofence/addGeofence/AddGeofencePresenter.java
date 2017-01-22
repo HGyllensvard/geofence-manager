@@ -67,7 +67,7 @@ public class AddGeofencePresenter extends PresenterAdapter<AddGeofenceViews> {
     }
 
     private Geofence createNewGeofence(LatLng latLng) {
-        return Geofence.create(mapOptions.geofenceCreatedName(), latLng, mapOptions.geofenceCreatedRadius());
+        return Geofence.create(mapOptions.geofenceCreatedName(), latLng, mapOptions.geofenceCreatedRadius(), true);
     }
 
     @Override

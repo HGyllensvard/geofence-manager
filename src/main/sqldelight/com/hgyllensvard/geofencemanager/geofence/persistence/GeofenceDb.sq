@@ -3,7 +3,8 @@ CREATE TABLE geofence (
   name TEXT NOT NULL,
   latitude REAL NOT NULL,
   longitude REAL NOT NULL,
-  radius REAL NOT NULL
+  radius REAL NOT NULL,
+  enabled INTEGER NOT NULL
 );
 
 select_all:

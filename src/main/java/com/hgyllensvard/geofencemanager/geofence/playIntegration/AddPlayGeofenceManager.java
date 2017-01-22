@@ -50,11 +50,7 @@ class AddPlayGeofenceManager {
                             return;
                         }
 
-                        if (status.isSuccess()) {
-                            emitter.onSuccess(true);
-                        } else {
-                            emitter.onError(new IllegalStateException("Failed to save"));
-                        }
+                        emitter.onSuccess(status.isSuccess());
                     });
                 })).subscribeOn(Schedulers.io());
     }

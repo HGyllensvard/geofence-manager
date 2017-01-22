@@ -1,8 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 
-import android.support.annotation.NonNull;
-
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
@@ -32,51 +30,39 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    public Single<AddGeofenceResult> addGeofence(
-            Geofence geofence
-    ) {
+    /**
+     * @param geofence Geofence to persis and add to the active geofences.
+     * @return The GeofenceActionResult will hld a boolean for success or not.
+     * If success is true the result will also contain the Geofence with the
+     * database id.
+     * <p>
+     * Upon a failure success is false and the related Error can be fetched
+     * from the failure method.
+     */
+    public Single<GeofenceActionResult> addGeofence(Geofence geofence) {
         return geofenceRepository.insert(geofence)
-                .flatMap(addedGeofence -> playServicesGeofenceManager.activateGeofence(addedGeofence)
-                        .flatMap(successfullyActivatedGeofence -> {
-                            if (successfullyActivatedGeofence) {
-                                return Single.just(AddGeofenceResult.success(addedGeofence));
-                            } else {
-                                return manageFailedToAddGeofence(addedGeofence);
-                            }
-                        }))
-                .onErrorReturn(AddGeofenceResult::failure)
+                .flatMap(this::activateGeofenceToPlay)
+                .onErrorReturn(GeofenceActionResult::failure)
                 .subscribeOn(Schedulers.io());
     }
-
-    /*
-     * Try to clean up the database if the geofence couldn't be added to the play services.
-     */
-    private SingleSource<? extends AddGeofenceResult> manageFailedToAddGeofence(Geofence geofence) {
-        return geofenceRepository.delete(geofence.id())
-                .map(deleted -> AddGeofenceResult.failure(new FailedToAddGeofenceException()));
-    }
-
+    
     public Single<Boolean> removeGeofence(long geofenceId) {
         return playServicesGeofenceManager.removeGeofence(geofenceId)
-                .flatMap(aBoolean -> geofenceRepository.delete(geofenceId))
+                .flatMap(ignored -> geofenceRepository.delete(geofenceId))
+                .onErrorReturnItem(false)
                 .subscribeOn(Schedulers.io());
     }
 
-    public Single<Geofence> updateGeofence(Geofence oldGeofence, Geofence updatedGeofence) {
-        return Single.fromCallable(() -> validateUpdateGeofenceInput(oldGeofence, updatedGeofence))
-                .flatMap(ignored -> playServicesGeofenceManager.removeGeofence(oldGeofence.id()))
-                .flatMap(ignored -> playServicesGeofenceManager.activateGeofence(updatedGeofence))
-                .flatMap(successfullyRemoved -> geofenceRepository.update(updatedGeofence))
-                .map(aBoolean -> updatedGeofence);
-    }
-
-    @NonNull
-    private Boolean validateUpdateGeofenceInput(Geofence oldGeofence, Geofence updatedGeofence) {
-        if (oldGeofence.id() != updatedGeofence.id()) {
-            throw new IllegalArgumentException("Not updating the same geofence, old: " + oldGeofence + ", new: " + updatedGeofence);
-        }
-
-        return true;
+    public Single<GeofenceActionResult> updateGeofence(Geofence geofence) {
+        return Single.fromCallable(() -> playServicesGeofenceManager.removeGeofence(geofence.id()))
+                .flatMap(successfullyRemoved -> geofenceRepository.update(geofence))
+                .flatMap(successfullyUpdatedGeofence -> {
+                    if (successfullyUpdatedGeofence) {
+                        return activateGeofenceToPlay(geofence);
+                    } else {
+                        return Single.just(GeofenceActionResult.failure(new FailedToUpdateGeofenceException(geofence)));
+                    }
+                });
     }
 
     public Flowable<List<Geofence>> observeGeofences() {
@@ -85,5 +71,24 @@ public class GeofenceManager {
 
     public Single<Geofence> getGeofence(long identifier) {
         return geofenceRepository.getGeofence(identifier);
+    }
+
+    private Single<GeofenceActionResult> activateGeofenceToPlay(Geofence addedGeofence) {
+        return playServicesGeofenceManager.activateGeofence(addedGeofence)
+                .flatMap(successfullyActivatedGeofence -> {
+                    if (successfullyActivatedGeofence) {
+                        return Single.just(GeofenceActionResult.success(addedGeofence));
+                    } else {
+                        return manageFailedToAddGeofence(addedGeofence);
+                    }
+                });
+    }
+
+    /*
+     * Try to clean up the database if the geofence couldn't be added to the play services.
+     */
+    private SingleSource<? extends GeofenceActionResult> manageFailedToAddGeofence(Geofence geofence) {
+        return geofenceRepository.delete(geofence.id())
+                .map(deleted -> GeofenceActionResult.failure(new FailedToAddGeofenceException()));
     }
 }

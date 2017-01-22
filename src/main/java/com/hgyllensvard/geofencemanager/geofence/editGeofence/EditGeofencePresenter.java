@@ -117,7 +117,7 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
             Geofence geofence,
             String newName
     ) {
-        Disposable disposable = geofenceManager.updateGeofence(geofence, geofence.withName(newName))
+        Disposable disposable = geofenceManager.updateGeofence(geofence.withName(newName))
                 .subscribe(updatedGeofence -> Timber.v("Updated geofence to: %s", updatedGeofence),
                         Timber::e);
 

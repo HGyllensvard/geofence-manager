@@ -16,29 +16,35 @@ public abstract class Geofence {
 
     public abstract float radius();
 
+    public abstract boolean active();
+
     public static Geofence create(
             long id,
             String name,
             LatLng latLng,
-            float radius
+            float radius,
+            boolean active
     ) {
         return new AutoValue_Geofence.Builder()
                 .id(id)
                 .name(name)
                 .latLng(latLng)
                 .radius(radius)
+                .active(active)
                 .build();
     }
 
     public static Geofence create(
             String name,
             LatLng latLng,
-            float radius
+            float radius,
+            boolean active
     ) {
         return create(NO_ID,
                 name,
                 latLng,
-                radius);
+                radius,
+                active);
     }
 
     abstract Builder toBuilder();
@@ -60,6 +66,8 @@ public abstract class Geofence {
         abstract Builder latLng(LatLng latLng);
 
         abstract Builder radius(float radius);
+
+        abstract Builder active(boolean active);
 
         abstract Geofence build();
     }

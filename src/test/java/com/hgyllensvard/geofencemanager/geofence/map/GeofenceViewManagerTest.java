@@ -24,7 +24,7 @@ public class GeofenceViewManagerTest {
     private static final LatLng LAT_LNG = new LatLng(10, 20);
     private static final float RADIUS = 5;
 
-    private final Geofence testGeofence = Geofence.create(GEOFENCE_ID, NAME, LAT_LNG, RADIUS);
+    private final Geofence testGeofence = Geofence.create(GEOFENCE_ID, NAME, LAT_LNG, RADIUS, true);
     private final List<Geofence> testGeofences = new ArrayList<>();
 
     @Before
