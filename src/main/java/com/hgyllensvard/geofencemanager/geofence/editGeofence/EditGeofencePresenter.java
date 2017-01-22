@@ -54,6 +54,7 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
         Disposable disposable = view.observeGeofenceSelected()
                 .debounce(SELECT_DEBOUNCE_TIMER, SELECT_DEBOUNCE_TIMER_UNIT)
                 .observeOn(AndroidSchedulers.mainThread())
+                .filter(geofenceId -> selectedGeofenceId != geofenceId)
                 .subscribe(geofenceId -> {
                     selectedGeofenceId = geofenceId;
                     view.displaySelectedGeofenceOptions();

@@ -3,10 +3,12 @@ package com.hgyllensvard.geofencemanager.geofence.map;
 import android.support.annotation.ColorInt;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 public class GeofenceView {
@@ -30,6 +32,7 @@ public class GeofenceView {
 
     public void display(GoogleMap map) {
         marker = map.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_select_geofence))
                 .position(geofence.latLng())
                 .draggable(false));
 
@@ -58,11 +61,6 @@ public class GeofenceView {
 
     public boolean isMarker(String markerId) {
         return marker.getId().equals(markerId);
-    }
-
-    public void delete() {
-        marker.remove();
-        circle.remove();
     }
 
     @Override

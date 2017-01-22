@@ -112,8 +112,8 @@ public class GeofenceModule {
             Context context
     ) {
         return GeofenceMapOptions.create()
-                .strokeColor(ContextCompat.getColor(context, R.color.colorAccent))
-                .fillColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .strokeColor(ContextCompat.getColor(context, R.color.transparentRed))
+                .fillColor(ContextCompat.getColor(context, R.color.transparentBlue))
                 .build();
     }
 

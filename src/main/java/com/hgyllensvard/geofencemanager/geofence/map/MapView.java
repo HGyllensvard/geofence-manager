@@ -118,7 +118,7 @@ public class MapView {
         Disposable disposable = geofenceViewManager.observeRemovedGeofenceViews()
                 .filter(geofenceViews -> !geofenceViews.isEmpty())
                 .flatMap(Observable::fromIterable)
-                .subscribe(GeofenceView::delete,
+                .subscribe(GeofenceView::remove,
                         Timber::e);
 
         disposables.add(disposable);
