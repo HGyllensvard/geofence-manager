@@ -30,7 +30,7 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    /**
+    /** 
      * @param geofence Geofence to persis and add to the active geofences.
      * @return The GeofenceActionResult will hld a boolean for success or not.
      * If success is true the result will also contain the Geofence with the
@@ -45,7 +45,7 @@ public class GeofenceManager {
                 .onErrorReturn(GeofenceActionResult::failure)
                 .subscribeOn(Schedulers.io());
     }
-    
+
     public Single<Boolean> removeGeofence(long geofenceId) {
         return playServicesGeofenceManager.removeGeofence(geofenceId)
                 .flatMap(ignored -> geofenceRepository.delete(geofenceId))

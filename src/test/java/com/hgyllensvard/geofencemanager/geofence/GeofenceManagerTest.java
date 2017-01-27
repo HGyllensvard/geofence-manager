@@ -1,9 +1,8 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.FailedToAddGeofenceException;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
@@ -33,21 +32,18 @@ public class GeofenceManagerTest {
 
     private GeofenceManager geofenceManager;
 
-    private Geofence testGeofence;
-    private Geofence insertedTestGeofence;
+    private Geofence testGeofence = GeofenceTestHelper.testGeofence;
+    private Geofence insertedTestGeofence = GeofenceTestHelper.insertedTestGeofence;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        testGeofence = Geofence.create("name", new LatLng(10, 20), 30, true);
-        insertedTestGeofence = testGeofence.withId(1);
 
         geofenceManager = new GeofenceManager(geofenceRepository, playServicesGeofenceManager);
     }
 
     @Test
-    public void shouldSuccessfullyAddGeofence() throws Exception {
+    public void shouldSuccessfullyAddGeofence() {
         when(geofenceRepository.insert(testGeofence)).thenReturn(Single.just(insertedTestGeofence));
         when(playServicesGeofenceManager.activateGeofence(insertedTestGeofence)).thenReturn(Single.just(true));
 
@@ -84,7 +80,7 @@ public class GeofenceManagerTest {
     }
 
     @Test
-    public void shouldSuccessfullyRemoveGeofence() throws Exception {
+    public void shouldSuccessfullyRemoveGeofence() {
         when(playServicesGeofenceManager.removeGeofence(insertedTestGeofence.id())).thenReturn(Single.just(false));
         when(geofenceRepository.delete(1)).thenReturn(Single.just(true));
 
@@ -121,12 +117,12 @@ public class GeofenceManagerTest {
     }
 
     @Test
-    public void observeGeofences() throws Exception {
+    public void observeGeofences() {
         verify(geofenceRepository, times(1)).listenGeofences();
     }
 
     @Test
-    public void getGeofence() throws Exception {
+    public void getGeofence() {
         verify(geofenceRepository, times(1)).getGeofence(any(Long.class));
     }
 }

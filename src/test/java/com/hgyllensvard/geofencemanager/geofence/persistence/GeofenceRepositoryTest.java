@@ -51,7 +51,7 @@ public class GeofenceRepositoryTest {
     private Geofence testGeofence;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         TestRepositoryComponent testRepositoryComponent = DaggerGeofenceRepositoryTest_TestRepositoryComponent.builder()
                 .contextModule(new ContextModule(RuntimeEnvironment.application))
                 .geofencePersistenceModule(new GeofencePersistenceModule())
@@ -65,7 +65,7 @@ public class GeofenceRepositoryTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         clearDatabase();
     }
 

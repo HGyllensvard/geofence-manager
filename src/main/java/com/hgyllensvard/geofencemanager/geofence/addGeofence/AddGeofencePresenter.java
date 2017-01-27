@@ -9,8 +9,6 @@ import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -19,13 +17,10 @@ import timber.log.Timber;
 
 public class AddGeofencePresenter extends PresenterAdapter<AddGeofenceViews> {
 
-    private static final int LONG_CLICK_DEBOUNCE_TIMER = 1;
-    private static final TimeUnit LONG_CLICK_DEBOUNCE_TIMER_UNIT = TimeUnit.SECONDS;
-
     private final GeofenceManager geofenceManager;
     private final GeofenceMapOptions mapOptions;
 
-    private final CompositeDisposable disposableContainer;
+    final CompositeDisposable disposableContainer;
 
     public AddGeofencePresenter(
             GeofenceManager geofenceManager,
@@ -41,29 +36,32 @@ public class AddGeofencePresenter extends PresenterAdapter<AddGeofenceViews> {
     public void bindView(@NonNull AddGeofenceViews view) {
         super.bindView(view);
 
-        view.displayMap()
+        Disposable disposable = view.displayMap()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> subscribeLongClick(),
-                        Timber::e);
-    }
-
-    private void subscribeLongClick() {
-        Disposable disposable = view.observerLongClick()
-                .observeOn(Schedulers.io())
-                .debounce(LONG_CLICK_DEBOUNCE_TIMER, LONG_CLICK_DEBOUNCE_TIMER_UNIT)
-                .doOnNext(latLng -> Timber.v("Adding new geofence at: %s", latLng))
-                .subscribe(this::addGeofence,
                         Timber::e);
 
         disposableContainer.add(disposable);
     }
 
+    private void subscribeLongClick() {
+        Disposable disposable = view.observerLongClick()
+                .observeOn(Schedulers.io())
+                .doOnNext(latLng -> Timber.v("Adding new geofence at: %s", latLng))
+                .doOnError(Timber::e)
+                .retry()
+                .subscribe(this::addGeofence);
+
+        disposableContainer.add(disposable);
+    }
+
     private void addGeofence(LatLng latLng) {
-        disposableContainer.add(
-                geofenceManager.addGeofence(createNewGeofence(latLng))
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(geofence -> Timber.i("Geofence added: %s", geofence),
-                                Timber::e));
+        Disposable disposable = geofenceManager.addGeofence(createNewGeofence(latLng))
+                .subscribeOn(Schedulers.io())
+                .subscribe(geofence -> Timber.i("Geofence added: %s", geofence),
+                        Timber::e);
+
+        disposableContainer.add(disposable);
     }
 
     private Geofence createNewGeofence(LatLng latLng) {
