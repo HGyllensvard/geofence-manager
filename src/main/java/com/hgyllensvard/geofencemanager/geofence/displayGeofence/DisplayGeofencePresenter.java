@@ -18,7 +18,7 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
     private final GeofenceManager geofenceManager;
     private final MapCameraManager mapCameraManager;
 
-    private final CompositeDisposable disposableContainer;
+    final CompositeDisposable disposableContainer;
 
     public DisplayGeofencePresenter(
             GeofenceManager geofenceManager,
@@ -42,6 +42,13 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
                         Timber::e);
     }
 
+    @Override
+    public void unbindView() {
+        super.unbindView();
+
+        disposableContainer.clear();
+    }
+
     private void zoomToUserPosition() {
         view.animateCameraTo(mapCameraManager.userPosition());
     }
@@ -58,12 +65,5 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
                 );
 
         disposableContainer.add(disposable);
-    }
-
-    @Override
-    public void unbindView() {
-        super.unbindView();
-
-        disposableContainer.clear();
     }
 }

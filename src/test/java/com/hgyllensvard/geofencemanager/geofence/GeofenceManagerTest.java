@@ -32,8 +32,8 @@ public class GeofenceManagerTest {
 
     private GeofenceManager geofenceManager;
 
-    private Geofence testGeofence = GeofenceTestHelper.testGeofence;
-    private Geofence insertedTestGeofence = GeofenceTestHelper.insertedTestGeofence;
+    private Geofence testGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE;
+    private Geofence insertedTestGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
 
     @Before
     public void setUp() {

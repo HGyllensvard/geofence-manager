@@ -59,16 +59,16 @@ public class AddGeofencePresenterTest {
     public void shouldAddGeofenceWhenLockClickOccurs() {
         PublishSubject<LatLng> subject = PublishSubject.create();
 
-        when(geofenceMapOptions.geofenceCreatedName()).thenReturn(GeofenceTestHelper.NAME);
-        when(geofenceMapOptions.geofenceCreatedRadius()).thenReturn(GeofenceTestHelper.RADIUS);
+        when(geofenceMapOptions.geofenceCreatedName()).thenReturn(GeofenceTestHelper.NAME_ONE);
+        when(geofenceMapOptions.geofenceCreatedRadius()).thenReturn(GeofenceTestHelper.RADIUS_ONE);
         when(addGeofenceViews.observerLongClick()).thenReturn(subject);
         when(addGeofenceViews.displayMap()).thenReturn(Observable.just(true));
 
         addGeofencePresenter.bindView(addGeofenceViews);
 
-        subject.onNext(GeofenceTestHelper.LAT_LNG);
+        subject.onNext(GeofenceTestHelper.LAT_LNG_ONE);
 
-        verify(geofenceManager, times(1)).addGeofence(GeofenceTestHelper.testGeofence);
+        verify(geofenceManager, times(1)).addGeofence(GeofenceTestHelper.TEST_GEOFENCE_ONE);
     }
 
     @Test

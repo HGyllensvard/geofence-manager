@@ -30,7 +30,7 @@ public class MapView {
     private Observable<LatLng> longClickFlowable;
     private Observable<Long> selectMarkerFlowable;
     private Observable<Integer> cameraMovedFlowable;
-    private Observable<Boolean> mapFlowable;
+    private Observable<Boolean> mapReadyObservable;
 
     private GoogleMap googleMap;
     private CompositeDisposable disposables;
@@ -46,11 +46,11 @@ public class MapView {
 
         disposables = new CompositeDisposable();
         mapFragment = SupportMapFragment.newInstance();
-        mapFlowable = createMapFlowable(activity);
+        mapReadyObservable = createMapReadyObservable(activity);
     }
 
     public Observable<Boolean> initialiseAndDisplayMap() {
-        return mapFlowable;
+        return mapReadyObservable;
     }
 
     private void enableUserLocation() throws SecurityException {
@@ -89,7 +89,7 @@ public class MapView {
         return cameraMovedFlowable;
     }
 
-    private Observable<Boolean> createMapFlowable(AppCompatActivity activity) {
+    private Observable<Boolean> createMapReadyObservable(AppCompatActivity activity) {
         return loadMapAsync()
                 .doOnTerminate(() -> {
                     Timber.d("Removing map fragment");
