@@ -3,6 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 
 import java.util.List;
@@ -25,8 +26,13 @@ public class DisplayGeofenceView implements DisplayGeofenceViews {
     }
 
     @Override
-    public void displayGeofences(List<Geofence> markers) {
-        mapView.displayGeofences(markers);
+    public void displayGeofenceViews(List<GeofenceView> geofenceViews) {
+        mapView.updateGeofenceViews(geofenceViews);
+    }
+
+    @Override
+    public void removeGeofenceViews(List<GeofenceView> geofenceViews) {
+        mapView.removedGeofenceViews(geofenceViews);
     }
 
     @Override

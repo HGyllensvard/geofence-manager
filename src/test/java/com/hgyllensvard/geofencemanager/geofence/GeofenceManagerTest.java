@@ -17,9 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Single;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class GeofenceManagerTest {
@@ -114,15 +111,5 @@ public class GeofenceManagerTest {
                 .assertValue(value -> {
                     return value.equals(GeofenceActionResult.success(insertedTestGeofence));
                 });
-    }
-
-    @Test
-    public void observeGeofences() {
-        verify(geofenceRepository, times(1)).listenGeofences();
-    }
-
-    @Test
-    public void getGeofence() {
-        verify(geofenceRepository, times(1)).getGeofence(any(Long.class));
     }
 }

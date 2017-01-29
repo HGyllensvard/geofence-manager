@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceView;
 
 import java.util.List;
 
@@ -13,7 +13,9 @@ public interface DisplayGeofenceViews extends View {
 
     Observable<Boolean> displayMap();
 
-    void displayGeofences(List<Geofence> markers);
+    void displayGeofenceViews(List<GeofenceView> geofenceViews);
+
+    void removeGeofenceViews(List<GeofenceView> geofenceViews);
 
     void animateCameraTo(CameraUpdate cameraUpdate);
 }

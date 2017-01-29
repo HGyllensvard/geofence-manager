@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 
-import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceViewTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
 
 import org.junit.After;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class DisplayGeofencePresenterTest {
 
     @Mock
-    GeofenceManager geofenceManager;
+    GeofenceViewManager geofenceViewManager;
 
     @Mock
     MapCameraManager mapCameraManager;
@@ -47,7 +47,7 @@ public class DisplayGeofencePresenterTest {
 
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
-        displayGeofencePresenter = new DisplayGeofencePresenter(geofenceManager, mapCameraManager);
+        displayGeofencePresenter = new DisplayGeofencePresenter(geofenceViewManager, mapCameraManager);
     }
 
     @After
@@ -70,17 +70,18 @@ public class DisplayGeofencePresenterTest {
     @Test
     public void shouldSuccessfullyUpdateMapWithGeofencesWhenMapIsDisplayed() {
         when(displayGeofenceViews.displayMap()).thenReturn(Observable.just(true));
-        when(geofenceManager.observeGeofences()).thenReturn(Flowable.just(GeofenceTestHelper.TEST_GEOFENCES));
+        when(geofenceViewManager.observeGeofenceViews()).thenReturn(Flowable.just(GeofenceViewTestHelper.TEST_GEOFENCE_VIEW_UPDATE));
 
         displayGeofencePresenter.bindView(displayGeofenceViews);
 
-        verify(displayGeofenceViews, times(1)).displayGeofences(GeofenceTestHelper.TEST_GEOFENCES);
+        verify(displayGeofenceViews, times(1)).displayGeofenceViews(GeofenceViewTestHelper.GEOFENCE_VIEWS_UPDATED);
+        verify(displayGeofenceViews, times(1)).removeGeofenceViews(GeofenceViewTestHelper.GEOFENCE_VIEWS_REMOVED);
     }
 
     @Test
     public void shouldUnsubscribeWhenUnbinding() {
         when(displayGeofenceViews.displayMap()).thenReturn(Observable.just(true));
-        when(geofenceManager.observeGeofences()).thenReturn(PublishProcessor.create());
+        when(geofenceViewManager.observeGeofenceViews()).thenReturn(PublishProcessor.create());
 
         displayGeofencePresenter.bindView(displayGeofenceViews);
 

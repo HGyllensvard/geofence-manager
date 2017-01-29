@@ -9,14 +9,12 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class MapView {
@@ -55,10 +53,6 @@ public class MapView {
 
     private void enableUserLocation() throws SecurityException {
         googleMap.setMyLocationEnabled(true);
-    }
-
-    public void displayGeofences(List<Geofence> geofences) {
-        geofenceViewManager.updateGeofenceViews(geofences);
     }
 
     public void animateCameraTo(CameraUpdate cameraUpdate) {
@@ -106,32 +100,22 @@ public class MapView {
                     longClickFlowable = createLongPressMapFlowable();
                     selectMarkerFlowable = createSelectedGeofenceFlowable();
                     cameraMovedFlowable = createCameraMoveStartedFlowable();
-                    createUpdatedGeofenceViewsListener();
-                    createRemovedGeofenceViewsListener();
                     Timber.i("Map View successfully setup");
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .share();
     }
 
-    private void createRemovedGeofenceViewsListener() {
-        Disposable disposable = geofenceViewManager.observeRemovedGeofenceViews()
-                .filter(geofenceViews -> !geofenceViews.isEmpty())
-                .flatMap(Observable::fromIterable)
-                .subscribe(GeofenceView::remove,
-                        Timber::e);
-
-        disposables.add(disposable);
+    public void removedGeofenceViews(List<GeofenceView> geofenceViews) {
+        for (GeofenceView geofenceView : geofenceViews) {
+            geofenceView.remove();
+        }
     }
 
-    private void createUpdatedGeofenceViewsListener() {
-        Disposable disposable = geofenceViewManager.observeUpdatedGeofenceViews()
-                .filter(geofenceViews -> !geofenceViews.isEmpty())
-                .flatMap(Observable::fromIterable)
-                .subscribe(geofenceView -> geofenceView.display(googleMap),
-                        Timber::e);
-
-        disposables.add(disposable);
+    public void updateGeofenceViews(List<GeofenceView> geofenceViews) {
+        for (GeofenceView geofenceView : geofenceViews) {
+            geofenceView.display(googleMap);
+        }
     }
 
     private Observable<Boolean> loadMapAsync() {
@@ -156,6 +140,7 @@ public class MapView {
 
         fragmentTransaction.add(mapContainer, mapFragment);
         fragmentTransaction.commit();
+        Timber.v("Map committed to be displayed");
     }
 
     private Observable<LatLng> createLongPressMapFlowable() {

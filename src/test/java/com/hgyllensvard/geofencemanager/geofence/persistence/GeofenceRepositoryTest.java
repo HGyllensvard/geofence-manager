@@ -78,7 +78,7 @@ public class GeofenceRepositoryTest {
     }
 
     @Test
-    public void shouldDeleteGeofence() {
+    public void  shouldDeleteGeofence() {
         Geofence insertedGeofence = repository.insert(testGeofence)
                 .blockingGet();
 

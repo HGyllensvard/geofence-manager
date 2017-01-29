@@ -27,7 +27,8 @@ public class GeofenceTestHelper {
     public static final boolean IS_ACTIVE_TWO = false;
 
     public static final Geofence TEST_GEOFENCE_TWO = Geofence.create(NAME_TWO, LAT_LNG_TWO, RADIUS_TWO, IS_ACTIVE_TWO);
-    public static final Geofence TEST_GEOFENCE_TWO_WITH_ID = TEST_GEOFENCE_TWO.withId(1);
+    public static final Geofence TEST_GEOFENCE_TWO_WITH_ID = TEST_GEOFENCE_TWO.withId(2);
 
     public static final List<Geofence> TEST_GEOFENCES = Arrays.asList(TEST_GEOFENCE_ONE, TEST_GEOFENCE_TWO);
+    public static final List<Geofence> TEST_GEOFENCES_WITH_ID = Arrays.asList(TEST_GEOFENCE_ONE_WITH_ID, TEST_GEOFENCE_TWO_WITH_ID);
 }

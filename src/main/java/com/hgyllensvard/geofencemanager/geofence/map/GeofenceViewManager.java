@@ -4,6 +4,7 @@ package com.hgyllensvard.geofencemanager.geofence.map;
 import android.annotation.SuppressLint;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,32 +13,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import timber.log.Timber;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GeofenceViewManager {
 
+    private final GeofenceManager geofenceManager;
     private final GeofenceMapOptions mapOptions;
 
     @SuppressLint("UseSparseArrays") // Does not support all methods used here
     private final Map<Long, GeofenceView> geofenceViews = new HashMap<>();
-    private final BehaviorSubject<List<GeofenceView>> geofenceViewSubject;
-    private final PublishSubject<List<GeofenceView>> updatedGeofenceViewSubject;
-    private final PublishSubject<List<GeofenceView>> removedGeofenceViewSubject;
 
     public GeofenceViewManager(
+            GeofenceManager geofenceManager,
             GeofenceMapOptions mapOptions
     ) {
+        this.geofenceManager = geofenceManager;
         this.mapOptions = mapOptions;
-
-        geofenceViewSubject = BehaviorSubject.create();
-        updatedGeofenceViewSubject = PublishSubject.create();
-        removedGeofenceViewSubject = PublishSubject.create();
     }
 
-    void updateGeofenceViews(List<Geofence> geofences) {
+    public Flowable<GeofenceViewUpdate> observeGeofenceViews() {
+        return geofenceManager.observeGeofences()
+                .map(this::updateGeofenceViews)
+                .subscribeOn(Schedulers.io())
+                .share();
+    }
+
+    private GeofenceViewUpdate updateGeofenceViews(List<Geofence> geofences) {
         List<GeofenceView> updatedGeofenceViews = new ArrayList<>();
         List<GeofenceView> removedGeofenceViews = new ArrayList<>();
 
@@ -60,25 +62,11 @@ public class GeofenceViewManager {
             removedGeofenceViews.add(geofenceViews.remove(key));
         }
 
-        geofenceViewSubject.onNext(new ArrayList<>(geofenceViews.values()));
-
-        Timber.v("Added or updated geofences: %s", updatedGeofenceViews);
-        updatedGeofenceViewSubject.onNext(updatedGeofenceViews);
-
-        Timber.v("Removing geofences: %s", removedGeofenceViews);
-        removedGeofenceViewSubject.onNext(removedGeofenceViews);
-    }
-
-    Observable<List<GeofenceView>> observeGeofenceViews() {
-        return geofenceViewSubject;
-    }
-
-    Observable<List<GeofenceView>> observeUpdatedGeofenceViews() {
-        return updatedGeofenceViewSubject;
-    }
-
-    Observable<List<GeofenceView>> observeRemovedGeofenceViews() {
-        return removedGeofenceViewSubject;
+        return GeofenceViewUpdate.create(
+                new ArrayList<>(geofenceViews.values()),
+                updatedGeofenceViews,
+                removedGeofenceViews
+        );
     }
 
     long findGeofenceId(String markerId) {

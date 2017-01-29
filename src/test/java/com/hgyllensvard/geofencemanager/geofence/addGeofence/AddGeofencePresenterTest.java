@@ -2,6 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
 
@@ -10,15 +12,18 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,6 +68,7 @@ public class AddGeofencePresenterTest {
         when(geofenceMapOptions.geofenceCreatedRadius()).thenReturn(GeofenceTestHelper.RADIUS_ONE);
         when(addGeofenceViews.observerLongClick()).thenReturn(subject);
         when(addGeofenceViews.displayMap()).thenReturn(Observable.just(true));
+        when(geofenceManager.addGeofence(any(Geofence.class))).thenReturn(Single.just(Mockito.mock(GeofenceActionResult.class)));
 
         addGeofencePresenter.bindView(addGeofenceViews);
 

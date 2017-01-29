@@ -54,20 +54,23 @@ public class GeofenceModule {
     @PerActivity
     @Provides
     DisplayGeofencePresenter providesDisplayGeofencePresenter(
-            GeofenceManager geofenceManager,
+            GeofenceViewManager geofenceViewManager,
             MapCameraManager mapCameraManager
     ) {
         return new DisplayGeofencePresenter(
-                geofenceManager,
+                geofenceViewManager,
                 mapCameraManager);
     }
 
     @PerActivity
     @Provides
     GeofenceViewManager providesGeofenceMarkerManager(
+            GeofenceManager geofenceManager,
             GeofenceMapOptions geofenceMapOptions
     ) {
-        return new GeofenceViewManager(geofenceMapOptions);
+        return new GeofenceViewManager(
+                geofenceManager,
+                geofenceMapOptions);
     }
 
     @PerActivity
