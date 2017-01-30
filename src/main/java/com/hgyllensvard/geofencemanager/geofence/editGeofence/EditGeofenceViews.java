@@ -17,11 +17,5 @@ public interface EditGeofenceViews extends View {
 
     void displaySelectedGeofenceOptions();
 
-    Observable<Boolean> observeRenameGeofence();
-
     Observable<Boolean> observeDeleteGeofence();
-
-    void displayRenameGeofence(String name);
-
-    void removeMarkerFromMap(long selectedGeofenceId);
 }

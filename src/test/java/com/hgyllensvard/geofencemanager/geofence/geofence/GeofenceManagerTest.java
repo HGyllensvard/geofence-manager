@@ -1,5 +1,6 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.geofence;
 
+import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.geofence.FailedToAddGeofenceException;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;

@@ -1,9 +1,8 @@
 package com.hgyllensvard.geofencemanager.geofence.geofence;
 
+class FailedToAddGeofenceException extends Throwable {
 
-public class FailedToAddGeofenceException extends Throwable {
-
-    public FailedToAddGeofenceException() {
+    FailedToAddGeofenceException() {
         super("Failed to add geofence");
     }
 }

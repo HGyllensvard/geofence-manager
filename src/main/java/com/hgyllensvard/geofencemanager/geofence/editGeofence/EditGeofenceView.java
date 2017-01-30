@@ -35,7 +35,6 @@ public class EditGeofenceView implements EditGeofenceViews {
     @BindView(R2.id.geofence_rename)
     EditText renameGeofence;
 
-    private final Activity activity;
     private final MapView mapView;
 
     private Unbinder unbinder;
@@ -47,7 +46,6 @@ public class EditGeofenceView implements EditGeofenceViews {
             Activity activity,
             MapView mapView
     ) {
-        this.activity = activity;
         this.mapView = mapView;
 
         unbinder = ButterKnife.bind(this, activity);
@@ -93,8 +91,7 @@ public class EditGeofenceView implements EditGeofenceViews {
         unbinder.unbind();
     }
 
-    @Override
-    public Observable<Boolean> observeRenameGeofence() {
+    private Observable<Boolean> observeRenameGeofence() {
         return renameObservable;
     }
 
@@ -103,19 +100,13 @@ public class EditGeofenceView implements EditGeofenceViews {
         return deleteFlowable;
     }
 
-    @Override
-    public void displayRenameGeofence(String name) {
+    private void displayRenameGeofence(String name) {
         renameGeofence.setVisibility(View.VISIBLE);
         renameGeofence.setText(name);
 
         displayKeyboard();
 
         renameGeofence.setSelection(name.length());
-    }
-
-    @Override
-    public void removeMarkerFromMap(long selectedGeofenceId) {
-
     }
 
     // Ugly solution, could not get the keyboard to be displayed properly.
