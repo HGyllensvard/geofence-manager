@@ -5,6 +5,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Scope;
 
+import dagger.Component;
+
 @Scope
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerActivity {

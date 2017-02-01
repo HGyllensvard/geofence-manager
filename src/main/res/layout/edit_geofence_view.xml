@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:fab="http://schemas.android.com/apk/res-auto"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+    >
+
+    <EditText
+        android:id="@+id/geofence_rename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/geofence_toolbar"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:background="@color/white"
+        android:inputType="text"
+        android:padding="7dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/edit_geofence_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        fab:menu_icon="@drawable/ic_menu_black_24dp"
+        >
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/geofence_menu_delete_geofence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete_black_24dp"
+            fab:fab_label="@string/delete"
+            fab:fab_size="mini"
+            />
+
+        <!-- Disabled for now -->
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/geofence_menu_rename_geofence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/geofence_rename"
+            android:src="@drawable/ic_edit_black_24dp"
+            android:visibility="gone"
+            fab:fab_label="@string/rename"
+            fab:fab_size="mini"
+            />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</merge>

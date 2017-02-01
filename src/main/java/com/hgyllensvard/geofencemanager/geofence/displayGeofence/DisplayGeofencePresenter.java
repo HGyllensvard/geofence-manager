@@ -70,7 +70,7 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
     }
 
     private void sendUpdatedGeofencesToView(List<GeofenceView> geofenceViews) {
-        Timber.d("Displaying geofences: %s", geofenceViews);
+        Timber.d("Updating geofences: %s", geofenceViews);
         if (!geofenceViews.isEmpty()) {
             view.displayGeofenceViews(geofenceViews);
         }

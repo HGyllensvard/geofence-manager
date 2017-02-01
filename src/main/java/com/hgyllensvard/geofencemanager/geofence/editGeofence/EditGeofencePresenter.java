@@ -34,6 +34,8 @@ public class EditGeofencePresenter extends PresenterAdapter<EditGeofenceViews> {
     public void bindView(@NonNull EditGeofenceViews view) {
         super.bindView(view);
 
+        view.hideSelectedGeofenceOptions();
+
         view.displayMap()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> {

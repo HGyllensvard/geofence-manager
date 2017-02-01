@@ -1,11 +1,11 @@
-package com.hgyllensvard.geofencemanager.geofence.map;
+package com.hgyllensvard.geofencemanager.geofence.map.exception;
 
 
-public class MapNotInitialisedError extends RuntimeException {
+public class MapNotInitialisedException extends RuntimeException {
 
     private static final String MAP_NOT_LOADED_ERROR = "The map view has not loaded yet, make sure that initialiseAndDisplayMap has returned successfully before using methods";
 
-    public MapNotInitialisedError() {
+    public MapNotInitialisedException() {
         super(MAP_NOT_LOADED_ERROR);
     }
 }

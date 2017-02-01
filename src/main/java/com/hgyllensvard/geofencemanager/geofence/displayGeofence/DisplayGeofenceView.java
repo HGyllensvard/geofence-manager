@@ -1,23 +1,68 @@
 package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 
 
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
+import android.widget.FrameLayout;
+
 import com.google.android.gms.maps.CameraUpdate;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.GeofenceManagerActivity;
+import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
-public class DisplayGeofenceView implements DisplayGeofenceViews {
+public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceViews {
 
-    private final MapView mapView;
+    @Inject
+    DisplayGeofencePresenter displayGeofencePresenter;
 
-    public DisplayGeofenceView(
-            MapView mapView
-    ) {
-        this.mapView = mapView;
+    @Inject
+    MapView mapView;
+
+    public DisplayGeofenceView(Context context) {
+        super(context);
+    }
+
+    public DisplayGeofenceView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public DisplayGeofenceView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        injectDependencies();
+
+        inflate(getContext(), R.layout.display_geofence_view, this);
+
+        displayGeofencePresenter.bindView(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        displayGeofencePresenter.unbindView();
+    }
+
+    private void injectDependencies() {
+        if (getContext() instanceof AppCompatActivity) {
+            ((GeofenceManagerActivity) getContext()).getGeofenceComponent()
+                    .inject(this);
+        } else {
+            throw new IllegalStateException("Activity not build to support this view");
+        }
     }
 
     @Override

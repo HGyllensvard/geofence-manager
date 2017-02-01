@@ -1,17 +1,24 @@
 package com.hgyllensvard.geofencemanager.geofence.editGeofence;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.hgyllensvard.geofencemanager.GeofenceManagerActivity;
+import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.R2;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 import com.jakewharton.rxbinding.view.RxView;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,7 +26,7 @@ import butterknife.Unbinder;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 
-public class EditGeofenceView implements EditGeofenceViews {
+public class EditGeofenceView extends RelativeLayout implements EditGeofenceViews {
 
     private static final int SIMULATE_CLICK_DELAY = 150;
 
@@ -35,20 +42,37 @@ public class EditGeofenceView implements EditGeofenceViews {
     @BindView(R2.id.geofence_rename)
     EditText renameGeofence;
 
-    private final MapView mapView;
+    @Inject
+    EditGeofencePresenter editGeofencePresenter;
+
+    @Inject
+    MapView mapView;
 
     private Unbinder unbinder;
 
     private Observable<Boolean> renameObservable;
     private Observable<Boolean> deleteFlowable;
 
-    public EditGeofenceView(
-            Activity activity,
-            MapView mapView
-    ) {
-        this.mapView = mapView;
+    public EditGeofenceView(Context context) {
+        super(context);
+    }
 
-        unbinder = ButterKnife.bind(this, activity);
+    public EditGeofenceView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public EditGeofenceView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        injectDependencies();
+
+        inflate(getContext(), R.layout.edit_geofence_view, this);
+        unbinder = ButterKnife.bind(this);
 
         renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
                 .map(aVoid -> true));
@@ -56,7 +80,24 @@ public class EditGeofenceView implements EditGeofenceViews {
         deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
                 .map(aVoid -> true));
 
-        editGeofenceMenu.hideMenuButton(false);
+        editGeofencePresenter.bindView(this);
+    }
+
+    private void injectDependencies() {
+        if (getContext() instanceof AppCompatActivity) {
+            ((GeofenceManagerActivity) getContext()).getGeofenceComponent()
+                    .inject(this);
+        } else {
+            throw new IllegalStateException("Activity not build to support this view");
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        editGeofencePresenter.unbindView();
+        unbinder.unbind();
     }
 
     @Override
@@ -72,6 +113,12 @@ public class EditGeofenceView implements EditGeofenceViews {
     @Override
     public Observable<Integer> observeCameraStartedMoving() {
         return mapView.observeCameraStartMoving();
+    }
+
+    @Override
+    public void instantlyHideSelectedGeofenceOptions() {
+        editGeofenceMenu.hideMenuButton(false);
+        renameGeofence.setVisibility(View.GONE);
     }
 
     @Override

@@ -6,19 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
-import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
-import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
-import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceView;
-import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceViews;
-import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofencePresenter;
-import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceView;
-import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceViews;
-import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
-import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceView;
-import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceViews;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
+import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
@@ -31,16 +25,8 @@ import dagger.Provides;
 @Module
 public class GeofenceModule {
 
-    @PerActivity
     @Provides
-    DisplayGeofenceViews providesGeofenceView(
-            MapView mapView
-    ) {
-        return new DisplayGeofenceView(mapView);
-    }
-
     @PerActivity
-    @Provides
     MapView providesMapView(
             AppCompatActivity appCompatActivity,
             GeofenceViewManager geofenceViewManager
@@ -75,14 +61,6 @@ public class GeofenceModule {
 
     @PerActivity
     @Provides
-    AddGeofenceViews providesAddGeofenceViews(
-            MapView mapView
-    ) {
-        return new AddGeofenceView(mapView);
-    }
-
-    @PerActivity
-    @Provides
     AddGeofencePresenter providesAddGeofencePresenter(
             GeofenceManager geofenceManager,
             GeofenceMapOptions geofenceMapOptions
@@ -90,15 +68,6 @@ public class GeofenceModule {
         return new AddGeofencePresenter(
                 geofenceManager,
                 geofenceMapOptions);
-    }
-
-    @PerActivity
-    @Provides
-    EditGeofenceViews providesEditGeofenceViews(
-            AppCompatActivity activity,
-            MapView mapView
-    ) {
-        return new EditGeofenceView(activity, mapView);
     }
 
     @PerActivity

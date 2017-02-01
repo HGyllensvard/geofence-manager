@@ -9,6 +9,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.hgyllensvard.geofencemanager.geofence.map.exception.MapNotInitialisedException;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class MapView {
 
     public Observable<LatLng> observerLongClick() {
         if (longClickFlowable == null) {
-            throw new MapNotInitialisedError();
+            throw new MapNotInitialisedException();
         }
 
         return longClickFlowable;
@@ -69,7 +70,7 @@ public class MapView {
 
     public Observable<Long> observeGeofenceSelected() {
         if (selectMarkerFlowable == null) {
-            throw new MapNotInitialisedError();
+            throw new MapNotInitialisedException();
         }
 
         return selectMarkerFlowable;
@@ -77,7 +78,7 @@ public class MapView {
 
     public Observable<Integer> observeCameraStartMoving() {
         if (cameraMovedFlowable == null) {
-            throw new MapNotInitialisedError();
+            throw new MapNotInitialisedException();
         }
 
         return cameraMovedFlowable;

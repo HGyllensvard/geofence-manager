@@ -13,6 +13,8 @@ public interface EditGeofenceViews extends View {
 
     Observable<Integer> observeCameraStartedMoving();
 
+    void instantlyHideSelectedGeofenceOptions();
+
     void hideSelectedGeofenceOptions();
 
     void displaySelectedGeofenceOptions();
