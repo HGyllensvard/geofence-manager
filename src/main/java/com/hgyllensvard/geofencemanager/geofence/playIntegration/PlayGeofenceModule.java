@@ -5,7 +5,8 @@ import android.content.Context;
 
 import com.google.android.gms.location.GeofencingApi;
 import com.google.android.gms.location.LocationServices;
-import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -13,7 +14,7 @@ import dagger.Provides;
 @Module
 public class PlayGeofenceModule {
 
-    @PerActivity
+    @Singleton
     @Provides
     PlayServicesGeofenceManager providesPlayGeofenceManager(
             AddPlayGeofenceManager addPlayGeofenceManager,
@@ -24,7 +25,7 @@ public class PlayGeofenceModule {
                 removePlayGeofenceManager);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     RemovePlayGeofenceManager providesRemoveGeofenceManager(
             GeofencingApi geofencingApi,
@@ -33,7 +34,7 @@ public class PlayGeofenceModule {
         return new RemovePlayGeofenceManager(geofencingApi, playApiManager);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     AddPlayGeofenceManager providesActivateGeofenceManager(
             Context context,
@@ -43,7 +44,7 @@ public class PlayGeofenceModule {
         return new AddPlayGeofenceManager(context, geofencingApi, playApiManager);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     PlayApiManager providesPlayApiManager(
             Context context
@@ -51,7 +52,7 @@ public class PlayGeofenceModule {
         return new PlayApiManager(context);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     GeofencingApi providesGeofenceApi() {
         return LocationServices.GeofencingApi;

@@ -5,13 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
-import com.hgyllensvard.geofencemanager.geofence.di.DaggerGeofenceComponent;
-import com.hgyllensvard.geofencemanager.geofence.di.GeofenceComponent;
-import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
+import com.hgyllensvard.geofencemanager.di.GeofenceModuleManager;
+import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerActivityComponent;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
-import com.hgyllensvard.geofencemanager.geofence.persistence.GeofencePersistenceModule;
-import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayGeofenceModule;
 
 import javax.inject.Inject;
 
@@ -33,7 +30,7 @@ public class GeofenceManagerActivity extends AppCompatActivity {
 
     private DisposableContainer disposableContainer;
 
-    private GeofenceComponent geofenceComponent;
+    private GeofenceManagerActivityComponent geofenceManagerActivityComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +46,10 @@ public class GeofenceManagerActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        geofenceComponent = DaggerGeofenceComponent.builder()
-                .activityModule(new ActivityModule(this))
-                .geofenceModule(new GeofenceModule())
-                .playGeofenceModule(new PlayGeofenceModule())
-                .geofencePersistenceModule(new GeofencePersistenceModule())
-                .build();
-
-        geofenceComponent.inject(this);
+        geofenceManagerActivityComponent = GeofenceModuleManager.geofenceComponent(this)
+                .plus(new ActivityModule(this), new GeofenceManagerModule());
+        
+        geofenceManagerActivityComponent.inject(this);
     }
 
     @Override
@@ -71,8 +64,8 @@ public class GeofenceManagerActivity extends AppCompatActivity {
         disposableContainer.add(disposable);
     }
 
-    public GeofenceComponent getGeofenceComponent() {
-        return geofenceComponent;
+    public GeofenceManagerActivityComponent getGeofenceManagerActivityComponent() {
+        return geofenceManagerActivityComponent;
     }
 
     private void managePermissionResult(RequestPermissionResult permissionResult) {

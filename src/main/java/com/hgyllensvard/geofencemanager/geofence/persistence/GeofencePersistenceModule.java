@@ -8,6 +8,8 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import rx.schedulers.Schedulers;
@@ -17,14 +19,14 @@ public class GeofencePersistenceModule {
 
     private static final int VERSION = 1;
 
-    @PerActivity
+    @Singleton
     @Provides
     public BriteDatabase providesDatabase(SQLiteOpenHelper helper) {
         SqlBrite sqlBrite = new SqlBrite.Builder().build();
         return sqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     GeofenceRepository providesGeofenceRepository(
             BriteDatabase briteDatabase,
@@ -33,7 +35,7 @@ public class GeofencePersistenceModule {
         return new GeofenceRepository(briteDatabase, geofenceMapper);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     SQLiteOpenHelper providesSqlLiteOpenHelper(
             Context context
@@ -41,7 +43,7 @@ public class GeofencePersistenceModule {
         return new GeofenceSqlOpenHelper(context, VERSION);
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     GeofenceMapper providesGeofenceMapper() {
         return new GeofenceMapper();

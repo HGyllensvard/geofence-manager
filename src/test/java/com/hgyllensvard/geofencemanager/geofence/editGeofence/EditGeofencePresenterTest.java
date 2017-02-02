@@ -81,7 +81,7 @@ public class EditGeofencePresenterTest {
 
         editGeofencePresenter.bindView(editGeofenceViews);
 
-        verify(editGeofenceViews, times(1)).hideSelectedGeofenceOptions();
+        verify(editGeofenceViews, times(2)).hideSelectedGeofenceOptions();
         assertThat(editGeofencePresenter.selectedGeofenceId).isEqualTo(EditGeofencePresenter.NO_SELECTION);
     }
 
@@ -109,7 +109,7 @@ public class EditGeofencePresenterTest {
 
         editGeofencePresenter.bindView(editGeofenceViews);
 
-        verify(editGeofenceViews, times(1)).hideSelectedGeofenceOptions();
+        verify(editGeofenceViews, times(2)).hideSelectedGeofenceOptions();
         verify(geofenceManager, times(1)).removeGeofence(GeofenceTestHelper.ID_ONE);
 
         assertThat(editGeofencePresenter.selectedGeofenceId).isEqualTo(EditGeofencePresenter.NO_SELECTION);
@@ -124,7 +124,7 @@ public class EditGeofencePresenterTest {
         editGeofencePresenter.bindView(editGeofenceViews);
 
         assertThat(editGeofencePresenter.selectedGeofenceId).isEqualTo(GeofenceTestHelper.ID_ONE);
-        verify(editGeofenceViews, times(0)).hideSelectedGeofenceOptions();
+        verify(editGeofenceViews, times(1)).hideSelectedGeofenceOptions();
         verify(geofenceManager, times(1)).removeGeofence(GeofenceTestHelper.ID_ONE);
     }
 

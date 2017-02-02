@@ -1,60 +1,38 @@
 package com.hgyllensvard.geofencemanager.dialogue;
 
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.content.Context;
 import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
-import com.hannesdorfmann.fragmentargs.FragmentArgs;
-import com.hannesdorfmann.fragmentargs.annotation.Arg;
-import com.hannesdorfmann.fragmentargs.annotation.FragmentWithArgs;
-
 import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
 
-@FragmentWithArgs
-public class ReactiveAlertDialogue extends DialogFragment {
 
-    @Arg
-    @StringRes
-    int dialogMessageRes;
+public class ReactiveAlertDialogue {
 
-    @Arg
-    @StringRes
-    int positiveMessageRes;
+    private AlertDialog.Builder alertDialog;
+    private Single<ReactiveDialogueResponse> dialogResponse;
 
-    private SingleEmitter<ReactiveDialogueResponse> push;
-    private Single<ReactiveDialogueResponse> mDialogResponse;
+    public ReactiveAlertDialogue(
+            Context context,
+            @StringRes int dialogMessageRes,
+            @StringRes int positiveMessageRes) {
 
-    public ReactiveAlertDialogue() {
-        mDialogResponse = Single.create(emitter -> push = emitter);
+        dialogResponse = Single.create(emitter -> alertDialog = new AlertDialog.Builder(context)
+                .setMessage(dialogMessageRes)
+                .setPositiveButton(positiveMessageRes,
+                        (dialog, which) -> {
+                            if (!emitter.isDisposed()) {
+                                emitter.onSuccess(ReactiveDialogueResponse.POSITIVE);
+                            }
+                        }));
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FragmentArgs.inject(this);
+    public void show() {
+        alertDialog.show();
     }
 
-    @Override
-    @NonNull
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        FragmentArgs.inject(this);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(dialogMessageRes)
-                .setPositiveButton(positiveMessageRes, (dialog, id) -> {
-                    if (!push.isDisposed()) {
-                        push.onSuccess(ReactiveDialogueResponse.POSITIVE);
-                    }
-                });
-        return builder.create();
-    }
-
-    public Single<ReactiveDialogueResponse> dialogResponse() {
-        return mDialogResponse;
+    public Single<ReactiveDialogueResponse> dialogueResponse() {
+        return dialogResponse;
     }
 }

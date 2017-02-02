@@ -58,7 +58,7 @@ public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceV
 
     private void injectDependencies() {
         if (getContext() instanceof AppCompatActivity) {
-            ((GeofenceManagerActivity) getContext()).getGeofenceComponent()
+            ((GeofenceManagerActivity) getContext()).getGeofenceManagerActivityComponent()
                     .inject(this);
         } else {
             throw new IllegalStateException("Activity not build to support this view");

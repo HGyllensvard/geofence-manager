@@ -85,7 +85,7 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     private void injectDependencies() {
         if (getContext() instanceof AppCompatActivity) {
-            ((GeofenceManagerActivity) getContext()).getGeofenceComponent()
+            ((GeofenceManagerActivity) getContext()).getGeofenceManagerActivityComponent()
                     .inject(this);
         } else {
             throw new IllegalStateException("Activity not build to support this view");

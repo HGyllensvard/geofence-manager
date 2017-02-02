@@ -19,6 +19,7 @@ import org.robolectric.annotation.Config;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import dagger.Component;
 
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Config(application = TestApplication.class, manifest = Config.NONE)
 public class GeofenceRepositoryTest {
 
-    @PerActivity
+    @Singleton
     @Component(
             modules = {ContextModule.class, GeofencePersistenceModule.class}
     )

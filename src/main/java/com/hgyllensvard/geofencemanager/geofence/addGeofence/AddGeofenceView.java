@@ -53,7 +53,7 @@ public class AddGeofenceView extends FrameLayout implements AddGeofenceViews {
 
     private void injectDependencies() {
         if (getContext() instanceof GeofenceManagerActivity) {
-            ((GeofenceManagerActivity) getContext()).getGeofenceComponent()
+            ((GeofenceManagerActivity) getContext()).getGeofenceManagerActivityComponent()
                     .inject(this);
         } else {
             throw new IllegalStateException("Activity not build to support this view");

@@ -17,13 +17,13 @@ public class ContextModule {
         this.context = context;
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     Context providesContext() {
         return context;
     }
 
-    @PerActivity
+    @Singleton
     @Provides
     LocationManager providesAndroidLocationManager() {
         return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
