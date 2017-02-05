@@ -2,10 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence.di;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.R;
-import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceViewManager;
@@ -13,6 +11,7 @@ import com.hgyllensvard.geofencemanager.geofence.map.MapCameraManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceTriggeredManager;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
 import javax.inject.Singleton;
@@ -81,5 +80,13 @@ public class GeofenceModule {
         return new LocationManager(
                 locationManager,
                 locationPermissionRequester);
+    }
+
+    @Singleton
+    @Provides
+    GeofenceTriggeredManager providesGeofenceEventTriggeredManager(
+            GeofenceManager geofenceManager
+    ) {
+        return new GeofenceTriggeredManager(geofenceManager);
     }
 }

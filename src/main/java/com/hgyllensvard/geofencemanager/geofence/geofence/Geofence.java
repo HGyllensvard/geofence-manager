@@ -6,6 +6,8 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Geofence {
 
+    public static Geofence sDummyGeofence = Geofence.create("", new LatLng(-1, -1), -1, false);
+
     public static final long NO_ID = -1;
 
     public abstract long id();
