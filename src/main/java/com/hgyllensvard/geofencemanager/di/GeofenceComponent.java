@@ -6,8 +6,10 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerActivityComponent;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofencePersistenceModule;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceTransitionsIntentService;
+import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceTriggeredManager;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayGeofenceModule;
 
 import javax.inject.Singleton;
@@ -27,5 +29,9 @@ public interface GeofenceComponent {
     GeofenceManagerActivityComponent plus(ActivityModule activityModule, GeofenceManagerModule geofenceManagerModule);
 
     void inject(GeofenceTransitionsIntentService geofenceTransitionsIntentService);
+
+    GeofenceManager geofenceManager();
+
+    GeofenceTriggeredManager geofenceTriggeredManager();
 
 }

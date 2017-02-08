@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.di.GeofenceModuleManager;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerActivityComponent;
+import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 
@@ -26,7 +27,7 @@ public class GeofenceManagerActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     @Inject
-    LocationPermissionRequester locationPermissionRequester;
+    LocationManager locationPermissionRequester;
 
     private DisposableContainer disposableContainer;
 

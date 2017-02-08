@@ -27,7 +27,7 @@ public class LocationPermissionRequester {
         this.context = context;
     }
 
-    public Single<RequestPermissionResult> request() {
+    Single<RequestPermissionResult> request() {
         return Single.defer(() -> {
             int permissionCheck = ContextCompat.checkSelfPermission(context,
                     ACCESS_FINE_LOCATION);
