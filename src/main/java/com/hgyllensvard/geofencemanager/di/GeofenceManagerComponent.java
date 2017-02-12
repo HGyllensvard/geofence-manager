@@ -24,7 +24,7 @@ import dagger.Component;
                 PlayGeofenceModule.class,
                 GeofencePersistenceModule.class}
 )
-public interface GeofenceComponent {
+public interface GeofenceManagerComponent {
 
     GeofenceManagerActivityComponent plus(ActivityModule activityModule, GeofenceManagerModule geofenceManagerModule);
 

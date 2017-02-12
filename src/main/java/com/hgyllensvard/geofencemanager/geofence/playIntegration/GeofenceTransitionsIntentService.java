@@ -18,7 +18,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     public GeofenceTransitionsIntentService() {
         super(GeofenceTransitionsIntentService.class.getSimpleName());
 
-        GeofenceModuleManager.geofenceComponent(getApplicationContext())
+        GeofenceModuleManager.geofenceManagerComponent(getApplicationContext())
                 .inject(this);
     }
 

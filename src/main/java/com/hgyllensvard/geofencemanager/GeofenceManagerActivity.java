@@ -8,7 +8,6 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.di.GeofenceModuleManager;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerActivityComponent;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
-import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 
 import javax.inject.Inject;
@@ -47,7 +46,7 @@ public class GeofenceManagerActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        geofenceManagerActivityComponent = GeofenceModuleManager.geofenceComponent(this)
+        geofenceManagerActivityComponent = GeofenceModuleManager.geofenceManagerComponent(this)
                 .plus(new ActivityModule(this), new GeofenceManagerModule());
         
         geofenceManagerActivityComponent.inject(this);

@@ -12,10 +12,10 @@ public class GeofenceModuleManager {
 
     private static GeofenceModuleManager moduleManager;
 
-    private static GeofenceComponent sGeofenceComponent;
+    private static GeofenceManagerComponent sGeofenceManagerComponent;
 
     private GeofenceModuleManager(Context context) {
-        sGeofenceComponent = DaggerGeofenceComponent.builder()
+        sGeofenceManagerComponent = DaggerGeofenceManagerComponent.builder()
                 .contextModule(new ContextModule(context))
                 .geofenceModule(new GeofenceModule())
                 .geofencePersistenceModule(new GeofencePersistenceModule())
@@ -23,10 +23,10 @@ public class GeofenceModuleManager {
                 .build();
     }
 
-    public static GeofenceComponent geofenceComponent(Context context) {
+    public static GeofenceManagerComponent geofenceManagerComponent(Context context) {
         generateGeofenceComponent(context);
 
-        return sGeofenceComponent;
+        return sGeofenceManagerComponent;
     }
 
     private static void generateGeofenceComponent(Context context) {
