@@ -8,7 +8,6 @@ import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceView;
 
-import dagger.Component;
 import dagger.Subcomponent;
 
 @PerActivity

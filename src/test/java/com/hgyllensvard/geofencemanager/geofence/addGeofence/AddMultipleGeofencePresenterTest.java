@@ -2,10 +2,12 @@ package com.hgyllensvard.geofencemanager.geofence.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceViews;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddMultipleGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,13 +30,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AddGeofencePresenterTest {
+public class AddMultipleGeofencePresenterTest {
 
     @Mock
     GeofenceManager geofenceManager;
-
-    @Mock
-    GeofenceMapOptions geofenceMapOptions;
 
     @Mock
     AddGeofenceViews addGeofenceViews;
@@ -52,7 +51,7 @@ public class AddGeofencePresenterTest {
 
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
-        addGeofencePresenter = new AddGeofencePresenter(geofenceManager, geofenceMapOptions);
+        addGeofencePresenter = new AddMultipleGeofencePresenter(geofenceManager, GeofenceTestHelper.GEOFENCE_MAP_OPTIONS);
     }
 
     @After
@@ -64,8 +63,6 @@ public class AddGeofencePresenterTest {
     public void shouldAddGeofenceWhenLockClickOccurs() {
         PublishSubject<LatLng> subject = PublishSubject.create();
 
-        when(geofenceMapOptions.geofenceCreatedName()).thenReturn(GeofenceTestHelper.NAME_ONE);
-        when(geofenceMapOptions.geofenceCreatedRadius()).thenReturn(GeofenceTestHelper.RADIUS_ONE);
         when(addGeofenceViews.observerLongClick()).thenReturn(subject);
         when(addGeofenceViews.displayMap()).thenReturn(Observable.just(true));
         when(geofenceManager.addGeofence(any(Geofence.class))).thenReturn(Single.just(Mockito.mock(GeofenceActionResult.class)));

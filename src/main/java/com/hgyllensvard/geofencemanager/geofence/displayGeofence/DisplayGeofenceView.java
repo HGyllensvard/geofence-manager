@@ -2,13 +2,11 @@ package com.hgyllensvard.geofencemanager.geofence.displayGeofence;
 
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
-import com.hgyllensvard.geofencemanager.GeofenceManagerActivity;
-import com.hgyllensvard.geofencemanager.R;
+import com.hgyllensvard.geofencemanager.GeofenceManagerInjector;
 import com.hgyllensvard.geofencemanager.geofence.map.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
 
@@ -17,8 +15,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import timber.log.Timber;
 
-public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceViews {
+public class DisplayGeofenceView extends View implements DisplayGeofenceViews {
 
     @Inject
     DisplayGeofencePresenter displayGeofencePresenter;
@@ -42,11 +41,11 @@ public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceV
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        injectDependencies();
+        if (!isInEditMode()) {
+            injectDependencies();
 
-        inflate(getContext(), R.layout.display_geofence_view, this);
-
-        displayGeofencePresenter.bindView(this);
+            displayGeofencePresenter.bindView(this);
+        }
     }
 
     @Override
@@ -57,11 +56,12 @@ public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceV
     }
 
     private void injectDependencies() {
-        if (getContext() instanceof AppCompatActivity) {
-            ((GeofenceManagerActivity) getContext()).getGeofenceManagerActivityComponent()
+        Timber.wtf("Context: %s", getContext());
+        if (getContext() instanceof GeofenceManagerInjector) {
+            ((GeofenceManagerInjector) getContext()).getGeofenceManagerActivityComponent()
                     .inject(this);
         } else {
-            throw new IllegalStateException("Activity not build to support this view");
+            throw new IllegalStateException("Context does not implement: %s" + GeofenceManagerInjector.class.getSimpleName());
         }
     }
 
@@ -83,10 +83,5 @@ public class DisplayGeofenceView extends FrameLayout implements DisplayGeofenceV
     @Override
     public void animateCameraTo(CameraUpdate cameraUpdate) {
         mapView.animateCameraTo(cameraUpdate);
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

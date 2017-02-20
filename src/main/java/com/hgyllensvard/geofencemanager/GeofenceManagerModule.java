@@ -4,7 +4,8 @@ package com.hgyllensvard.geofencemanager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddMultipleGeofencePresenter;
+import com.hgyllensvard.geofencemanager.geofence.addGeofence.AddSingleGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofencePresenter;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
@@ -44,11 +45,22 @@ public class GeofenceManagerModule {
 
     @PerActivity
     @Provides
-    AddGeofencePresenter providesAddGeofencePresenter(
+    AddMultipleGeofencePresenter providesAddMultipleGeofencePresenters(
             GeofenceManager geofenceManager,
             GeofenceMapOptions geofenceMapOptions
     ) {
-        return new AddGeofencePresenter(
+        return new AddMultipleGeofencePresenter(
+                geofenceManager,
+                geofenceMapOptions);
+    }
+
+    @PerActivity
+    @Provides
+    AddSingleGeofencePresenter providesAddSinglaGeofencePresenter(
+            GeofenceManager geofenceManager,
+            GeofenceMapOptions geofenceMapOptions
+    ) {
+        return new AddSingleGeofencePresenter(
                 geofenceManager,
                 geofenceMapOptions);
     }

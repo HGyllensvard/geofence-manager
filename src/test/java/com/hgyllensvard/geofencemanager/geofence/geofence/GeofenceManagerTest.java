@@ -1,10 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.geofence.FailedToAddGeofenceException;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
@@ -36,7 +32,7 @@ public class GeofenceManagerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
+        
         geofenceManager = new GeofenceManager(geofenceRepository, playServicesGeofenceManager);
     }
 

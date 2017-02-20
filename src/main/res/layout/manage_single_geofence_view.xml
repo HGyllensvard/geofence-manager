@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".GeofenceManagerActivity"
+    >
+
+    <FrameLayout
+        android:id="@+id/geofence_map_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@id/geofence_toolbar"
+        />
+
+    <!--<com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceView-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp"-->
+        <!--/>-->
+
+</android.support.constraint.ConstraintLayout>

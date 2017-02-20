@@ -20,7 +20,7 @@ import io.reactivex.internal.disposables.DisposableContainer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class GeofenceManagerActivity extends AppCompatActivity {
+public class GeofenceManagerActivity extends AppCompatActivity implements GeofenceManagerInjector {
 
     @BindView(R2.id.geofence_toolbar)
     Toolbar toolbar;
@@ -64,6 +64,7 @@ public class GeofenceManagerActivity extends AppCompatActivity {
         disposableContainer.add(disposable);
     }
 
+    @Override
     public GeofenceManagerActivityComponent getGeofenceManagerActivityComponent() {
         return geofenceManagerActivityComponent;
     }

@@ -3,11 +3,23 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.map.GeofenceMapOptions;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class GeofenceTestHelper {
+
+    public static final int fillColor = 1;
+
+    public static final int strokeColor = 2;
+
+    public static final GeofenceMapOptions GEOFENCE_MAP_OPTIONS = GeofenceMapOptions.create()
+            .fillColor(1)
+            .strokeColor(2)
+            .geofenceCreatedName(GeofenceTestHelper.NAME_ONE)
+            .geofenceCreatedRadius(GeofenceTestHelper.RADIUS_ONE)
+            .build();
 
     public static final long ID_ONE = 1;
     public static final String NAME_ONE = "name_one";

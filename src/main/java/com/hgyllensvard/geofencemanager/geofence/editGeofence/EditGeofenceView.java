@@ -3,7 +3,6 @@ package com.hgyllensvard.geofencemanager.geofence.editGeofence;
 
 import android.content.Context;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.hgyllensvard.geofencemanager.GeofenceManagerActivity;
+import com.hgyllensvard.geofencemanager.GeofenceManagerInjector;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.R2;
 import com.hgyllensvard.geofencemanager.geofence.map.MapView;
@@ -69,26 +68,28 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        injectDependencies();
-
         inflate(getContext(), R.layout.edit_geofence_view, this);
         unbinder = ButterKnife.bind(this);
 
-        renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
-                .map(aVoid -> true));
+        if (!isInEditMode()) {
+            renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
+                    .map(aVoid -> true));
 
-        deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
-                .map(aVoid -> true));
+            deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
+                    .map(aVoid -> true));
 
-        editGeofencePresenter.bindView(this);
+            injectDependencies();
+
+            editGeofencePresenter.bindView(this);
+        }
     }
 
     private void injectDependencies() {
-        if (getContext() instanceof AppCompatActivity) {
-            ((GeofenceManagerActivity) getContext()).getGeofenceManagerActivityComponent()
+        if (getContext() instanceof GeofenceManagerInjector) {
+            ((GeofenceManagerInjector) getContext()).getGeofenceManagerActivityComponent()
                     .inject(this);
         } else {
-            throw new IllegalStateException("Activity not build to support this view");
+            throw new IllegalStateException("Context does not implement: %s" + GeofenceManagerInjector.class.getSimpleName());
         }
     }
 
@@ -131,11 +132,6 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     @Override
     public void displaySelectedGeofenceOptions() {
         editGeofenceMenu.showMenuButton(true);
-    }
-
-    @Override
-    public void destroy() {
-        unbinder.unbind();
     }
 
     private Observable<Boolean> observeRenameGeofence() {
