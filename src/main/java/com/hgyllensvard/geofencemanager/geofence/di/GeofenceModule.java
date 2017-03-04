@@ -4,8 +4,10 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 
 import com.hgyllensvard.geofencemanager.R;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceTriggeredManager;
 
 import javax.inject.Singleton;
@@ -33,5 +35,11 @@ public class GeofenceModule {
             GeofenceManager geofenceManager
     ) {
         return new GeofenceTriggeredManager(geofenceManager);
+    }
+
+    @Singleton
+    @Provides
+    SelectedGeofence selectedGeofence() {
+        return new SelectedGeofence();
     }
 }

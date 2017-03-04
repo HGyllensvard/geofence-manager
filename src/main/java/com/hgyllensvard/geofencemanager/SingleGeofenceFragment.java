@@ -36,7 +36,6 @@ public class SingleGeofenceFragment extends Fragment implements GeofenceManagerI
         super.onCreate(savedInstanceState);
 
         FragmentArgs.inject(this);
-
     }
 
     @Override
@@ -45,9 +44,14 @@ public class SingleGeofenceFragment extends Fragment implements GeofenceManagerI
 
         unbinder = ButterKnife.bind(this, view);
 
-        toolbar.setTitle("Cool");
+        setupToolbar();
 
         return view;
+    }
+
+    private void setupToolbar() {
+        toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        toolbar.setNavigationOnClickListener(view -> getActivity().getSupportFragmentManager().popBackStack());
     }
 
     @Override

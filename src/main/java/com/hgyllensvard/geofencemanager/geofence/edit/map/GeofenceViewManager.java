@@ -20,7 +20,6 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 public class GeofenceViewManager {
 

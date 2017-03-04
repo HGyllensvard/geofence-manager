@@ -86,7 +86,7 @@ public class MapView {
 
     private Observable<Boolean> createMapReadyObservable(AppCompatActivity activity) {
         return loadMapAsync()
-                .doOnTerminate(() -> {
+                .doOnDispose(() -> {
                     Timber.d("Removing map fragment");
                     activity.getSupportFragmentManager()
                             .beginTransaction()
@@ -104,7 +104,8 @@ public class MapView {
                     Timber.i("Map View successfully setup");
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .share();
+                .replay(1)
+                .refCount();
     }
 
     public void removedGeofenceViews(List<GeofenceView> geofenceViews) {

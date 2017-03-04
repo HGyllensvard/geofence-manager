@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapView;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
@@ -84,10 +83,4 @@ public class GeofenceManagerModule {
 //    ) {
 //        return new EditGeofencePresenter(geofenceManager);
 //    }
-
-    @PerActivity
-    @Provides
-    SelectedGeofence selectedGeofence() {
-        return new SelectedGeofence();
-    }
 }
