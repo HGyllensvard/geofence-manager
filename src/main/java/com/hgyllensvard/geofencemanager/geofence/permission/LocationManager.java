@@ -8,7 +8,7 @@ import io.reactivex.Single;
 
 public class LocationManager {
 
-    android.location.LocationManager locationManager;
+    private android.location.LocationManager locationManager;
     private LocationPermissionRequester locationPermissionRequester;
 
     public LocationManager(

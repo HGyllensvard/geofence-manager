@@ -1,10 +1,10 @@
 package com.hgyllensvard.geofencemanager;
 
 
-import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerActivityComponent;
+import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerComponent;
 
 public interface GeofenceManagerInjector {
 
-    GeofenceManagerActivityComponent getGeofenceManagerActivityComponent();
+    GeofenceManagerComponent getGeofenceManagerComponent();
     
 }

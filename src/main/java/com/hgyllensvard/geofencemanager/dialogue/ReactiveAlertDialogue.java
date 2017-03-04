@@ -18,21 +18,20 @@ public class ReactiveAlertDialogue {
             @StringRes int dialogMessageRes,
             @StringRes int positiveMessageRes) {
 
-        dialogResponse = Single.create(emitter -> alertDialog = new AlertDialog.Builder(context)
-                .setMessage(dialogMessageRes)
-                .setPositiveButton(positiveMessageRes,
-                        (dialog, which) -> {
-                            if (!emitter.isDisposed()) {
-                                emitter.onSuccess(ReactiveDialogueResponse.POSITIVE);
-                            }
-                        }));
+        dialogResponse = Single.create(emitter -> {
+            alertDialog = new AlertDialog.Builder(context)
+                    .setMessage(dialogMessageRes)
+                    .setPositiveButton(positiveMessageRes,
+                            (dialog, which) -> {
+                                if (!emitter.isDisposed()) {
+                                    emitter.onSuccess(ReactiveDialogueResponse.POSITIVE);
+                                }
+                            });
+            alertDialog.show();
+        });
     }
 
-    public void show() {
-        alertDialog.show();
-    }
-
-    public Single<ReactiveDialogueResponse> dialogueResponse() {
+    public Single<ReactiveDialogueResponse> showAndAwaitDialogueResponse() {
         return dialogResponse;
     }
 }

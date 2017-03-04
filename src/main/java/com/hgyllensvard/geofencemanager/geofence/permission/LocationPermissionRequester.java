@@ -12,6 +12,7 @@ import com.hgyllensvard.geofencemanager.dialogue.ReactiveDialogueResponse;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -38,14 +39,13 @@ public class LocationPermissionRequester {
                 return informUserWhyPermissionNeeded()
                         .flatMap(dialogueResponse -> requestPermission());
             }
-        });
+        }).subscribeOn(AndroidSchedulers.mainThread());
     }
 
     private Single<Boolean> informUserWhyPermissionNeeded() {
-        ReactiveAlertDialogue fragment = new ReactiveAlertDialogue(context, R.string.location, R.string.ok);
-        fragment.show();
+        ReactiveAlertDialogue alertDialogue = new ReactiveAlertDialogue(context, R.string.location, R.string.ok);
 
-        return fragment.dialogueResponse()
+        return alertDialogue.showAndAwaitDialogueResponse()
                 .map(reactiveDialogueResponse ->
                         reactiveDialogueResponse == ReactiveDialogueResponse.POSITIVE);
     }

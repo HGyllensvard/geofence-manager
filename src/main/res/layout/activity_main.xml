@@ -1,43 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GeofenceManagerActivity"
     >
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/geofence_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        />
-
-    <FrameLayout
-        android:id="@+id/geofence_map_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/geofence_toolbar"
-        />
-
-    <com.hgyllensvard.geofencemanager.geofence.displayGeofence.DisplayGeofenceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-    <com.hgyllensvard.geofencemanager.geofence.addGeofence.AddGeofenceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        custom:presenterType="multiple"
-        />
-
-    <com.hgyllensvard.geofencemanager.geofence.editGeofence.EditGeofenceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-</RelativeLayout>
+</FrameLayout>

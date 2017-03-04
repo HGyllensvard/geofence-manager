@@ -1,7 +1,6 @@
 package com.hgyllensvard.geofencemanager.buildingBlocks.di;
 
 import android.content.Context;
-import android.location.LocationManager;
 
 import javax.inject.Singleton;
 
@@ -21,11 +20,5 @@ public class ContextModule {
     @Provides
     Context providesContext() {
         return context;
-    }
-
-    @Singleton
-    @Provides
-    LocationManager providesAndroidLocationManager() {
-        return (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 }

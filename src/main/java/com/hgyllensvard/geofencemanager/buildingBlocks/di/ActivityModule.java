@@ -6,13 +6,11 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ActivityModule extends ContextModule {
+public class ActivityModule {
 
     private AppCompatActivity activity;
 
     public ActivityModule(AppCompatActivity activity) {
-        super(activity);
-        
         this.activity = activity;
     }
 

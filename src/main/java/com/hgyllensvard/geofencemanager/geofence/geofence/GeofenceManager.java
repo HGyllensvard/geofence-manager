@@ -6,6 +6,8 @@ import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeo
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
@@ -22,6 +24,7 @@ public class GeofenceManager {
     private final GeofenceRepository geofenceRepository;
     private final PlayServicesGeofenceManager playServicesGeofenceManager;
 
+    @Inject
     public GeofenceManager(
             GeofenceRepository geofenceRepository,
             PlayServicesGeofenceManager playServicesGeofenceManager
