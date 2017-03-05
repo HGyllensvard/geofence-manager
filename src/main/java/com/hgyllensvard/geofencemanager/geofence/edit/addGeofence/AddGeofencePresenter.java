@@ -6,13 +6,14 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 
 import javax.inject.Inject;
 
+import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -57,15 +58,22 @@ public class AddGeofencePresenter extends PresenterAdapter<AddGeofenceViews> {
     private void subscribeLongClick() {
         Disposable disposable = view.observerLongClick()
                 .observeOn(Schedulers.io())
-                .doOnNext(latLng -> Timber.v("Adding new geofence at: %s", latLng))
+                .doOnNext(latLng -> Timber.v("Attempting to add new geofence at: %s", latLng))
                 .flatMap(latLng -> shouldAddNewGeofence()
-                        .filter(t -> true)
+                        .doOnEach(this::logIfNotAddingGeofence)
+                        .filter(t -> t)
                         .map(ignored -> latLng))
                 .doOnError(Timber::e)
                 .retry()
                 .subscribe(this::addGeofence);
 
         disposableContainer.add(disposable);
+    }
+
+    private void logIfNotAddingGeofence(Notification<Boolean> booleanNotification) {
+        if (booleanNotification.getValue()) {
+            Timber.w("A geofence is already selected, will therefore not add new geofence");
+        }
     }
 
     private void addGeofence(LatLng latLng) {
@@ -91,12 +99,11 @@ public class AddGeofencePresenter extends PresenterAdapter<AddGeofenceViews> {
      * added before still exist, so filter that observable so another one isn't created
      */
     private Observable<Boolean> shouldAddNewGeofence() {
-        return selectedGeofence.observeSelectedGeofence()
+        return Observable.fromCallable(selectedGeofence::selectedGeofence)
                 .flatMap(geofenceId -> geofenceManager.getGeofence(geofenceId)
                         .onErrorReturn(throwable -> Geofence.sDummyGeofence)
                         .doOnSuccess(geofence -> Timber.v("Fetched geofence: %s", geofence))
-                        .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence))
-                        .map(geofence -> true)
+                        .map(geofence -> geofence.equals(Geofence.sDummyGeofence))
                         .toObservable());
     }
 

@@ -20,12 +20,14 @@ public class GeofenceManagerModule {
     @PerActivity
     MapView providesMapView(
             AppCompatActivity appCompatActivity,
-            GeofenceViewManager geofenceViewManager
+            GeofenceViewManager geofenceViewManager,
+            LocationManager locationManager
     ) {
         return new MapView(
                 appCompatActivity,
                 R.id.geofence_map_container,
-                geofenceViewManager);
+                geofenceViewManager,
+                locationManager);
     }
 
     @Provides

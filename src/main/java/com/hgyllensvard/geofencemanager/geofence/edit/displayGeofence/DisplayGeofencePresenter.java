@@ -9,15 +9,12 @@ import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapCameraManager;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -42,7 +39,7 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
     @Override
     public void bindView(@NonNull DisplayGeofenceViews view) {
         super.bindView(view);
-        
+
         Disposable disposable = view.displayMap()
                 .doOnNext(ignored -> zoomToUserPosition())
                 .observeOn(Schedulers.io())
@@ -56,7 +53,6 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
     @Override
     public void unbindView() {
         super.unbindView();
-
 
         disposableContainer.clear();
     }

@@ -10,13 +10,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.exception.MapNotInitialisedException;
+import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
+import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 
 import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
 import timber.log.Timber;
+
+import static io.reactivex.internal.operators.single.SingleInternalHelper.toObservable;
 
 public class MapView {
 
@@ -24,6 +29,7 @@ public class MapView {
     private final int mapContainer;
 
     private final SupportMapFragment mapFragment;
+    private final LocationManager locationManager;
     private final GeofenceViewManager geofenceViewManager;
 
     private Observable<LatLng> longClickFlowable;
@@ -37,10 +43,12 @@ public class MapView {
     public MapView(
             AppCompatActivity activity,
             @IdRes int mapContainer,
-            GeofenceViewManager geofenceViewManager
+            GeofenceViewManager geofenceViewManager,
+            LocationManager locationManager
     ) {
         this.activity = activity;
         this.mapContainer = mapContainer;
+        this.locationManager = locationManager;
         this.geofenceViewManager = geofenceViewManager;
 
         disposables = new CompositeDisposable();
@@ -85,7 +93,8 @@ public class MapView {
     }
 
     private Observable<Boolean> createMapReadyObservable(AppCompatActivity activity) {
-        return loadMapAsync()
+        return checkOrRequestLocationPermission()
+                .flatMap(ignored -> loadMapAsync())
                 .doOnDispose(() -> {
                     Timber.d("Removing map fragment");
                     activity.getSupportFragmentManager()
@@ -106,6 +115,17 @@ public class MapView {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .replay(1)
                 .refCount();
+    }
+
+    private Observable<RequestPermissionResult> checkOrRequestLocationPermission() {
+        return locationManager.request()
+                .map(requestPermissionResult -> {
+                    if (requestPermissionResult == RequestPermissionResult.DENIED) {
+                        throw new IllegalStateException("Trying to display map view, but no location permission");
+                    }
+
+                    return requestPermissionResult;
+                }).toObservable();
     }
 
     public void removedGeofenceViews(List<GeofenceView> geofenceViews) {
