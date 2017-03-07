@@ -3,10 +3,16 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.Collections;
 import java.util.List;
 
 @AutoValue
 public abstract class GeofenceViewUpdate {
+
+    public static final GeofenceViewUpdate EMPTY_UPDATE = GeofenceViewUpdate.create(
+            Collections.emptyList(),
+            Collections.emptyList(),
+            Collections.emptyList());
 
     public abstract List<GeofenceView> geofenceViews();
 

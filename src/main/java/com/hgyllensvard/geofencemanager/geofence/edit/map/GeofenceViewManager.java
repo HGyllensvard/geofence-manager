@@ -20,6 +20,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class GeofenceViewManager {
 
@@ -49,8 +50,8 @@ public class GeofenceViewManager {
     }
 
     private Flowable<GeofenceViewUpdate> updateGeofenceViews(List<Geofence> updatedGeofences) {
-        return Observable.combineLatest(Observable.just(updatedGeofences), selectedGeofence.observeSelectedGeofence(),
-                (geofences, selectedGeofenceId) -> {
+        return Observable.combineLatest(selectedGeofence.observeSelectedGeofence(), Observable.just(updatedGeofences),
+                (selectedGeofenceId, geofences) -> {
                     List<GeofenceView> updatedGeofenceViews = new ArrayList<>();
                     List<GeofenceView> removedGeofenceViews = new ArrayList<>();
 
@@ -62,6 +63,7 @@ public class GeofenceViewManager {
                         keys.remove(geofence.id());
 
                         if (isModifiedGeofence(geofence, geofenceView) && shouldDisplayGeofence(geofence.id(), selectedGeofenceId)) {
+                            Timber.v("Creating GeofenceView for: %s", geofence);
                             GeofenceView view = createGeofenceView(geofence);
                             geofenceViews.put(geofence.id(), view);
                             updatedGeofenceViews.add(view);
@@ -69,7 +71,8 @@ public class GeofenceViewManager {
                     }
 
                     // We didn't parse the key, the geofence is to be removed.
-                    for (Long key : keys) {
+                    for (long key : keys) {
+                        Timber.v("Removing GeofenceView for id: %s", key);
                         removedGeofenceViews.add(geofenceViews.remove(key));
                     }
 

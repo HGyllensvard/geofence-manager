@@ -12,6 +12,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 
 /**
@@ -33,7 +34,7 @@ public class GeofenceManager {
         this.playServicesGeofenceManager = playServicesGeofenceManager;
     }
 
-    /** 
+    /**
      * @param geofence Geofence to persis and add to the active geofences.
      * @return The GeofenceActionResult will hld a boolean for success or not.
      * If success is true the result will also contain the Geofence with the
@@ -46,6 +47,7 @@ public class GeofenceManager {
         return geofenceRepository.insert(geofence)
                 .flatMap(this::activateGeofenceToPlay)
                 .onErrorReturn(GeofenceActionResult::failure)
+                .doOnSuccess(geofenceActionResult -> Timber.v("Add geofence result: %s", geofenceActionResult))
                 .subscribeOn(Schedulers.io());
     }
 
@@ -70,6 +72,12 @@ public class GeofenceManager {
 
     public Flowable<List<Geofence>> observeGeofences() {
         return geofenceRepository.listenGeofences();
+    }
+
+    public Single<Boolean> exist(long geofenceId) {
+        return geofenceRepository.getGeofence(geofenceId)
+                .onErrorReturn(throwable -> Geofence.sDummyGeofence)
+                .map(geofence -> geofence.equals(Geofence.sDummyGeofence));
     }
 
     public Single<Geofence> getGeofence(long identifier) {

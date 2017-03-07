@@ -40,7 +40,7 @@ public class GeofenceViewManagerTest {
 
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
-        selectedGeofence = new SelectedGeofence(-1);
+        selectedGeofence = new SelectedGeofence();
 
         geofenceViewManager = new GeofenceViewManager(
                 geofenceManager,

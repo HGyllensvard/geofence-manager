@@ -2,10 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,20 +20,17 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AddMultipleGeofencePresenterTest {
+public class AddGeofencePresenterTest {
 
     @Mock
-    GeofenceManager geofenceManager;
+    AddGeofenceManager addGeofenceManager;
 
     @Mock
     AddGeofenceViews addGeofenceViews;
-
-    private SelectedGeofence selectedGeofence;
 
     private AddGeofencePresenter addGeofencePresenter;
 
@@ -51,9 +45,7 @@ public class AddMultipleGeofencePresenterTest {
 
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
-        selectedGeofence = new SelectedGeofence(-1);
-
-        addGeofencePresenter = new AddGeofencePresenter(geofenceManager, GeofenceTestHelper.GEOFENCE_MAP_OPTIONS, selectedGeofence);
+        addGeofencePresenter = new AddGeofencePresenter(addGeofenceManager);
     }
 
     @After
@@ -67,13 +59,14 @@ public class AddMultipleGeofencePresenterTest {
 
         when(addGeofenceViews.observerLongClick()).thenReturn(subject);
         when(addGeofenceViews.displayMap()).thenReturn(Observable.just(true));
-        when(geofenceManager.addGeofence(any(Geofence.class))).thenReturn(Single.just(Mockito.mock(GeofenceActionResult.class)));
+        when(addGeofenceManager.addGeofence(GeofenceTestHelper.LAT_LNG_ONE))
+                .thenReturn(Single.just(Mockito.mock(GeofenceActionResult.class)));
 
         addGeofencePresenter.bindView(addGeofenceViews);
 
         subject.onNext(GeofenceTestHelper.LAT_LNG_ONE);
 
-        verify(geofenceManager, times(1)).addGeofence(GeofenceTestHelper.TEST_GEOFENCE_ONE);
+        verify(addGeofenceManager, times(1)).addGeofence(GeofenceTestHelper.LAT_LNG_ONE);
     }
 
     @Test
@@ -88,10 +81,10 @@ public class AddMultipleGeofencePresenterTest {
 
         displayMapSubject.onNext(true);
 
-        assertThat(addGeofencePresenter.disposableContainer.size()).isEqualTo(2);
+        assertThat(addGeofencePresenter.disposables().size()).isEqualTo(2);
 
         addGeofencePresenter.unbindView();
 
-        assertThat(addGeofencePresenter.disposableContainer.size()).isZero();
+        assertThat(addGeofencePresenter.disposables().size()).isZero();
     }
 }

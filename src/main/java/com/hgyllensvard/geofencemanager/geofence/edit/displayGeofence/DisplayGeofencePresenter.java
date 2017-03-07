@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewManager;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewUpdate;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapCameraManager;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -65,6 +67,10 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
         Disposable disposable = geofenceViewManager.observeGeofenceViews()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(throwable -> {
+                    Timber.w(throwable);
+                    return Flowable.just(GeofenceViewUpdate.EMPTY_UPDATE);
+                })
                 .subscribe(geofences -> {
                             sendUpdatedGeofencesToView(geofences.updatedGeofenceViews());
                             sendRemovedGeofenceViewsToView(geofences.removedGeofenceViews());

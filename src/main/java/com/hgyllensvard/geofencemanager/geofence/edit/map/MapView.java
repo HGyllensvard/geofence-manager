@@ -18,10 +18,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
 import timber.log.Timber;
-
-import static io.reactivex.internal.operators.single.SingleInternalHelper.toObservable;
 
 public class MapView {
 
@@ -94,6 +91,8 @@ public class MapView {
 
     private Observable<Boolean> createMapReadyObservable(AppCompatActivity activity) {
         return checkOrRequestLocationPermission()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(throwable -> activity.finish())
                 .flatMap(ignored -> loadMapAsync())
                 .doOnDispose(() -> {
                     Timber.d("Removing map fragment");
@@ -107,9 +106,12 @@ public class MapView {
                 .doOnNext(ignored -> {
                     googleMap.getUiSettings().setMapToolbarEnabled(false);
                     enableUserLocation();
-                    longClickFlowable = createLongPressMapFlowable();
-                    selectMarkerFlowable = createSelectedGeofenceFlowable();
-                    cameraMovedFlowable = createCameraMoveStartedFlowable();
+                    longClickFlowable = createLongPressMapFlowable()
+                            .subscribeOn(AndroidSchedulers.mainThread());
+                    selectMarkerFlowable = createSelectedGeofenceFlowable()
+                            .subscribeOn(AndroidSchedulers.mainThread());
+                    cameraMovedFlowable = createCameraMoveStartedFlowable()
+                            .subscribeOn(AndroidSchedulers.mainThread());
                     Timber.i("Map View successfully setup");
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -168,7 +170,7 @@ public class MapView {
     private Observable<LatLng> createLongPressMapFlowable() {
         return Observable.create(emitter -> {
             googleMap.setOnMapLongClickListener(emitter::onNext);
-            emitter.setCancellable(() -> googleMap.setOnMapLongClickListener(null));
+            emitter.setCancellable(() -> activity.runOnUiThread(() -> googleMap.setOnMapLongClickListener(null)));
         });
     }
 
