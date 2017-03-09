@@ -72,7 +72,7 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
                     return Flowable.just(GeofenceViewUpdate.EMPTY_UPDATE);
                 })
                 .subscribe(geofences -> {
-                            sendUpdatedGeofencesToView(geofences.updatedGeofenceViews());
+                            sendUpdatedGeofencesToView(geofences.selectedGeofenceViews());
                             sendRemovedGeofenceViewsToView(geofences.removedGeofenceViews());
                         },
                         Timber::e);

@@ -57,10 +57,12 @@ public class GeofenceViewManagerTest {
     public void successfullyAddGeofenceViews() {
         when(geofenceManager.observeGeofences()).thenReturn(Flowable.just(GeofenceTestHelper.TEST_GEOFENCES_WITH_ID));
 
+        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(geofenceViewManager.observeGeofenceViews().test(), 0);
 
-        assertThat(geofenceViewUpdate.updatedGeofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_ONE, GeofenceViewTestHelper.GEOFENCE_VIEW_TWO);
-        assertThat(geofenceViewUpdate.geofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_ONE, GeofenceViewTestHelper.GEOFENCE_VIEW_TWO);
+        assertThat(geofenceViewUpdate.selectedGeofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_ONE);
+        assertThat(geofenceViewUpdate.geofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_ONE);
         assertThat(geofenceViewUpdate.removedGeofenceViews()).isEmpty();
     }
 
@@ -70,6 +72,8 @@ public class GeofenceViewManagerTest {
 
         when(geofenceManager.observeGeofences()).thenReturn(subject);
 
+        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+
         TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews().test();
 
         subject.onNext(GeofenceTestHelper.TEST_GEOFENCES_WITH_ID);
@@ -78,8 +82,8 @@ public class GeofenceViewManagerTest {
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(testSubscriber, 1);
 
         assertThat(geofenceViewUpdate.geofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_ONE);
-        assertThat(geofenceViewUpdate.updatedGeofenceViews()).isEmpty();
-        assertThat(geofenceViewUpdate.removedGeofenceViews()).contains(GeofenceViewTestHelper.GEOFENCE_VIEW_TWO);
+        assertThat(geofenceViewUpdate.selectedGeofenceViews()).isEmpty();
+        assertThat(geofenceViewUpdate.removedGeofenceViews()).isEmpty();
     }
 
     @Test
@@ -87,8 +91,10 @@ public class GeofenceViewManagerTest {
         PublishProcessor<List<Geofence>> subject = PublishProcessor.create();
 
         when(geofenceManager.observeGeofences()).thenReturn(subject);
+        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
 
-        TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews().test();
+        TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews()
+                .test();
 
         Geofence updatedGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID.withName("A new Name");
         subject.onNext(Collections.singletonList(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
@@ -98,7 +104,7 @@ public class GeofenceViewManagerTest {
 
         GeofenceView updatedGeofenceView = new GeofenceView(updatedGeofence, GeofenceTestHelper.FILL_COLOUR, GeofenceTestHelper.STROKE_COLOUR);
         assertThat(geofenceViewUpdate.geofenceViews()).contains(updatedGeofenceView);
-        assertThat(geofenceViewUpdate.updatedGeofenceViews()).contains(updatedGeofenceView);
+        assertThat(geofenceViewUpdate.selectedGeofenceViews()).contains(updatedGeofenceView);
         assertThat(geofenceViewUpdate.removedGeofenceViews()).isEmpty();
     }
 

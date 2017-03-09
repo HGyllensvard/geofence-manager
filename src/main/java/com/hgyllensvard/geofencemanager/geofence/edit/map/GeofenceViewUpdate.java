@@ -16,18 +16,18 @@ public abstract class GeofenceViewUpdate {
 
     public abstract List<GeofenceView> geofenceViews();
 
-    public abstract List<GeofenceView> updatedGeofenceViews();
+    public abstract List<GeofenceView> selectedGeofenceViews();
 
     public abstract List<GeofenceView> removedGeofenceViews();
 
     public static GeofenceViewUpdate create(
             List<GeofenceView> geofenceViews,
-            List<GeofenceView> updatedGeofenceViews,
+            List<GeofenceView> selectedGeofenceViews,
             List<GeofenceView> removedGeofenceViews
     ) {
         return new AutoValue_GeofenceViewUpdate(
                 geofenceViews,
-                updatedGeofenceViews,
+                selectedGeofenceViews,
                 removedGeofenceViews);
     }
 }

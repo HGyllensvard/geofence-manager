@@ -4,8 +4,6 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
-import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import java.util.List;
@@ -43,7 +41,7 @@ public class GeofenceRepository {
             if (id != -1) {
                 return geofence.withId(id);
             } else {
-                throw new InsertFailedException("Couldn't save geofence: " + geofence);
+                return Geofence.sDummyGeofence;
             }
         }).subscribeOn(Schedulers.io());
     }
@@ -91,7 +89,7 @@ public class GeofenceRepository {
                 }
             }
 
-            throw new NoSuchGeofenceExistException("No geofence found for ID: " + identifier);
+            return Geofence.sDummyGeofence;
         });
     }
 }

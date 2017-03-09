@@ -27,12 +27,3 @@ public abstract class PresenterAdapter<T extends View> implements Presenter<T> {
     }
 }
 
-RxPresenterAdapter
-Refactored AddGeofencePresenter, split it up in two classes to
-improve achitecture and testability.
-
-Improved error management in DisplayGeofencePresenter
-and updated tests
-
-Added an exist method in the GeofenceManager
-

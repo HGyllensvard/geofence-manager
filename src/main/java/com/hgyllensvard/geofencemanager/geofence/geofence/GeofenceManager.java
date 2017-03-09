@@ -2,6 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
+import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class GeofenceManager {
     }
 
     /**
-     * @param geofence Geofence to persis and add to the active geofences.
+     * @param geofenceToAdd Geofence to persis and add to the active geofences.
      * @return The GeofenceActionResult will hld a boolean for success or not.
      * If success is true the result will also contain the Geofence with the
      * database id.
@@ -43,10 +44,15 @@ public class GeofenceManager {
      * Upon a failure success is false and the related Error can be fetched
      * from the failure method.
      */
-    public Single<GeofenceActionResult> addGeofence(Geofence geofence) {
-        return geofenceRepository.insert(geofence)
-                .flatMap(this::activateGeofenceToPlay)
-                .onErrorReturn(GeofenceActionResult::failure)
+    public Single<GeofenceActionResult> addGeofence(Geofence geofenceToAdd) {
+        return geofenceRepository.insert(geofenceToAdd)
+                .flatMap(geofence -> {
+                    if (geofence.equals(Geofence.sDummyGeofence)) {
+                        return Single.just(GeofenceActionResult.failure(new InsertFailedException(geofence.toString())));
+                    }
+
+                    return activateGeofenceToPlay(geofence);
+                })
                 .doOnSuccess(geofenceActionResult -> Timber.v("Add geofence result: %s", geofenceActionResult))
                 .subscribeOn(Schedulers.io());
     }
@@ -76,8 +82,7 @@ public class GeofenceManager {
 
     public Single<Boolean> exist(long geofenceId) {
         return geofenceRepository.getGeofence(geofenceId)
-                .onErrorReturn(throwable -> Geofence.sDummyGeofence)
-                .map(geofence -> geofence.equals(Geofence.sDummyGeofence));
+                .map(geofence -> !geofence.equals(Geofence.sDummyGeofence));
     }
 
     public Single<Geofence> getGeofence(long identifier) {

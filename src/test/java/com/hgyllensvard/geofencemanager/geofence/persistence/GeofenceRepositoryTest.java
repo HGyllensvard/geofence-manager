@@ -2,10 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
-import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
-import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.NoSuchGeofenceExistException;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import org.junit.After;
@@ -79,7 +77,7 @@ public class GeofenceRepositoryTest {
     }
 
     @Test
-    public void  shouldDeleteGeofence() {
+    public void shouldDeleteGeofence() {
         Geofence insertedGeofence = repository.insert(testGeofence)
                 .blockingGet();
 
@@ -131,7 +129,8 @@ public class GeofenceRepositoryTest {
         repository.getGeofence(1)
                 .test()
                 .awaitDone(1, TimeUnit.SECONDS)
-                .assertError(NoSuchGeofenceExistException.class);
+                .assertNoErrors()
+                .assertValue(Geofence.sDummyGeofence);
     }
 
     @Test
@@ -187,7 +186,7 @@ public class GeofenceRepositoryTest {
                 .assertValueCount(1)
                 .assertValueAt(0, testGeofences ->
                         testGeofences.size() == 2 &&
-                        testGeofences.get(1).equals(geofenceTwo.withId(2)));
+                                testGeofences.get(1).equals(geofenceTwo.withId(2)));
     }
 
     private void clearDatabase() {
