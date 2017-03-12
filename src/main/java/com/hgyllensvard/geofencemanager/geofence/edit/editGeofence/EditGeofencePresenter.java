@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import javax.inject.Inject;
 
@@ -44,7 +43,7 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
     @Override
     public void unbindView() {
-        if (view != null) {
+        if (view != null && selectedGeofence.isGeofenceSelected()) {
             String geofenceName = view.getGeofenceName();
             LatLng geofenceMarker = view.getGeofencePosition(selectedGeofence.selectedGeofence());
             editGeofencePresenterManager.updateSelectedGeofence(geofenceName, geofenceMarker);
@@ -55,7 +54,7 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
     private void subscribeSelectedGeofence() {
         Disposable disposable = editGeofencePresenterManager.observeSelectedGeofence()
-                .doOnNext(this::displayGeofenceName)
+                .doOnNext(geofence -> displayGeofenceName(geofence.name()))
                 .doOnNext(geofence -> view.displaySelectedGeofenceOptions())
                 .subscribe(geofenceId -> {
                 }, Timber::e);
@@ -63,8 +62,9 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
         disposables.add(disposable);
     }
 
-    private void displayGeofenceName(Geofence geofence) {
-        view.displayGeofenceName(geofence.name());
+    private void displayGeofenceName(String geofenceName) {
+        Timber.v("Displaying geofence name: %s", geofenceName);
+        view.displayGeofenceName(geofenceName);
     }
 
     private void subscribeDeleteGeofence() {

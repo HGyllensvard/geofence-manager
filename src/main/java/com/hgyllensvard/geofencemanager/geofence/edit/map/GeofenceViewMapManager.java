@@ -22,7 +22,7 @@ public class GeofenceViewMapManager {
         this.geofenceView = geofenceView;
     }
 
-    public void display(GoogleMap map) {
+    void display(GoogleMap map) {
         marker = map.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_select_geofence))
                 .position(geofenceView.latLng())
@@ -35,7 +35,7 @@ public class GeofenceViewMapManager {
                 .radius(geofenceView.radius()));
     }
 
-    public void remove() {
+    void remove() {
         if (marker != null) {
             marker.remove();
             marker = null;
@@ -47,11 +47,11 @@ public class GeofenceViewMapManager {
         }
     }
 
-    public boolean isMarker(String markerId) {
+    boolean isMarker(String markerId) {
         return marker.getId().equals(markerId);
     }
 
-    public Geofence getGeofence() {
+    Geofence getGeofence() {
         return geofenceView.geofence();
     }
 }

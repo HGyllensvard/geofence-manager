@@ -98,6 +98,7 @@ public class EditGeofencePresenterTest {
     @Test
     public void unbindView_SaveGeofence() {
         when(editGeofenceViews.getGeofenceName()).thenReturn(NAME_ONE);
+        when(selectedGeofence.isGeofenceSelected()).thenReturn(true);
         when(selectedGeofence.selectedGeofence()).thenReturn(ID_ONE);
         when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(LAT_LNG_ONE);
 
@@ -109,6 +110,17 @@ public class EditGeofencePresenterTest {
 
     @Test
     public void unbindView_ViewNull_DoNotAttemptToSave() {
+        editGeofencePresenter.unbindView();
+
+        verify(editGeofencePresenterManager, never()).updateSelectedGeofence(any(String.class), any(LatLng.class));
+    }
+
+
+    @Test
+    public void unbindView_NoValidGeofenceSelected_DoNotAttemptToSave() {
+        editGeofencePresenter.bindView(editGeofenceViews);
+
+        when(selectedGeofence.isGeofenceSelected()).thenReturn(false);
         editGeofencePresenter.unbindView();
 
         verify(editGeofencePresenterManager, never()).updateSelectedGeofence(any(String.class), any(LatLng.class));

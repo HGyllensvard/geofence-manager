@@ -49,10 +49,11 @@ public class EditGeofencePresenterManager {
         Maybe.fromCallable(selectedGeofence::selectedGeofence)
                 .doOnSuccess(geofenceId -> Timber.v("Updating geofence with Id: %s", geofenceId))
                 .filter(this::isValidGeofenceId)
-                .toSingle()
-                .flatMap(geofenceManager::getGeofence)
+                .flatMap(geofence -> geofenceManager.getGeofence(geofence)
+                        .toMaybe())
                 .map(geofence -> constructNewGeofence(geofenceName, geofencePosition, geofence))
-                .flatMap(geofenceManager::updateGeofence)
+                .flatMap(geofence -> geofenceManager.updateGeofence(geofence)
+                        .toMaybe())
                 .subscribeOn(Schedulers.io())
                 .subscribe(actionResult -> {
                         }
