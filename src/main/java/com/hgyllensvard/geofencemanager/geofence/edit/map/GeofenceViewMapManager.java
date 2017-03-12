@@ -1,6 +1,5 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
@@ -9,9 +8,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
-
-import static android.R.attr.fillColor;
-import static android.R.attr.strokeColor;
 
 public class GeofenceViewMapManager {
 
@@ -33,8 +29,8 @@ public class GeofenceViewMapManager {
                 .draggable(false));
 
         circle = map.addCircle(new CircleOptions()
-                .fillColor(fillColor)
-                .strokeColor(strokeColor)
+                .fillColor(geofenceView.fillColor())
+                .strokeColor(geofenceView.strokeColor())
                 .center(geofenceView.latLng())
                 .radius(geofenceView.radius()));
     }
