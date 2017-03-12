@@ -23,7 +23,11 @@ public class SelectedGeofence {
         return subject;
     }
 
-    public synchronized void noSelection() {
+    public synchronized boolean isGeofenceSelected() {
+        return subject.getValue() != Geofence.NO_ID;
+    }
+
+    public synchronized void setNoSelection() {
         Timber.d("No selected Geofence");
         subject.onNext(Geofence.NO_ID);
     }

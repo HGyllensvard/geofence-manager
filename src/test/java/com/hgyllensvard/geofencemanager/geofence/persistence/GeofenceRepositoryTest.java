@@ -2,12 +2,14 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
+import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -27,6 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = TestApplication.class, manifest = Config.NONE)
 public class GeofenceRepositoryTest {
+
+    @Rule
+    public final RxSchedulersOverriderRule rxSchedulersOverriderRule = new RxSchedulersOverriderRule();
 
     @Singleton
     @Component(
@@ -72,7 +77,6 @@ public class GeofenceRepositoryTest {
     public void shouldInsertGeofence() {
         repository.insert(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(testGeofence.withId(1));
     }
 
@@ -84,7 +88,6 @@ public class GeofenceRepositoryTest {
         assertThat(insertedGeofence).isNotNull();
         repository.delete(insertedGeofence.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValue(true);
     }
 
@@ -92,7 +95,6 @@ public class GeofenceRepositoryTest {
     public void shouldNotDeleteGeofenceWithNoId() {
         repository.delete(testGeofence.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(false);
     }
 
@@ -104,12 +106,10 @@ public class GeofenceRepositoryTest {
         assertThat(result).isNotNull();
         repository.delete(result.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(true);
 
         repository.delete(result.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValue(false);
     }
 
@@ -128,7 +128,6 @@ public class GeofenceRepositoryTest {
     public void shouldThrowErrorIfCantFetchGeofence() {
         repository.getGeofence(1)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(Geofence.sDummyGeofence);
     }
@@ -141,12 +140,11 @@ public class GeofenceRepositoryTest {
         String newName = "Some newName";
         repository.update(geofence.withName(newName))
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(true);
 
         repository.listenGeofences()
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
+                .awaitDone(200, TimeUnit.MILLISECONDS)
                 .assertValueCount(1)
                 .assertValueAt(0, testGeofences -> testGeofences.size() == 1 &&
                         testGeofences.get(0).equals(geofence.withName(newName)));
@@ -156,7 +154,6 @@ public class GeofenceRepositoryTest {
     public void shouldNotUpdateNonExistingGeofence() {
         repository.update(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(false);
     }
 
@@ -164,12 +161,11 @@ public class GeofenceRepositoryTest {
     public void shouldFetchKnownGeofencesWhenSubscribing() {
         repository.insert(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(testGeofence.withId(1));
 
         repository.listenGeofences()
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
+                .awaitDone(200, TimeUnit.MILLISECONDS)
                 .assertValueCount(1)
                 .assertValueAt(0, testGeofences -> testGeofences.size() == 1 &&
                         testGeofences.get(0).equals(testGeofence.withId(1)));
@@ -177,12 +173,11 @@ public class GeofenceRepositoryTest {
         Geofence geofenceTwo = Geofence.create("New Geofence", new LatLng(2, 2), 2, true);
         repository.insert(geofenceTwo)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValues(geofenceTwo.withId(2));
 
         repository.listenGeofences()
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
+                .awaitDone(200, TimeUnit.MILLISECONDS)
                 .assertValueCount(1)
                 .assertValueAt(0, testGeofences ->
                         testGeofences.size() == 2 &&

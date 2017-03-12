@@ -2,6 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
@@ -13,7 +15,9 @@ import com.hgyllensvard.geofencemanager.geofence.edit.map.exception.MapNotInitia
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,7 +31,7 @@ public class MapView {
 
     private final SupportMapFragment mapFragment;
     private final LocationManager locationManager;
-    private final GeofenceViewManager geofenceViewManager;
+    private final GeofenceViewMapsManager geofenceMapManagers;
 
     private Observable<LatLng> longClickFlowable;
     private Observable<Long> selectMarkerFlowable;
@@ -40,13 +44,13 @@ public class MapView {
     public MapView(
             AppCompatActivity activity,
             @IdRes int mapContainer,
-            GeofenceViewManager geofenceViewManager,
-            LocationManager locationManager
+            LocationManager locationManager,
+            GeofenceViewMapsManager geofenceMapManagers
     ) {
         this.activity = activity;
         this.mapContainer = mapContainer;
         this.locationManager = locationManager;
-        this.geofenceViewManager = geofenceViewManager;
+        this.geofenceMapManagers = geofenceMapManagers;
 
         disposables = new CompositeDisposable();
         mapFragment = SupportMapFragment.newInstance();
@@ -132,14 +136,28 @@ public class MapView {
 
     public void removedGeofenceViews(List<GeofenceView> geofenceViews) {
         for (GeofenceView geofenceView : geofenceViews) {
-            geofenceView.remove();
+            GeofenceViewMapManager viewMapManager = geofenceMapManagers.get(geofenceView.id());
+            if (viewMapManager != null) {
+                viewMapManager.remove();
+            }
         }
     }
 
     public void updateGeofenceViews(List<GeofenceView> geofenceViews) {
         for (GeofenceView geofenceView : geofenceViews) {
-            geofenceView.display(googleMap);
+            GeofenceViewMapManager viewMapManager = getOrAddGeofenceView(geofenceView);
+            viewMapManager.display(googleMap);
         }
+    }
+
+    @NonNull
+    private GeofenceViewMapManager getOrAddGeofenceView(GeofenceView geofenceView) {
+        GeofenceViewMapManager viewMapManager = geofenceMapManagers.get(geofenceView.id());
+        if (viewMapManager == null) {
+            viewMapManager = new GeofenceViewMapManager(geofenceView);
+        }
+        geofenceMapManagers.put(geofenceView.id(), viewMapManager);
+        return viewMapManager;
     }
 
     private Observable<Boolean> loadMapAsync() {
@@ -177,7 +195,7 @@ public class MapView {
     private Observable<Long> createSelectedGeofenceFlowable() {
         return Observable.create(emitter -> {
             googleMap.setOnMarkerClickListener(marker -> {
-                emitter.onNext(geofenceViewManager.findGeofenceId(marker.getId()));
+                emitter.onNext(geofenceMapManagers.findGeofenceId(marker.getId()));
 
                 // Not the most effective solution, but I rather take implementation elegance here
                 return false;
@@ -192,5 +210,16 @@ public class MapView {
             googleMap.setOnCameraMoveStartedListener(emitter::onNext);
             emitter.setCancellable(() -> googleMap.setOnCameraMoveStartedListener(null));
         });
+    }
+
+    @Nullable
+    public LatLng getGeofencePosition(long geofenceId) {
+        GeofenceViewMapManager mapManager = geofenceMapManagers.get(geofenceId);
+
+        if (mapManager == null) {
+            return null;
+        }
+
+        return mapManager.getGeofence().latLng();
     }
 }

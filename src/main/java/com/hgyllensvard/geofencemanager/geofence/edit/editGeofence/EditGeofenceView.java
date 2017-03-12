@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.maps.model.LatLng;
+import com.hgyllensvard.geofencemanager.ActivityFlowManager;
 import com.hgyllensvard.geofencemanager.GeofenceManagerInjector;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.R2;
@@ -38,8 +40,8 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     @BindView(R2.id.geofence_menu_delete_geofence)
     FloatingActionButton deleteGeofenceMenuAction;
 
-    @BindView(R2.id.geofence_rename)
-    EditText renameGeofence;
+    @BindView(R2.id.edit_geofence_name)
+    EditText geofenceName;
 
     @Inject
     EditGeofencePresenter editGeofencePresenter;
@@ -51,6 +53,8 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     private Observable<Boolean> renameObservable;
     private Observable<Boolean> deleteFlowable;
+
+    private ActivityFlowManager activityFlowManager;
 
     public EditGeofenceView(Context context) {
         super(context);
@@ -79,8 +83,17 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
                     .map(aVoid -> true));
 
             injectDependencies();
+            setupActivityFlowManager();
 
             editGeofencePresenter.bindView(this);
+        }
+    }
+
+    private void setupActivityFlowManager() {
+        if (getContext() instanceof ActivityFlowManager) {
+            activityFlowManager = (ActivityFlowManager) getContext();
+        } else {
+            throw new IllegalStateException("Context does not implement: " + ActivityFlowManager.class.getSimpleName());
         }
     }
 
@@ -119,14 +132,14 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     @Override
     public void instantlyHideSelectedGeofenceOptions() {
         editGeofenceMenu.hideMenuButton(false);
-        renameGeofence.setVisibility(View.GONE);
+        geofenceName.setVisibility(View.GONE);
     }
 
     @Override
     public void hideSelectedGeofenceOptions() {
         editGeofenceMenu.hideMenuButton(true);
-        renameGeofence.setVisibility(View.GONE);
-        renameGeofence.setText("");
+        geofenceName.setVisibility(View.GONE);
+        geofenceName.setText("");
     }
 
     @Override
@@ -143,21 +156,41 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
         return deleteFlowable;
     }
 
+    @Override
+    public void exitView() {
+        activityFlowManager.viewAsksForExit();
+    }
+
+    @Override
+    public String getGeofenceName() {
+        return geofenceName.getText().toString();
+    }
+
+    @Override
+    public LatLng getGeofencePosition(long geofenceId) {
+        return mapView.getGeofencePosition(geofenceId);
+    }
+
+    @Override
+    public void displayGeofenceName(String name) {
+        geofenceName.setText(name);
+    }
+
     private void displayRenameGeofence(String name) {
-        renameGeofence.setVisibility(View.VISIBLE);
-        renameGeofence.setText(name);
+        geofenceName.setVisibility(View.VISIBLE);
+        geofenceName.setText(name);
 
         displayKeyboard();
 
-        renameGeofence.setSelection(name.length());
+        geofenceName.setSelection(name.length());
     }
 
     // Ugly solution, could not get the keyboard to be displayed properly.
     // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
     private void displayKeyboard() {
-        renameGeofence.postDelayed(() -> {
-            renameGeofence.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-            renameGeofence.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+        geofenceName.postDelayed(() -> {
+            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
         }, SIMULATE_CLICK_DELAY);
     }
 }

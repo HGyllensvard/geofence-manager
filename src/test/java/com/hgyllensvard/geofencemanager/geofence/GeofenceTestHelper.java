@@ -22,6 +22,7 @@ public class GeofenceTestHelper {
             .build();
 
     public static final long ID_ONE = 1;
+    public static final String ID_ONE_STR = String.valueOf(ID_ONE);
     public static final String NAME_ONE = "name_one";
     public static final int LATITUDE_ONE = 10;
     public static final int LONGITUDE_ONE = 20;
@@ -33,6 +34,7 @@ public class GeofenceTestHelper {
     public static final Geofence TEST_GEOFENCE_ONE_WITH_ID = TEST_GEOFENCE_ONE.withId(ID_ONE);
 
     public static final long ID_TWO = 2;
+    public static final String ID_TWO_STR = String.valueOf(ID_TWO);
     public static final String NAME_TWO = "name_two";
     public static final int LATITUDE_TWO = 15;
     public static final int LONGITUDE_TWO = 25;

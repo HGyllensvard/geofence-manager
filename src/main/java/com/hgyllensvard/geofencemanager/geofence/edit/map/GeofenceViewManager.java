@@ -89,21 +89,11 @@ public class GeofenceViewManager {
     }
 
     private boolean isModifiedGeofence(Geofence geofence, GeofenceView geofenceView) {
-        return geofenceView == null || !geofenceView.getGeofence().equals(geofence);
-    }
-
-    long findGeofenceId(String markerId) {
-        for (Map.Entry<Long, GeofenceView> markerEntrySet : geofenceViews.entrySet()) {
-            if (markerEntrySet.getValue().isMarker(markerId)) {
-                return markerEntrySet.getKey();
-            }
-        }
-
-        return -1;
+        return geofenceView == null || !geofenceView.geofence().equals(geofence);
     }
 
     private GeofenceView createGeofenceView(Geofence geofence) {
-        return new GeofenceView(geofence,
+        return GeofenceView.create(geofence,
                 mapOptions.fillColor(),
                 mapOptions.strokeColor());
     }

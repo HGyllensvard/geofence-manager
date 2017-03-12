@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
@@ -40,16 +39,14 @@ public class AddGeofencePresenterTest {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
         addGeofencePresenter = new AddGeofencePresenter(addGeofenceManager);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         addGeofencePresenter.unbindView();
     }
 

@@ -1,22 +1,25 @@
 package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Single;
 
 import static org.mockito.Mockito.when;
 
 public class GeofenceManagerTest {
+
+    @Rule
+    public final RxSchedulersOverriderRule rxSchedulersOverriderRule = new RxSchedulersOverriderRule();
 
     @Mock
     GeofenceRepository geofenceRepository;
@@ -43,7 +46,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.addGeofence(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(GeofenceActionResult.success(testGeofence.withId(1)));
     }
@@ -54,7 +56,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.addGeofence(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(geofenceActionResult -> geofenceActionResult.error() instanceof InsertFailedException);
     }
@@ -67,7 +68,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.addGeofence(testGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(addGeofenceResult -> addGeofenceResult.error() instanceof FailedToAddGeofenceException);
     }
@@ -79,7 +79,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.removeGeofence(insertedTestGeofence.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(true);
     }
@@ -90,7 +89,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.exist(GeofenceTestHelper.ID_ONE)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(true);
     }
@@ -101,7 +99,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.exist(GeofenceTestHelper.ID_ONE)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(false);
     }
@@ -112,7 +109,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.removeGeofence(insertedTestGeofence.id())
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertNoErrors()
                 .assertValue(false);
     }
@@ -125,7 +121,6 @@ public class GeofenceManagerTest {
 
         geofenceManager.updateGeofence(insertedTestGeofence)
                 .test()
-                .awaitDone(1, TimeUnit.SECONDS)
                 .assertValue(value -> value.equals(GeofenceActionResult.success(insertedTestGeofence)));
     }
 }

@@ -59,6 +59,10 @@ public abstract class Geofence {
         return toBuilder().name(name).build();
     }
 
+    public Geofence withLatLng(LatLng latLng) {
+        return toBuilder().latLng(latLng).build();
+    }
+
     @AutoValue.Builder
     abstract static class Builder {
         abstract Builder id(long id);

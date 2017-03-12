@@ -13,8 +13,10 @@ public abstract class RxPresenterAdapter<T extends View> extends PresenterAdapte
 
     @Override
     public void unbindView() {
-        super.unbindView();
+        if (view != null) {
+            disposables.clear();
+        }
 
-        disposables.clear();
+        super.unbindView();
     }
 }

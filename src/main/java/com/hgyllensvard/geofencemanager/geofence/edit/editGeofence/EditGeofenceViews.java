@@ -1,6 +1,9 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
 
+import android.support.annotation.Nullable;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
 
 import io.reactivex.Observable;
@@ -20,4 +23,13 @@ public interface EditGeofenceViews extends View {
     void displaySelectedGeofenceOptions();
 
     Observable<Boolean> observeDeleteGeofence();
+
+    void exitView();
+
+    String getGeofenceName();
+
+    @Nullable
+    LatLng getGeofencePosition(long geofenceId);
+
+    void displayGeofenceName(String name);
 }

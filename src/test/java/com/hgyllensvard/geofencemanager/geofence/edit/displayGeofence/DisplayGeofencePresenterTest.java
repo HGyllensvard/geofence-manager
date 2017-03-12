@@ -1,24 +1,21 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.displayGeofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewUpdate;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapCameraManager;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.processors.PublishProcessor;
-import io.reactivex.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
@@ -27,6 +24,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class DisplayGeofencePresenterTest {
+
+    @Rule
+    public final RxSchedulersOverriderRule rxSchedulersOverriderRule = new RxSchedulersOverriderRule();
 
     @Mock
     GeofenceViewManager geofenceViewManager;
@@ -39,16 +39,9 @@ public class DisplayGeofencePresenterTest {
 
     private DisplayGeofencePresenter displayGeofencePresenter;
 
-    @BeforeClass
-    public static void setupClass() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    }
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        RxJavaPlugins.setIoSchedulerHandler(scheduler -> Schedulers.trampoline());
 
         when(displayGeofenceViews.displayMap()).thenReturn(Observable.just(true));
 
