@@ -7,15 +7,11 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.di.GeofenceModuleManager;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceManagerComponent;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
-import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
 
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.DisposableContainer;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 public class GeofenceManagerActivity extends AppCompatActivity implements GeofenceManagerInjector {
 
@@ -50,30 +46,11 @@ public class GeofenceManagerActivity extends AppCompatActivity implements Geofen
     protected void onResume() {
         super.onResume();
 
-        Disposable disposable = locationPermissionRequester.request()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::managePermissionResult,
-                        Timber::e);
-
-        disposableContainer.add(disposable);
+        displayMap();
     }
 
     public GeofenceManagerComponent getGeofenceManagerComponent() {
         return geofenceManagerComponent;
-    }
-
-    private void managePermissionResult(RequestPermissionResult permissionResult) {
-        switch (permissionResult) {
-            case DENIED:
-                finish();
-                break;
-            case GRANTED:
-                Timber.v("Location permission granted, continuing");
-                displayMap();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected argument");
-        }
     }
 
     private void displayMap() {
