@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.toolbar.EditableTitleToolbarPresenter;
+import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
 
 import javax.inject.Inject;
 
@@ -17,14 +19,17 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
     private final EditGeofencePresenterManager editGeofencePresenterManager;
     private final SelectedGeofence selectedGeofence;
+    private final EditableTitleToolbarPresenter editableTitleToolbarPresenter;
 
     @Inject
     public EditGeofencePresenter(
             EditGeofencePresenterManager editGeofencePresenterManager,
-            SelectedGeofence selectedGeofence
+            SelectedGeofence selectedGeofence,
+            EditableTitleToolbarPresenter editableTitleToolbarPresenter
     ) {
         this.editGeofencePresenterManager = editGeofencePresenterManager;
         this.selectedGeofence = selectedGeofence;
+        this.editableTitleToolbarPresenter = editableTitleToolbarPresenter;
     }
 
     @Override
@@ -44,9 +49,9 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     @Override
     public void unbindView() {
         if (view != null && selectedGeofence.isGeofenceSelected()) {
-            String geofenceName = view.getGeofenceName();
+            ToolbarTitle toolbarTitle = editableTitleToolbarPresenter.title();
             LatLng geofenceMarker = view.getGeofencePosition(selectedGeofence.selectedGeofence());
-            editGeofencePresenterManager.updateSelectedGeofence(geofenceName, geofenceMarker);
+            editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), geofenceMarker);
         }
 
         super.unbindView();
@@ -63,7 +68,7 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     }
 
     private void displayGeofenceName(String geofenceName) {
-        Timber.v("Displaying geofence name: %s", geofenceName);
+        Timber.v("Displaying geofence title: %s", geofenceName);
         view.displayGeofenceName(geofenceName);
     }
 

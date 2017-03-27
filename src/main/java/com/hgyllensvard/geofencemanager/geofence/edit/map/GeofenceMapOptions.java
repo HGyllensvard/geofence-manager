@@ -22,8 +22,8 @@ public abstract class GeofenceMapOptions {
     public abstract int geofenceCreatedRadius();
 
     /**
-     * @return Default name a geofence is given when created, several geofences can have the same
-     * name, they are uniquely distinguishably by their ID.
+     * @return Default title a geofence is given when created, several geofences can have the same
+     * title, they are uniquely distinguishably by their ID.
      */
     public abstract String geofenceCreatedName();
 

@@ -3,6 +3,8 @@ package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.toolbar.EditableTitleToolbarPresenter;
+import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +43,9 @@ public class EditGeofencePresenterTest {
     @Mock
     SelectedGeofence selectedGeofence;
 
+    @Mock
+    EditableTitleToolbarPresenter editableTitleToolbarPresenter;
+
     private EditGeofencePresenter editGeofencePresenter;
 
     @BeforeClass
@@ -54,7 +59,10 @@ public class EditGeofencePresenterTest {
 
         setupDefaultMocks();
 
-        editGeofencePresenter = new EditGeofencePresenter(editGeofencePresenterManager, selectedGeofence);
+        editGeofencePresenter = new EditGeofencePresenter(
+                editGeofencePresenterManager,
+                selectedGeofence,
+                editableTitleToolbarPresenter);
     }
 
     @Test
@@ -101,6 +109,7 @@ public class EditGeofencePresenterTest {
         when(selectedGeofence.isGeofenceSelected()).thenReturn(true);
         when(selectedGeofence.selectedGeofence()).thenReturn(ID_ONE);
         when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(LAT_LNG_ONE);
+        when(editableTitleToolbarPresenter.title()).thenReturn(ToolbarTitle.create(NAME_ONE));
 
         editGeofencePresenter.bindView(editGeofenceViews);
         editGeofencePresenter.unbindView();

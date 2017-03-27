@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqldelight.SqlDelightStatement;
 
 import java.util.List;
 
@@ -63,9 +64,11 @@ public class GeofenceRepository {
     }
 
     private void createGeofenceFlowable() {
+        SqlDelightStatement query = GeofenceModel.FACTORY.select_all();
+
         geofenceFlowable = RxJavaInterop.toV2Flowable(database.createQuery(
                 GeofenceModel.TABLE_NAME,
-                GeofenceDbModel.SELECT_ALL,
+                query.statement,
                 new String[]{})
                 .mapToList(GeofenceModel.SELECT_ALL_MAPPER::map))
                 .map(geofenceMapper::toGeofences)
@@ -76,7 +79,8 @@ public class GeofenceRepository {
     public Single<Geofence> getGeofence(long identifier) {
         return Single.fromCallable(() -> {
 
-            Cursor cursor = database.query(GeofenceDbModel.SELECT_WITH_ID, String.valueOf(identifier));
+            SqlDelightStatement query = GeofenceModel.FACTORY.select_with_id(identifier);
+            Cursor cursor = database.query(query.statement, query.args);
 
             if (cursor != null) {
                 try {

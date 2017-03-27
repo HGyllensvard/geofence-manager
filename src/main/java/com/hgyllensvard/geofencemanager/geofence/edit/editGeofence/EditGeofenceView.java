@@ -2,11 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -39,9 +35,6 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     @BindView(R2.id.geofence_menu_delete_geofence)
     FloatingActionButton deleteGeofenceMenuAction;
-
-    @BindView(R2.id.edit_geofence_name)
-    EditText geofenceName;
 
     @Inject
     EditGeofencePresenter editGeofencePresenter;
@@ -77,10 +70,10 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
         if (!isInEditMode()) {
             renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
-                    .map(aVoid -> true));
+                    .map(ignored -> true));
 
             deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
-                    .map(aVoid -> true));
+                    .map(ignored -> true));
 
             injectDependencies();
             setupActivityFlowManager();
@@ -132,14 +125,11 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     @Override
     public void instantlyHideSelectedGeofenceOptions() {
         editGeofenceMenu.hideMenuButton(false);
-        geofenceName.setVisibility(View.GONE);
     }
 
     @Override
     public void hideSelectedGeofenceOptions() {
         editGeofenceMenu.hideMenuButton(true);
-        geofenceName.setVisibility(View.GONE);
-        geofenceName.setText("");
     }
 
     @Override
@@ -163,7 +153,8 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     @Override
     public String getGeofenceName() {
-        return geofenceName.getText().toString();
+//        return geofenceName.getText().toString();
+        return null;
     }
 
     @Override
@@ -173,24 +164,25 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     @Override
     public void displayGeofenceName(String name) {
-        geofenceName.setText(name);
+
+//        geofenceName.setText(title);
     }
 
-    private void displayRenameGeofence(String name) {
-        geofenceName.setVisibility(View.VISIBLE);
-        geofenceName.setText(name);
-
-        displayKeyboard();
-
-        geofenceName.setSelection(name.length());
-    }
-
-    // Ugly solution, could not get the keyboard to be displayed properly.
-    // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
-    private void displayKeyboard() {
-        geofenceName.postDelayed(() -> {
-            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-        }, SIMULATE_CLICK_DELAY);
-    }
+//    private void displayRenameGeofence(String title) {
+//        geofenceName.setVisibility(View.VISIBLE);
+//        geofenceName.setText(title);
+//
+//        displayKeyboard();
+//
+//        geofenceName.setSelection(title.length());
+//    }
+//
+//    // Ugly solution, could not get the keyboard to be displayed properly.
+//    // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
+//    private void displayKeyboard() {
+//        geofenceName.postDelayed(() -> {
+//            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+//            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+//        }, SIMULATE_CLICK_DELAY);
+//    }
 }

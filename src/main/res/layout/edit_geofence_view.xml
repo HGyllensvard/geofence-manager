@@ -4,20 +4,7 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent"
     >
-
-    <EditText
-        android:id="@+id/edit_geofence_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:background="@color/white"
-        android:inputType="text"
-        android:padding="7dp"
-        android:textColor="@color/black"
-        android:visibility="gone"
-        />
-
+    
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/edit_geofence_menu"
         android:layout_width="wrap_content"

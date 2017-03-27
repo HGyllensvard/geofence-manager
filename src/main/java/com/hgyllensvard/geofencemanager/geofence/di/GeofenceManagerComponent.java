@@ -7,6 +7,7 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.geofence.edit.addGeofence.AddGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.displayGeofence.DisplayGeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.editGeofence.EditGeofenceView;
+import com.hgyllensvard.geofencemanager.toolbar.EditableTitleEditableToolbar;
 
 import dagger.Subcomponent;
 
@@ -25,4 +26,6 @@ public interface GeofenceManagerComponent {
     void inject(EditGeofenceView editGeofenceView);
 
     void inject(AddGeofenceView addGeofenceView);
+
+    void inject(EditableTitleEditableToolbar editableTitleToolbar);
 }
