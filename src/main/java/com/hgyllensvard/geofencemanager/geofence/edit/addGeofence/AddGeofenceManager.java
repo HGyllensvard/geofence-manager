@@ -31,23 +31,16 @@ public class AddGeofenceManager {
         this.selectedGeofence = selectedGeofence;
     }
 
-    public Single<GeofenceActionResult> addGeofence(LatLng geofenceLatLng) {
-        return Single.just(geofenceLatLng)
-                .flatMap(latLng -> shouldAddNewGeofence()
-                        .doOnSuccess(this::logIfNotAddingGeofence)
-                        .map(ignored -> latLng))
-                .flatMap(this::storeGeofence);
-    }
-    
-    private Single<Boolean> shouldAddNewGeofence() {
-        return Single.fromCallable(selectedGeofence::selectedGeofence)
-                .flatMap(geofenceManager::exist);
-    }
+    Single<GeofenceActionResult> attemptAddGeofence(LatLng geofenceLatLng) {
+        return Single.just(selectedGeofence.selectedGeofence())
+                .flatMap(selectedGeofenceId -> {
+                    if (selectedGeofenceId == Geofence.NO_ID) {
+                        return storeGeofence(geofenceLatLng);
+                    }
 
-    private void logIfNotAddingGeofence(boolean isAddingGeofence) {
-        if (!isAddingGeofence) {
-            Timber.w("A geofence is already selected, will therefore not add new geofence");
-        }
+                    Timber.w("Selected Geofence already exists: %s, will therefore not add new geofence", selectedGeofenceId);
+                    return Single.just(GeofenceActionResult.failure(new GeofenceAlreadySelectedError(selectedGeofenceId)));
+                });
     }
 
     private Single<GeofenceActionResult> storeGeofence(LatLng latLng) {
@@ -65,8 +58,7 @@ public class AddGeofenceManager {
             Geofence geofence = geofenceActionResult.geofence();
 
             if (geofence == null) {
-                Timber.w("Geofence is null, but shouldn't be");
-                return;
+                throw new IllegalStateException("Geofence is null in result but shouldn't be");
             }
 
             selectedGeofence.updatedSelectedGeofence(geofence.id());

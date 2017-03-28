@@ -56,14 +56,14 @@ public class AddGeofencePresenterTest {
 
         when(addGeofenceViews.observerLongClick()).thenReturn(subject);
         when(addGeofenceViews.displayMap()).thenReturn(Observable.just(true));
-        when(addGeofenceManager.addGeofence(GeofenceTestHelper.LAT_LNG_ONE))
+        when(addGeofenceManager.attemptAddGeofence(GeofenceTestHelper.LAT_LNG_ONE))
                 .thenReturn(Single.just(Mockito.mock(GeofenceActionResult.class)));
 
         addGeofencePresenter.bindView(addGeofenceViews);
 
         subject.onNext(GeofenceTestHelper.LAT_LNG_ONE);
 
-        verify(addGeofenceManager, times(1)).addGeofence(GeofenceTestHelper.LAT_LNG_ONE);
+        verify(addGeofenceManager, times(1)).attemptAddGeofence(GeofenceTestHelper.LAT_LNG_ONE);
     }
 
     @Test

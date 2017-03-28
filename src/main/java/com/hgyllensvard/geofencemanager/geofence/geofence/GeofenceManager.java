@@ -81,6 +81,7 @@ public class GeofenceManager {
     }
 
     public Single<Boolean> exist(long geofenceId) {
+        Timber.v("Checking if Geofence with id: %s exists", geofenceId);
         return geofenceRepository.getGeofence(geofenceId)
                 .map(geofence -> !geofence.equals(Geofence.sDummyGeofence));
     }

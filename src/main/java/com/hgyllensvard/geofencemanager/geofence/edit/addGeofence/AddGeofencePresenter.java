@@ -41,7 +41,7 @@ public class AddGeofencePresenter extends RxPresenterAdapter<AddGeofenceViews> {
         Disposable disposable = view.observerLongClick()
                 .observeOn(Schedulers.io())
                 .doOnNext(latLng -> Timber.v("Attempting to add new geofence at: %s", latLng))
-                .flatMap(latLng -> addGeofenceManager.addGeofence(latLng)
+                .flatMap(latLng -> addGeofenceManager.attemptAddGeofence(latLng)
                         .toObservable())
                 .doOnError(Timber::e)
                 .retry()

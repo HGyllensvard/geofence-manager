@@ -2,8 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,5 +47,4 @@ public class GeofenceTestHelper {
 
     public static final List<Geofence> TEST_GEOFENCES = Arrays.asList(TEST_GEOFENCE_ONE, TEST_GEOFENCE_TWO);
     public static final List<Geofence> TEST_GEOFENCES_WITH_ID = Arrays.asList(TEST_GEOFENCE_ONE_WITH_ID, TEST_GEOFENCE_TWO_WITH_ID);
-
 }
