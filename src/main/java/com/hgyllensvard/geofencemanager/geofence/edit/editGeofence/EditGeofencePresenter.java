@@ -38,12 +38,14 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
         view.hideSelectedGeofenceOptions();
 
-        view.displayMap()
+        Disposable displayMap = view.displayMap()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> {
                     subscribeSelectedGeofence();
                     subscribeDeleteGeofence();
                 }, Timber::e);
+
+        disposables.add(displayMap);
     }
 
     @Override
@@ -51,7 +53,12 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
         if (view != null && selectedGeofence.isGeofenceSelected()) {
             ToolbarTitle toolbarTitle = editableTitleToolbarPresenter.title();
             LatLng geofenceMarker = view.getGeofencePosition(selectedGeofence.selectedGeofence());
-            editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), geofenceMarker);
+
+            if (toolbarTitle == null) {
+                Timber.w("Toolbar title was null, don't save the geofence changes.");
+            } else {
+                editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), geofenceMarker);
+            }
         }
 
         super.unbindView();

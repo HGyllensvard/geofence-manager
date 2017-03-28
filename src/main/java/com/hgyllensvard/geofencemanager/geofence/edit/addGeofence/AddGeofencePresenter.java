@@ -19,7 +19,7 @@ public class AddGeofencePresenter extends RxPresenterAdapter<AddGeofenceViews> {
     private final AddGeofenceManager addGeofenceManager;
 
     @Inject
-    public AddGeofencePresenter(
+    AddGeofencePresenter(
             AddGeofenceManager addGeofenceManager
     ) {
         this.addGeofenceManager = addGeofenceManager;
