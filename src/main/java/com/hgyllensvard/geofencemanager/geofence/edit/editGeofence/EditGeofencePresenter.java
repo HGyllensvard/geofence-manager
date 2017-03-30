@@ -22,7 +22,7 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     private final EditableTitleToolbarPresenter editableTitleToolbarPresenter;
 
     @Inject
-    public EditGeofencePresenter(
+    EditGeofencePresenter(
             EditGeofencePresenterManager editGeofencePresenterManager,
             SelectedGeofence selectedGeofence,
             EditableTitleToolbarPresenter editableTitleToolbarPresenter
@@ -52,12 +52,12 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     public void unbindView() {
         if (view != null && selectedGeofence.isGeofenceSelected()) {
             ToolbarTitle toolbarTitle = editableTitleToolbarPresenter.title();
-            LatLng geofenceMarker = view.getGeofencePosition(selectedGeofence.selectedGeofence());
+            LatLng position = view.getGeofencePosition(selectedGeofence.selectedGeofence());
 
             if (toolbarTitle == null) {
                 Timber.w("Toolbar title was null, don't save the geofence changes.");
             } else {
-                editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), geofenceMarker);
+                editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), position);
             }
         }
 

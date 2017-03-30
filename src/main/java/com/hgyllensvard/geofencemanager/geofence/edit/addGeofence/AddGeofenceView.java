@@ -66,6 +66,6 @@ public class AddGeofenceView extends View implements AddGeofenceViews {
 
     @Override
     public Observable<LatLng> observerLongClick() {
-        return mapView.observerLongClick();
+        return mapView.observeLongClick();
     }
 }

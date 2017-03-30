@@ -65,6 +65,7 @@ public class GeofenceManager {
     }
 
     public Single<GeofenceActionResult> updateGeofence(Geofence geofence) {
+        Timber.v("Updating Geofence with id: %s to: %s", geofence.id(), geofence);
         return Single.fromCallable(() -> playServicesGeofenceManager.removeGeofence(geofence.id()))
                 .flatMap(successfullyRemoved -> geofenceRepository.update(geofence))
                 .flatMap(successfullyUpdatedGeofence -> {

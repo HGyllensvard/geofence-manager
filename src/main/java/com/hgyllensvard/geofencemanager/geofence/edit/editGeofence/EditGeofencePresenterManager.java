@@ -47,7 +47,7 @@ public class EditGeofencePresenterManager {
             @Nullable LatLng geofencePosition
     ) {
         Maybe.fromCallable(selectedGeofence::selectedGeofence)
-                .doOnSuccess(geofenceId -> Timber.v("Updating geofence with Id: %s", geofenceId))
+                .doOnSuccess(geofenceId -> Timber.v("Updating geofence with Id: %s to position: %s ", geofenceId, geofencePosition))
                 .filter(this::isValidGeofenceId)
                 .flatMap(geofence -> geofenceManager.getGeofence(geofence)
                         .toMaybe())
