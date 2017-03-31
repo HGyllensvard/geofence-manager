@@ -4,7 +4,7 @@ package com.hgyllensvard.geofencemanager.di;
 import com.hgyllensvard.geofencemanager.GeofenceManagerModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ActivityModule;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.di.GeofenceModule;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofencePersistenceModule;
@@ -34,6 +34,6 @@ public interface GeofenceManagerComponent {
 
     GeofenceTriggeredManager geofenceTriggeredManager();
 
-    SelectedGeofence selectedGeofence();
+    SelectedGeofenceId selectedGeofence();
 
 }

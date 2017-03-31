@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 
 public interface EditableToolbarView extends View {
 
-    Observable<ToolbarTitle> observeTitle();
+    Observable<String> observeTitle();
 
     ToolbarTitle title();
 

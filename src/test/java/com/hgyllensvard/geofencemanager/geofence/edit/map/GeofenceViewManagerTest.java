@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
@@ -32,7 +32,7 @@ public class GeofenceViewManagerTest {
     @Mock
     GeofenceManager geofenceManager;
 
-    private SelectedGeofence selectedGeofence;
+    private SelectedGeofenceId selectedGeofenceId;
 
     private GeofenceViewManager geofenceViewManager;
 
@@ -40,19 +40,19 @@ public class GeofenceViewManagerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        selectedGeofence = new SelectedGeofence();
+        selectedGeofenceId = new SelectedGeofenceId();
 
         geofenceViewManager = new GeofenceViewManager(
                 geofenceManager,
                 GEOFENCE_MAP_OPTIONS,
-                selectedGeofence);
+                selectedGeofenceId);
     }
 
     @Test
     public void successfullyAddGeofenceViews() {
         when(geofenceManager.observeGeofences()).thenReturn(Flowable.just(GeofenceTestHelper.TEST_GEOFENCES_WITH_ID));
 
-        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+        selectedGeofenceId.selectedGeofence(GeofenceTestHelper.ID_ONE);
 
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(geofenceViewManager.observeGeofenceViews().test(), 0);
 
@@ -67,7 +67,7 @@ public class GeofenceViewManagerTest {
 
         when(geofenceManager.observeGeofences()).thenReturn(subject);
 
-        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+        selectedGeofenceId.selectedGeofence(GeofenceTestHelper.ID_ONE);
 
         TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews().test();
 
@@ -86,7 +86,7 @@ public class GeofenceViewManagerTest {
         PublishProcessor<List<Geofence>> subject = PublishProcessor.create();
 
         when(geofenceManager.observeGeofences()).thenReturn(subject);
-        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+        selectedGeofenceId.selectedGeofence(GeofenceTestHelper.ID_ONE);
 
         TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews()
                 .test();

@@ -2,13 +2,10 @@ package com.hgyllensvard.geofencemanager.toolbar;
 
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
 import javax.inject.Inject;
 
@@ -20,18 +17,16 @@ import timber.log.Timber;
 @PerActivity
 public class EditableTitleToolbarPresenter extends RxPresenterAdapter<EditableToolbarView> {
 
-    private SelectedGeofence selectedGeofence;
-    private GeofenceManager geofenceManager;
-
-    private ToolbarTitle toolbarTitle;
+    private final SelectedGeofence selectedGeofence;
+    private final ToolbarTitleManager toolbarTitleManager;
 
     @Inject
-    public EditableTitleToolbarPresenter(
+    EditableTitleToolbarPresenter(
             SelectedGeofence selectedGeofence,
-            GeofenceManager geofenceManager
+            ToolbarTitleManager toolbarTitleManager
     ) {
         this.selectedGeofence = selectedGeofence;
-        this.geofenceManager = geofenceManager;
+        this.toolbarTitleManager = toolbarTitleManager;
     }
 
     @Override
@@ -43,25 +38,22 @@ public class EditableTitleToolbarPresenter extends RxPresenterAdapter<EditableTo
         setSelectedGeofenceNameAsTitle();
     }
 
-    @Nullable
-    public ToolbarTitle title() {
-        return toolbarTitle;
-    }
-
     private void subscribeToolbarTitleChanges() {
         Disposable titleChangeDisposable = view.observeTitle()
-                .subscribe(toolbarTitle -> this.toolbarTitle = toolbarTitle,
+                .map(ToolbarTitle::create)
+                .subscribe(toolbarTitleManager::title,
                         Timber::e);
 
         disposables.add(titleChangeDisposable);
     }
 
     private void setSelectedGeofenceNameAsTitle() {
-        geofenceManager.getGeofence(selectedGeofence.selectedGeofence())
-                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence))
+        Disposable disposable = selectedGeofence.observeValidSelectedGeofence()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(geofence -> view.title(geofence.name()),
                         Timber::e);
+
+        disposables.add(disposable);
     }
 }

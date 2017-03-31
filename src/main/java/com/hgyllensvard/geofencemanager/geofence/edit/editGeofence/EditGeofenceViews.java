@@ -16,8 +16,6 @@ public interface EditGeofenceViews extends View {
 
     Observable<Integer> observeCameraStartedMoving();
 
-    void instantlyHideSelectedGeofenceOptions();
-
     void hideSelectedGeofenceOptions();
 
     void displaySelectedGeofenceOptions();
@@ -25,11 +23,7 @@ public interface EditGeofenceViews extends View {
     Observable<Boolean> observeDeleteGeofence();
 
     void exitView();
-
-    String getGeofenceName();
-
+    
     @Nullable
     LatLng getGeofencePosition(long geofenceId);
-
-    void displayGeofenceName(String name);
 }

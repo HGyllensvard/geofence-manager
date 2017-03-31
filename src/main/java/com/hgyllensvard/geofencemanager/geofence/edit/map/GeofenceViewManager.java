@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 import android.annotation.SuppressLint;
 
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
@@ -26,7 +26,7 @@ public class GeofenceViewManager {
 
     private final GeofenceManager geofenceManager;
     private final GeofenceMapOptions mapOptions;
-    private final SelectedGeofence selectedGeofence;
+    private final SelectedGeofenceId selectedGeofenceId;
 
     @SuppressLint("UseSparseArrays") // Does not support all methods used here
     private final Map<Long, GeofenceView> geofenceViews = new HashMap<>();
@@ -35,11 +35,11 @@ public class GeofenceViewManager {
     public GeofenceViewManager(
             GeofenceManager geofenceManager,
             GeofenceMapOptions mapOptions,
-            SelectedGeofence selectedGeofence
+            SelectedGeofenceId selectedGeofenceId
     ) {
         this.geofenceManager = geofenceManager;
         this.mapOptions = mapOptions;
-        this.selectedGeofence = selectedGeofence;
+        this.selectedGeofenceId = selectedGeofenceId;
     }
 
     public Flowable<GeofenceViewUpdate> observeGeofenceViews() {
@@ -50,7 +50,7 @@ public class GeofenceViewManager {
     }
 
     private Flowable<GeofenceViewUpdate> updateGeofenceViews(List<Geofence> updatedGeofences) {
-        return Observable.combineLatest(selectedGeofence.observeSelectedGeofence(), Observable.just(updatedGeofences),
+        return Observable.combineLatest(selectedGeofenceId.observeSelectedGeofenceId(), Observable.just(updatedGeofences),
                 (selectedGeofenceId, geofences) -> {
                     List<GeofenceView> updatedGeofenceViews = new ArrayList<>();
                     List<GeofenceView> removedGeofenceViews = new ArrayList<>();

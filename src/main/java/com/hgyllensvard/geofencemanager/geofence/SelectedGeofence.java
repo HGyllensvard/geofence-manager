@@ -2,38 +2,85 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-import timber.log.Timber;
+import io.reactivex.Single;
 
+@Singleton
 public class SelectedGeofence {
 
-    private BehaviorSubject<Long> subject;
+    private SelectedGeofenceId selectedGeofenceId;
+    private GeofenceManager geofenceManager;
 
-    public SelectedGeofence() {
-        subject = BehaviorSubject.createDefault(Geofence.NO_ID);
+    @Inject
+    public SelectedGeofence(
+            SelectedGeofenceId selectedGeofenceId,
+            GeofenceManager geofenceManager
+    ) {
+        this.selectedGeofenceId = selectedGeofenceId;
+        this.geofenceManager = geofenceManager;
     }
 
-    public synchronized long selectedGeofence() {
-        return subject.getValue();
+    public Single<Geofence> selectedGeofence() {
+        return Single.fromCallable(() -> selectedGeofenceId.selectedGeofenceId())
+                .flatMap(geofenceId -> {
+                    if (geofenceId == Geofence.NO_ID) {
+                        return Single.just(Geofence.sDummyGeofence);
+                    }
+
+                    return geofenceManager.getGeofence(geofenceId);
+                });
     }
 
-    public Observable<Long> observeSelectedGeofence() {
-        return subject;
+    public Maybe<Geofence> selectedValidGeofence() {
+        return selectedGeofence()
+                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence));
     }
 
-    public synchronized boolean isGeofenceSelected() {
-        return subject.getValue() != Geofence.NO_ID;
+    /**
+     * @return Observable that will only emit a new item once a
+     * valid existing geofence has been selected.
+     */
+    public Observable<Geofence> observeValidSelectedGeofence() {
+        return observeSelectedGeofence()
+                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence));
     }
 
-    public synchronized void setNoSelection() {
-        Timber.d("No selected Geofence");
-        subject.onNext(Geofence.NO_ID);
+    /**
+     * @return Observable that returns the selected Geofence.
+     * This will include the dummy Geofence returned if there is
+     * currently no selected Geofence. This can then be used to know
+     * if a Geofence is selected or not.
+     */
+    public Observable<Geofence> observeSelectedGeofence() {
+        return selectedGeofenceId.observeSelectedGeofenceId()
+                .flatMap(geofenceId -> {
+                    if (geofenceId == Geofence.NO_ID) {
+                        return Observable.just(Geofence.sDummyGeofence);
+                    }
+
+                    return geofenceManager.getGeofence(geofenceId)
+                            .toObservable();
+
+                })
+                .distinctUntilChanged();
     }
 
-    public synchronized void updatedSelectedGeofence(long geofenceId) {
-        Timber.d("New Geofence selected: %s", geofenceId);
-        subject.onNext(geofenceId);
+    public Single<Boolean> delete() {
+        if (!selectedGeofenceId.isGeofenceSelected()) {
+            return Single.just(false);
+        }
+
+        return geofenceManager.removeGeofence(selectedGeofenceId.selectedGeofenceId())
+                .doOnSuccess(successfullyDeletedGeofence -> {
+                    if (successfullyDeletedGeofence) {
+                        selectedGeofenceId.setNoSelection();
+                    }
+                });
     }
 }

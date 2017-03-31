@@ -2,11 +2,13 @@ package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,6 +27,9 @@ import static org.mockito.Mockito.when;
 
 public class AddGeofencePresenterTest {
 
+    @Rule
+    public final RxSchedulersOverriderRule schedulersOverriderRule = new RxSchedulersOverriderRule();
+
     @Mock
     AddGeofenceManager addGeofenceManager;
 
@@ -32,11 +37,6 @@ public class AddGeofencePresenterTest {
     AddGeofenceViews addGeofenceViews;
 
     private AddGeofencePresenter addGeofencePresenter;
-
-    @BeforeClass
-    public static void setupClass() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
-    }
 
     @Before
     public void setUp() {

@@ -32,8 +32,6 @@ public class GeofenceManagerActivity extends AppCompatActivity implements Geofen
 
 //        ButterKnife.bind(this);
 
-//        toolbar.setTitle("Activate geofences");
-
 //        setSupportActionBar(toolbar);
 
         geofenceManagerComponent = GeofenceModuleManager.geofenceManagerComponent(this)

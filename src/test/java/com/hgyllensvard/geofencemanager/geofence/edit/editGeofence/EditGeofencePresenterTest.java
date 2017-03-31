@@ -3,8 +3,9 @@ package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.toolbar.EditableTitleToolbarPresenter;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
+import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitleManager;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,10 +42,13 @@ public class EditGeofencePresenterTest {
     EditGeofenceViews editGeofenceViews;
 
     @Mock
+    SelectedGeofenceId selectedGeofenceId;
+
+    @Mock
     SelectedGeofence selectedGeofence;
 
     @Mock
-    EditableTitleToolbarPresenter editableTitleToolbarPresenter;
+    ToolbarTitleManager toolbarTitleManager;
 
     private EditGeofencePresenter editGeofencePresenter;
 
@@ -61,14 +65,15 @@ public class EditGeofencePresenterTest {
 
         editGeofencePresenter = new EditGeofencePresenter(
                 editGeofencePresenterManager,
-                selectedGeofence,
-                editableTitleToolbarPresenter);
+                selectedGeofenceId,
+                toolbarTitleManager,
+                selectedGeofence);
     }
 
     @Test
     public void deleteGeofence_succeedToDelete_VerifyClosingView() {
         when(editGeofenceViews.observeDeleteGeofence()).thenReturn(Observable.just(true));
-        when(editGeofencePresenterManager.deleteSelectedGeofence()).thenReturn(Single.just(true));
+        when(selectedGeofence.delete()).thenReturn(Single.just(true));
 
         editGeofencePresenter.bindView(editGeofenceViews);
 
@@ -78,7 +83,7 @@ public class EditGeofencePresenterTest {
     @Test
     public void deleteGeofence_failToDelete_DoNotUpdateUI() {
         when(editGeofenceViews.observeDeleteGeofence()).thenReturn(Observable.just(true));
-        when(editGeofencePresenterManager.deleteSelectedGeofence()).thenReturn(Single.just(false));
+        when(selectedGeofence.delete()).thenReturn(Single.just(false));
 
         editGeofencePresenter.bindView(editGeofenceViews);
 
@@ -86,17 +91,8 @@ public class EditGeofencePresenterTest {
     }
 
     @Test
-    public void displayGeofenceName() {
-        when(editGeofencePresenterManager.observeSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
-
-        editGeofencePresenter.bindView(editGeofenceViews);
-
-        verify(editGeofenceViews, times(1)).displayGeofenceName(NAME_ONE);
-    }
-
-    @Test
     public void displaySelectedGeofenceOptions() {
-        when(editGeofencePresenterManager.observeSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
+        when(selectedGeofence.observeSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
 
         editGeofencePresenter.bindView(editGeofenceViews);
 
@@ -105,11 +101,10 @@ public class EditGeofencePresenterTest {
 
     @Test
     public void unbindView_SaveGeofence() {
-        when(editGeofenceViews.getGeofenceName()).thenReturn(NAME_ONE);
-        when(selectedGeofence.isGeofenceSelected()).thenReturn(true);
-        when(selectedGeofence.selectedGeofence()).thenReturn(ID_ONE);
+        when(selectedGeofenceId.isGeofenceSelected()).thenReturn(true);
+        when(selectedGeofenceId.selectedGeofenceId()).thenReturn(ID_ONE);
         when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(LAT_LNG_ONE);
-        when(editableTitleToolbarPresenter.title()).thenReturn(ToolbarTitle.create(NAME_ONE));
+        when(toolbarTitleManager.title()).thenReturn(ToolbarTitle.create(NAME_ONE));
 
         editGeofencePresenter.bindView(editGeofenceViews);
         editGeofencePresenter.unbindView();
@@ -129,7 +124,7 @@ public class EditGeofencePresenterTest {
     public void unbindView_NoValidGeofenceSelected_DoNotAttemptToSave() {
         editGeofencePresenter.bindView(editGeofenceViews);
 
-        when(selectedGeofence.isGeofenceSelected()).thenReturn(false);
+        when(selectedGeofenceId.isGeofenceSelected()).thenReturn(false);
         editGeofencePresenter.unbindView();
 
         verify(editGeofencePresenterManager, never()).updateSelectedGeofence(any(String.class), any(LatLng.class));
@@ -144,6 +139,6 @@ public class EditGeofencePresenterTest {
         when(editGeofenceViews.observeDeleteGeofence()).thenReturn(PublishSubject.create());
         when(editGeofenceViews.observeGeofenceSelected()).thenReturn(PublishSubject.create());
 
-        when(editGeofencePresenterManager.observeSelectedGeofence()).thenReturn(PublishSubject.create());
+        when(selectedGeofence.observeSelectedGeofence()).thenReturn(PublishSubject.create());
     }
 }

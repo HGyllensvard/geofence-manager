@@ -2,7 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
@@ -28,7 +28,7 @@ public class AddGeofenceManagerTest {
     @Mock
     GeofenceManager geofenceManager;
 
-    private SelectedGeofence selectedGeofence;
+    private SelectedGeofenceId selectedGeofenceId;
 
     private AddGeofenceManager addGeofenceManager;
 
@@ -36,17 +36,17 @@ public class AddGeofenceManagerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        selectedGeofence = new SelectedGeofence();
+        selectedGeofenceId = new SelectedGeofenceId();
 
         addGeofenceManager = new AddGeofenceManager(
                 geofenceManager,
                 GeofenceTestHelper.GEOFENCE_MAP_OPTIONS,
-                selectedGeofence);
+                selectedGeofenceId);
     }
 
     @Test
     public void attemptAddGeofence_AlreadySelectedGeofence_FailedActionReturned() throws Exception {
-        selectedGeofence.updatedSelectedGeofence(GeofenceTestHelper.ID_ONE);
+        selectedGeofenceId.selectedGeofence(GeofenceTestHelper.ID_ONE);
 
         addGeofenceManager.attemptAddGeofence(GeofenceTestHelper.LAT_LNG_ONE)
                 .test()
@@ -65,7 +65,7 @@ public class AddGeofenceManagerTest {
                 .assertValueCount(1)
                 .assertValue(actionResult -> actionResult.equals(FAILED_GEOFENCE_ACTION));
 
-        assertThat(selectedGeofence.selectedGeofence()).isEqualTo(Geofence.NO_ID);
+        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(Geofence.NO_ID);
     }
 
     @Test
@@ -79,6 +79,6 @@ public class AddGeofenceManagerTest {
                 .assertValueCount(1)
                 .assertValue(actionResult -> actionResult.geofence().equals(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
 
-        assertThat(selectedGeofence.selectedGeofence()).isEqualTo(GeofenceTestHelper.ID_ONE);
+        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(GeofenceTestHelper.ID_ONE);
     }
 }

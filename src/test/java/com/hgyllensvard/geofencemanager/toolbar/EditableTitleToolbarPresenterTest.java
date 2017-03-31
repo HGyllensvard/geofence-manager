@@ -3,7 +3,6 @@ package com.hgyllensvard.geofencemanager.toolbar;
 import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,14 +10,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE;
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -37,7 +36,7 @@ public class EditableTitleToolbarPresenterTest {
     SelectedGeofence selectedGeofence;
 
     @Mock
-    GeofenceManager geofenceManager;
+    ToolbarTitleManager toolbarTitleManager;
 
     @Mock
     EditableToolbarView view;
@@ -52,42 +51,29 @@ public class EditableTitleToolbarPresenterTest {
 
         presenter = new EditableTitleToolbarPresenter(
                 selectedGeofence,
-                geofenceManager);
+                toolbarTitleManager);
     }
 
     @Test
     public void bindView_subscribeTitleChanges_updateLocalTitle() {
-        when(view.observeTitle()).thenReturn(Observable.just(TOOLBAR_TITLE));
-
-        assertThat(presenter.title()).isNull();
+        when(view.observeTitle()).thenReturn(Observable.just(TITLE));
 
         presenter.bindView(view);
 
-        assertThat(presenter.title().title()).isEqualTo(TITLE);
+        verify(toolbarTitleManager, times(1)).title(TOOLBAR_TITLE);
     }
 
     @Test
     public void bindView_getSelectedGeofence_updateViewTitle() {
-        when(selectedGeofence.selectedGeofence()).thenReturn(ID_ONE);
-        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(TEST_GEOFENCE_ONE));
+        when(selectedGeofence.observeValidSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
 
         presenter.bindView(view);
 
         verify(view, times(1)).title(NAME_ONE);
     }
 
-    @Test
-    public void bindView_geofenceDoesNotExist_doNotUpdateView() {
-        when(selectedGeofence.selectedGeofence()).thenReturn(ID_ONE);
-        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(Geofence.sDummyGeofence));
-
-        presenter.bindView(view);
-
-        verify(view, never()).title(any(String.class));
-    }
-
     private void setupDummyInitialStates() {
         when(view.observeTitle()).thenReturn(PublishSubject.create());
-        when(geofenceManager.getGeofence(any(Long.class))).thenReturn(Single.just(Geofence.sDummyGeofence));
+        when(selectedGeofence.observeValidSelectedGeofence()).thenReturn(PublishSubject.create());
     }
 }

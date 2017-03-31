@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.toolbar.EditableTitleToolbarPresenter;
+import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
+import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitleManager;
 
 import javax.inject.Inject;
 
@@ -18,18 +20,21 @@ import timber.log.Timber;
 public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews> {
 
     private final EditGeofencePresenterManager editGeofencePresenterManager;
+    private final SelectedGeofenceId selectedGeofenceId;
+    private final ToolbarTitleManager toolbarTitleManager;
     private final SelectedGeofence selectedGeofence;
-    private final EditableTitleToolbarPresenter editableTitleToolbarPresenter;
 
     @Inject
     EditGeofencePresenter(
             EditGeofencePresenterManager editGeofencePresenterManager,
-            SelectedGeofence selectedGeofence,
-            EditableTitleToolbarPresenter editableTitleToolbarPresenter
+            SelectedGeofenceId selectedGeofenceId,
+            ToolbarTitleManager toolbarTitleManager,
+            SelectedGeofence selectedGeofence
     ) {
         this.editGeofencePresenterManager = editGeofencePresenterManager;
+        this.selectedGeofenceId = selectedGeofenceId;
+        this.toolbarTitleManager = toolbarTitleManager;
         this.selectedGeofence = selectedGeofence;
-        this.editableTitleToolbarPresenter = editableTitleToolbarPresenter;
     }
 
     @Override
@@ -50,9 +55,9 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
     @Override
     public void unbindView() {
-        if (view != null && selectedGeofence.isGeofenceSelected()) {
-            ToolbarTitle toolbarTitle = editableTitleToolbarPresenter.title();
-            LatLng position = view.getGeofencePosition(selectedGeofence.selectedGeofence());
+        if (view != null && selectedGeofenceId.isGeofenceSelected()) {
+            ToolbarTitle toolbarTitle = toolbarTitleManager.title();
+            LatLng position = view.getGeofencePosition(selectedGeofenceId.selectedGeofenceId());
 
             if (toolbarTitle == null) {
                 Timber.w("Toolbar title was null, don't save the geofence changes.");
@@ -65,28 +70,25 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     }
 
     private void subscribeSelectedGeofence() {
-        Disposable disposable = editGeofencePresenterManager.observeSelectedGeofence()
-                .doOnNext(geofence -> displayGeofenceName(geofence.name()))
-                .doOnNext(geofence -> view.displaySelectedGeofenceOptions())
-                .subscribe(geofenceId -> {
+        Disposable disposable = selectedGeofence.observeSelectedGeofence()
+                .subscribe(geofence -> {
+                    if (geofence.equals(Geofence.sDummyGeofence)) {
+                        view.hideSelectedGeofenceOptions();
+                    } else {
+                        view.displaySelectedGeofenceOptions();
+                    }
                 }, Timber::e);
 
         disposables.add(disposable);
     }
 
-    private void displayGeofenceName(String geofenceName) {
-        Timber.v("Displaying geofence title: %s", geofenceName);
-        view.displayGeofenceName(geofenceName);
-    }
-
     private void subscribeDeleteGeofence() {
         Disposable disposable = view.observeDeleteGeofence()
-                .flatMap(ignored -> editGeofencePresenterManager.deleteSelectedGeofence()
+                .flatMap(ignored -> selectedGeofence.delete()
                         .toObservable())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(successfullyDeletedGeofence -> {
                     if (successfullyDeletedGeofence) {
-                        view.hideSelectedGeofenceOptions();
                         view.exitView();
                     }
                     Timber.v("Successfully deleted selected geofence? : %s", successfullyDeletedGeofence);

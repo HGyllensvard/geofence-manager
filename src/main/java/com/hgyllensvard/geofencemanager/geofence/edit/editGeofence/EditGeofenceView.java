@@ -24,9 +24,7 @@ import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 
 public class EditGeofenceView extends RelativeLayout implements EditGeofenceViews {
-
-    private static final int SIMULATE_CLICK_DELAY = 150;
-
+    
     @BindView(R2.id.edit_geofence_menu)
     FloatingActionMenu editGeofenceMenu;
 
@@ -44,8 +42,7 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     private Unbinder unbinder;
 
-    private Observable<Boolean> renameObservable;
-    private Observable<Boolean> deleteFlowable;
+    private Observable<Boolean> deleteObservable;
 
     private ActivityFlowManager activityFlowManager;
 
@@ -69,10 +66,7 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
         unbinder = ButterKnife.bind(this);
 
         if (!isInEditMode()) {
-            renameObservable = RxJavaInterop.toV2Observable(RxView.clicks(renameGeofenceMenuAction)
-                    .map(ignored -> true));
-
-            deleteFlowable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
+            deleteObservable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
                     .map(ignored -> true));
 
             injectDependencies();
@@ -123,11 +117,6 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     }
 
     @Override
-    public void instantlyHideSelectedGeofenceOptions() {
-        editGeofenceMenu.hideMenuButton(false);
-    }
-
-    @Override
     public void hideSelectedGeofenceOptions() {
         editGeofenceMenu.hideMenuButton(true);
     }
@@ -137,13 +126,9 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
         editGeofenceMenu.showMenuButton(true);
     }
 
-    private Observable<Boolean> observeRenameGeofence() {
-        return renameObservable;
-    }
-
     @Override
     public Observable<Boolean> observeDeleteGeofence() {
-        return deleteFlowable;
+        return deleteObservable;
     }
 
     @Override
@@ -152,37 +137,7 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     }
 
     @Override
-    public String getGeofenceName() {
-//        return geofenceName.getText().toString();
-        return null;
-    }
-
-    @Override
     public LatLng getGeofencePosition(long geofenceId) {
         return mapView.getGeofencePosition(geofenceId);
     }
-
-    @Override
-    public void displayGeofenceName(String name) {
-
-//        geofenceName.setText(title);
-    }
-
-//    private void displayRenameGeofence(String title) {
-//        geofenceName.setVisibility(View.VISIBLE);
-//        geofenceName.setText(title);
-//
-//        displayKeyboard();
-//
-//        geofenceName.setSelection(title.length());
-//    }
-//
-//    // Ugly solution, could not get the keyboard to be displayed properly.
-//    // Found at: http://stackoverflow.com/questions/5105354/how-to-show-soft-keyboard-when-edittext-is-focused
-//    private void displayKeyboard() {
-//        geofenceName.postDelayed(() -> {
-//            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-//            geofenceName.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-//        }, SIMULATE_CLICK_DELAY);
-//    }
 }

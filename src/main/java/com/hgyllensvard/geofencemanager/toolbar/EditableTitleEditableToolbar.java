@@ -30,7 +30,7 @@ public class EditableTitleEditableToolbar extends android.support.v7.widget.Tool
     @BindView(R2.id.toolbar_title)
     EditText toolbarTitle;
 
-    private Observable<ToolbarTitle> titleObservable;
+    private Observable<String> titleObservable;
 
     public EditableTitleEditableToolbar(Context context) {
         super(context);
@@ -55,8 +55,7 @@ public class EditableTitleEditableToolbar extends android.support.v7.widget.Tool
                 RxTextView.afterTextChangeEvents(toolbarTitle)
                         .map(TextViewAfterTextChangeEvent::editable)
                         .filter(editable -> editable != null)
-                        .map(CharSequence::toString)
-                        .map(ToolbarTitle::create));
+                        .map(CharSequence::toString));
 
         injectDependencies();
 
@@ -64,7 +63,7 @@ public class EditableTitleEditableToolbar extends android.support.v7.widget.Tool
     }
 
     @Override
-    public Observable<ToolbarTitle> observeTitle() {
+    public Observable<String> observeTitle() {
         return titleObservable;
     }
 

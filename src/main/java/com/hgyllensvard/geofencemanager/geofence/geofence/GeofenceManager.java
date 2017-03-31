@@ -36,7 +36,7 @@ public class GeofenceManager {
     }
 
     /**
-     * @param geofenceToAdd Geofence to persis and add to the active geofences.
+     * @param geofenceToAdd Geofence to persist and add to the active geofences.
      * @return The GeofenceActionResult will hld a boolean for success or not.
      * If success is true the result will also contain the Geofence with the
      * database id.
