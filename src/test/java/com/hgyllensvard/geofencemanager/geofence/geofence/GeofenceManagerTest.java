@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.geofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.persistence.GeofenceRepository;
 import com.hgyllensvard.geofencemanager.geofence.persistence.exceptions.InsertFailedException;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.PlayServicesGeofenceManager;

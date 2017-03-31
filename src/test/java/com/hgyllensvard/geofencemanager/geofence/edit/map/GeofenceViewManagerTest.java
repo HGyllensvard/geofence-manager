@@ -2,8 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceViewTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 

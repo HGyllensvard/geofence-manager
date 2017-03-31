@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import com.google.android.gms.location.GeofencingEvent;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 

@@ -2,6 +2,8 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 
 import org.junit.Before;
 import org.junit.Test;

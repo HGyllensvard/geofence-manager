@@ -1,16 +1,21 @@
 package com.hgyllensvard.geofencemanager.geofence;
 
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceIdState;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import io.reactivex.observers.TestObserver;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO;
 import static com.hgyllensvard.geofencemanager.geofence.geofence.Geofence.NO_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SelectedGeofenceIdTest {
+
+    private static final SelectedGeofenceIdState NO_SELECTION = SelectedGeofenceIdState.noSelection();
+    private static final SelectedGeofenceIdState ID_ONE = SelectedGeofenceIdState.selected(GeofenceTestHelper.ID_ONE);
+    private static final SelectedGeofenceIdState ID_TWO = SelectedGeofenceIdState.selected(GeofenceTestHelper.ID_TWO);
 
     private static final int INVALID_GEOFENCE_ID = -1000;
 
@@ -27,12 +32,18 @@ public class SelectedGeofenceIdTest {
     }
 
     @Test
+    public void selectedGeofenceState_defaultNoId() {
+        assertThat(selectedGeofenceId.selectedGeofenceState().geofenceId()).isEqualTo(NO_ID);
+        assertThat(selectedGeofenceId.selectedGeofenceState().isGeofenceSelected()).isFalse();
+    }
+
+    @Test
     public void observeValidSelectedGeofence_updateSelectionMultipleTimes() {
-        TestObserver<Long> selectedGeofence = selectedGeofenceId.observeValidSelectedGeofenceId().test();
+        TestObserver<SelectedGeofenceIdState> selectedGeofence = selectedGeofenceId.observeValidSelectedGeofenceId().test();
 
         assertUpdateIdTo(ID_ONE);
         assertUpdateIdTo(ID_TWO);
-        assertUpdateIdTo(NO_ID);
+        assertUpdateIdTo(NO_SELECTION);
 
         selectedGeofence
                 .assertNoErrors()
@@ -42,21 +53,21 @@ public class SelectedGeofenceIdTest {
 
     @Test
     public void observeSelectedGeofence_updateSelectionMultipleTimes() {
-        TestObserver<Long> selectedGeofence = selectedGeofenceId.observeSelectedGeofenceId().test();
+        TestObserver<SelectedGeofenceIdState> selectedGeofence = selectedGeofenceId.observeSelectedGeofenceId().test();
 
         assertUpdateIdTo(ID_ONE);
         assertUpdateIdTo(ID_TWO);
-        assertUpdateIdTo(NO_ID);
+        assertUpdateIdTo(NO_SELECTION);
 
         selectedGeofence
                 .assertNoErrors()
                 .assertValueCount(4)
-                .assertValues(NO_ID, ID_ONE, ID_TWO, NO_ID);
+                .assertValues(NO_SELECTION, ID_ONE, ID_TWO, NO_SELECTION);
     }
 
     @Test
     public void observeSelectedGeofence_doNotSendUpdatesForSameSelection() {
-        TestObserver<Long> selectedGeofence = selectedGeofenceId.observeSelectedGeofenceId().test();
+        TestObserver<SelectedGeofenceIdState> selectedGeofence = selectedGeofenceId.observeSelectedGeofenceId().test();
 
         assertUpdateIdTo(ID_ONE);
         assertUpdateIdTo(ID_ONE);
@@ -65,7 +76,7 @@ public class SelectedGeofenceIdTest {
         selectedGeofence
                 .assertNoErrors()
                 .assertValueCount(2)
-                .assertValues(NO_ID, ID_ONE);
+                .assertValues(NO_SELECTION, ID_ONE);
     }
 
     @Test
@@ -83,7 +94,7 @@ public class SelectedGeofenceIdTest {
     public void setNoSelection_checkNoIdSelected() {
         assertUpdateIdTo(ID_ONE);
         selectedGeofenceId.setNoSelection();
-        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(NO_ID);
+        assertThat(selectedGeofenceId.selectedGeofenceState()).isEqualTo(NO_SELECTION);
     }
 
     @Test
@@ -99,11 +110,11 @@ public class SelectedGeofenceIdTest {
     @Test
     public void updatedSelectedGeofence_checkCanReturnSelectionToNoSelectedId() {
         assertUpdateIdTo(ID_ONE);
-        assertUpdateIdTo(NO_ID);
+        assertUpdateIdTo(NO_SELECTION);
     }
 
-    private void assertUpdateIdTo(long geofenceId) {
-        assertThat(selectedGeofenceId.selectedGeofence(geofenceId)).isTrue();
-        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(geofenceId);
+    private void assertUpdateIdTo(SelectedGeofenceIdState geofenceState) {
+        assertThat(selectedGeofenceId.selectedGeofence(geofenceState.geofenceId())).isTrue();
+        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(geofenceState.geofenceId());
     }
 }

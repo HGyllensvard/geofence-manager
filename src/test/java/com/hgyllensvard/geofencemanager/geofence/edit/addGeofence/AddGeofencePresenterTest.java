@@ -2,12 +2,11 @@ package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,8 +15,6 @@ import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;

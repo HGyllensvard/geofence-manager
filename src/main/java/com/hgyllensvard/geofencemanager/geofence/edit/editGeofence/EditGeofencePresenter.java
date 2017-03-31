@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitleManager;

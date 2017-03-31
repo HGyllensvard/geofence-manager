@@ -1,9 +1,9 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitleManager;
 

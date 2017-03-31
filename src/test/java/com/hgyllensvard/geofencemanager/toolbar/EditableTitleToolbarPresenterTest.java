@@ -1,8 +1,7 @@
 package com.hgyllensvard.geofencemanager.toolbar;
 
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,16 +9,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.subjects.PublishSubject;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

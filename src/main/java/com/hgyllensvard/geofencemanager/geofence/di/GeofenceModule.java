@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 
 import com.hgyllensvard.geofencemanager.R;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.playIntegration.GeofenceTriggeredManager;

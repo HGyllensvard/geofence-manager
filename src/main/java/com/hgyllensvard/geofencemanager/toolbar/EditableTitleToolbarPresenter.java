@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofence;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 
 import javax.inject.Inject;
 

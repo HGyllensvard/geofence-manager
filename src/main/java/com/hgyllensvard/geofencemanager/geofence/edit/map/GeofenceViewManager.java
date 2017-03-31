@@ -3,9 +3,10 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 import android.annotation.SuppressLint;
 
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceIdState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,8 +51,8 @@ public class GeofenceViewManager {
     }
 
     private Flowable<GeofenceViewUpdate> updateGeofenceViews(List<Geofence> updatedGeofences) {
-        return Observable.combineLatest(selectedGeofenceId.observeSelectedGeofenceId(), Observable.just(updatedGeofences),
-                (selectedGeofenceId, geofences) -> {
+        return Observable.combineLatest(selectedGeofenceId.observeValidSelectedGeofenceId(), Observable.just(updatedGeofences),
+                (selectedGeofenceState, geofences) -> {
                     List<GeofenceView> updatedGeofenceViews = new ArrayList<>();
                     List<GeofenceView> removedGeofenceViews = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public class GeofenceViewManager {
 
                         keys.remove(geofence.id());
 
-                        if (isModifiedGeofence(geofence, geofenceView) && shouldDisplayGeofence(geofence.id(), selectedGeofenceId)) {
+                        if (isModifiedGeofence(geofence, geofenceView) && shouldDisplayGeofence(geofence.id(), selectedGeofenceState)) {
                             Timber.v("Creating GeofenceView for: %s", geofence);
                             GeofenceView view = createGeofenceView(geofence);
                             geofenceViews.put(geofence.id(), view);
@@ -84,8 +85,8 @@ public class GeofenceViewManager {
                 }).toFlowable(BackpressureStrategy.BUFFER);
     }
 
-    private boolean shouldDisplayGeofence(long id, long geofenceId) {
-        return id == geofenceId;
+    private boolean shouldDisplayGeofence(long id, SelectedGeofenceIdState geofenceState) {
+        return id == geofenceState.geofenceId();
     }
 
     private boolean isModifiedGeofence(Geofence geofence, GeofenceView geofenceView) {

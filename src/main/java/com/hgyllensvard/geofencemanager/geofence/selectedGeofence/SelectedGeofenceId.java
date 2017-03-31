@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.selectedGeofence;
 
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
@@ -12,14 +12,18 @@ import timber.log.Timber;
 @Singleton
 public class SelectedGeofenceId {
 
-    private BehaviorSubject<Long> subject;
+    private BehaviorSubject<SelectedGeofenceIdState> subject;
 
     public SelectedGeofenceId() {
-        subject = BehaviorSubject.createDefault(Geofence.NO_ID);
+        subject = BehaviorSubject.createDefault(SelectedGeofenceIdState.noSelection());
+    }
+
+    public synchronized SelectedGeofenceIdState selectedGeofenceState() {
+        return subject.getValue();
     }
 
     public synchronized long selectedGeofenceId() {
-        return subject.getValue();
+        return subject.getValue().geofenceId();
     }
 
     /**
@@ -29,35 +33,43 @@ public class SelectedGeofenceId {
      * <p>
      * If you're only interested in the currently selected Geofence, see {@link SelectedGeofence}
      */
-    public Observable<Long> observeValidSelectedGeofenceId() {
+    public Observable<SelectedGeofenceIdState> observeValidSelectedGeofenceId() {
         return observeSelectedGeofenceId()
-                .filter(geofenceId -> geofenceId != Geofence.NO_ID);
+                .doOnEach(selectedGeofenceIdStateNotification -> Timber.wtf("Cool A: %s", selectedGeofenceIdStateNotification))
+                .filter(SelectedGeofenceIdState::isGeofenceSelected)
+                .doOnEach(selectedGeofenceIdStateNotification -> Timber.wtf("Cool B: %s", selectedGeofenceIdStateNotification));
     }
 
     /**
      * @return Observable returning the id of the current {@link Geofence} selected.
      * If no Geofence is selected a no_id is set to notify of this change.
      */
-    public Observable<Long> observeSelectedGeofenceId() {
+    public Observable<SelectedGeofenceIdState> observeSelectedGeofenceId() {
         return subject
                 .distinctUntilChanged();
     }
 
     public synchronized boolean isGeofenceSelected() {
-        return subject.getValue() != Geofence.NO_ID;
+        return subject.getValue().isGeofenceSelected();
     }
 
     public synchronized void setNoSelection() {
         Timber.d("No selected Geofence");
-        subject.onNext(Geofence.NO_ID);
+        subject.onNext(SelectedGeofenceIdState.noSelection());
     }
 
     public synchronized boolean selectedGeofence(long geofenceId) {
         if (isInvalidGeofenceId(geofenceId)) {
             return false;
         }
+
         Timber.d("New Geofence selected: %s", geofenceId);
-        subject.onNext(geofenceId);
+        if (geofenceId == Geofence.NO_ID) {
+            setNoSelection();
+        } else {
+            subject.onNext(SelectedGeofenceIdState.selected(geofenceId));
+        }
+
         return true;
     }
 

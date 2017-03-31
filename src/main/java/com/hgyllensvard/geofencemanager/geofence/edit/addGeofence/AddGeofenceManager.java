@@ -2,11 +2,12 @@ package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceIdState;
 
 import javax.inject.Inject;
 
@@ -33,20 +34,19 @@ public class AddGeofenceManager {
     }
 
     Single<GeofenceActionResult> attemptAddGeofence(LatLng geofenceLatLng) {
-        return Single.just(selectedGeofenceId.isGeofenceSelected())
-                .flatMap(isGeofenceSelected -> {
-                    if (!isGeofenceSelected) {
+        return Single.just(selectedGeofenceId.selectedGeofenceState())
+                .flatMap(selectedGeofenceState -> {
+                    if (!selectedGeofenceState.isGeofenceSelected()) {
                         return storeGeofence(geofenceLatLng);
                     }
 
-                    return noGeofenceAdded();
+                    return noGeofenceAdded(selectedGeofenceState);
                 });
     }
 
-    private SingleSource<? extends GeofenceActionResult> noGeofenceAdded() {
-        long selectedGeofence = selectedGeofenceId.selectedGeofenceId();
-        Timber.w("Selected Geofence already exists: %s, will therefore not add new geofence", selectedGeofence);
-        return Single.just(GeofenceActionResult.failure(new GeofenceAlreadySelectedError(selectedGeofence)));
+    private SingleSource<? extends GeofenceActionResult> noGeofenceAdded(SelectedGeofenceIdState selectedGeofenceIdState) {
+        Timber.w("Selected Geofence already exists: %s, will therefore not add new geofence", selectedGeofenceIdState.geofenceId());
+        return Single.just(GeofenceActionResult.failure(new GeofenceAlreadySelectedError(selectedGeofenceIdState.geofenceId())));
     }
 
     private Single<GeofenceActionResult> storeGeofence(LatLng latLng) {

@@ -1,8 +1,8 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 
@@ -65,7 +65,7 @@ public class AddGeofenceManagerTest {
                 .assertValueCount(1)
                 .assertValue(actionResult -> actionResult.equals(FAILED_GEOFENCE_ACTION));
 
-        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(Geofence.NO_ID);
+        assertThat(selectedGeofenceId.selectedGeofenceState().isGeofenceSelected()).isFalse();
     }
 
     @Test
@@ -79,6 +79,6 @@ public class AddGeofenceManagerTest {
                 .assertValueCount(1)
                 .assertValue(actionResult -> actionResult.geofence().equals(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
 
-        assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(GeofenceTestHelper.ID_ONE);
+        assertThat(selectedGeofenceId.selectedGeofenceState().geofenceId()).isEqualTo(GeofenceTestHelper.ID_ONE);
     }
 }

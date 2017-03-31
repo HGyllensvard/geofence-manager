@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.selectedGeofence;
 
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
@@ -27,13 +27,13 @@ public class SelectedGeofence {
     }
 
     public Single<Geofence> selectedGeofence() {
-        return Single.fromCallable(() -> selectedGeofenceId.selectedGeofenceId())
-                .flatMap(geofenceId -> {
-                    if (geofenceId == Geofence.NO_ID) {
+        return Single.fromCallable(() -> selectedGeofenceId.selectedGeofenceState())
+                .flatMap(selectedGeofenceState -> {
+                    if (!selectedGeofenceState.isGeofenceSelected()) {
                         return Single.just(Geofence.sDummyGeofence);
                     }
 
-                    return geofenceManager.getGeofence(geofenceId);
+                    return geofenceManager.getGeofence(selectedGeofenceState.geofenceId());
                 });
     }
 
@@ -59,12 +59,12 @@ public class SelectedGeofence {
      */
     public Observable<Geofence> observeSelectedGeofence() {
         return selectedGeofenceId.observeSelectedGeofenceId()
-                .flatMap(geofenceId -> {
-                    if (geofenceId == Geofence.NO_ID) {
+                .flatMap(geofenceState -> {
+                    if (!geofenceState.isGeofenceSelected()) {
                         return Observable.just(Geofence.sDummyGeofence);
                     }
 
-                    return geofenceManager.getGeofence(geofenceId)
+                    return geofenceManager.getGeofence(geofenceState.geofenceId())
                             .toObservable();
 
                 })

@@ -2,7 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.persistence;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
-import com.hgyllensvard.geofencemanager.geofence.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.squareup.sqlbrite.BriteDatabase;
