@@ -60,7 +60,7 @@ public class DisplayGeofencePresenterTest {
         displayGeofencePresenter.bindView(displayGeofenceViews);
 
 //         CameraUpdate is final so can't mock, the important is to know that the UI was called
-        verify(displayGeofenceViews, times(1)).animateCameraTo(null);
+        verify(displayGeofenceViews, times(1)).moveCameraTo(null);
     }
 
     @Test

@@ -17,5 +17,5 @@ public interface DisplayGeofenceViews extends View {
 
     void removeGeofenceViews(List<GeofenceView> geofenceViews);
 
-    void animateCameraTo(CameraUpdate cameraUpdate);
+    void moveCameraTo(CameraUpdate cameraUpdate);
 }

@@ -68,8 +68,8 @@ public class MapView {
         googleMap.setMyLocationEnabled(true);
     }
 
-    public void animateCameraTo(CameraUpdate cameraUpdate) {
-        googleMap.animateCamera(cameraUpdate);
+    public void moveCameraTo(CameraUpdate cameraUpdate) {
+        googleMap.moveCamera(cameraUpdate);
     }
 
     public Observable<LatLng> observeLongClick() {

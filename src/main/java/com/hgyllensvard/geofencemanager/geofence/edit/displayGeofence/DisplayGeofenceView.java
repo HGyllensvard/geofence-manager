@@ -79,7 +79,7 @@ public class DisplayGeofenceView extends View implements DisplayGeofenceViews {
     }
 
     @Override
-    public void animateCameraTo(CameraUpdate cameraUpdate) {
-        mapView.animateCameraTo(cameraUpdate);
+    public void moveCameraTo(CameraUpdate cameraUpdate) {
+        mapView.moveCameraTo(cameraUpdate);
     }
 }

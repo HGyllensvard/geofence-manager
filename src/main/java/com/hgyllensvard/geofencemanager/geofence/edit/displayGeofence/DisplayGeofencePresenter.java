@@ -43,7 +43,7 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
         super.bindView(view);
 
         Disposable disposable = view.displayMap()
-                .doOnNext(ignored -> zoomToUserPosition())
+                .doOnNext(ignored -> moveToUserPosition())
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> subscribeExistingGeofences(),
@@ -59,8 +59,8 @@ public class DisplayGeofencePresenter extends PresenterAdapter<DisplayGeofenceVi
         disposableContainer.clear();
     }
 
-    private void zoomToUserPosition() {
-        view.animateCameraTo(mapCameraManager.userPosition());
+    private void moveToUserPosition() {
+        view.moveCameraTo(mapCameraManager.userPosition());
     }
 
     private void subscribeExistingGeofences() {
