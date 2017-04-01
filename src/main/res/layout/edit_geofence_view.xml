@@ -4,15 +4,15 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent"
     >
-    
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/edit_geofence_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         fab:menu_icon="@drawable/ic_menu_black_24dp"
         >
 

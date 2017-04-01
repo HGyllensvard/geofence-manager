@@ -24,7 +24,7 @@ import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.Observable;
 
 public class EditGeofenceView extends RelativeLayout implements EditGeofenceViews {
-    
+
     @BindView(R2.id.edit_geofence_menu)
     FloatingActionMenu editGeofenceMenu;
 
@@ -68,6 +68,8 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
         if (!isInEditMode()) {
             deleteObservable = RxJavaInterop.toV2Observable(RxView.clicks(deleteGeofenceMenuAction)
                     .map(ignored -> true));
+
+            editGeofenceMenu.hideMenu(false);
 
             injectDependencies();
             setupActivityFlowManager();
@@ -118,12 +120,12 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     @Override
     public void hideSelectedGeofenceOptions() {
-        editGeofenceMenu.hideMenuButton(true);
+        editGeofenceMenu.hideMenu(true);
     }
 
     @Override
     public void displaySelectedGeofenceOptions() {
-        editGeofenceMenu.showMenuButton(true);
+        editGeofenceMenu.showMenu(true);
     }
 
     @Override

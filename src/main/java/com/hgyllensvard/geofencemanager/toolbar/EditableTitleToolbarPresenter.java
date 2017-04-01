@@ -48,10 +48,16 @@ public class EditableTitleToolbarPresenter extends RxPresenterAdapter<EditableTo
     }
 
     private void setSelectedGeofenceNameAsTitle() {
-        Disposable disposable = selectedGeofence.observeValidSelectedGeofence()
+        Disposable disposable = selectedGeofence.observeSelectedGeofence()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(geofence -> view.title(geofence.name()),
+                .subscribe(geofenceState -> {
+                            if (geofenceState.validGeofence()) {
+                                view.title(geofenceState.geofence().name());
+                            } else {
+                                view.hideTitle();
+                            }
+                        },
                         Timber::e);
 
         disposables.add(disposable);

@@ -12,4 +12,6 @@ public interface EditableToolbarView extends View {
     ToolbarTitle title();
 
     void title(String name);
+
+    void hideTitle();
 }

@@ -74,7 +74,13 @@ public class EditableTitleEditableToolbar extends android.support.v7.widget.Tool
 
     @Override
     public void title(String title) {
+        toolbarTitle.setVisibility(VISIBLE);
         toolbarTitle.setText(title);
+    }
+
+    @Override
+    public void hideTitle() {
+        toolbarTitle.setVisibility(GONE);
     }
 
     @Override

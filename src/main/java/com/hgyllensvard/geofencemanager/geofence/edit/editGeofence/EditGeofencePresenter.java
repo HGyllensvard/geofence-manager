@@ -7,7 +7,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
-import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitleManager;
 
@@ -15,6 +14,7 @@ import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews> {
@@ -40,8 +40,6 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     @Override
     public void bindView(@NonNull EditGeofenceViews view) {
         super.bindView(view);
-
-        view.hideSelectedGeofenceOptions();
 
         Disposable displayMap = view.displayMap()
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -71,11 +69,14 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
 
     private void subscribeSelectedGeofence() {
         Disposable disposable = selectedGeofence.observeSelectedGeofence()
-                .subscribe(geofence -> {
-                    if (geofence.equals(Geofence.sDummyGeofence)) {
-                        view.hideSelectedGeofenceOptions();
-                    } else {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(geofenceState -> {
+                    Timber.d("GeofenceSelected: %s geofence: %s", geofenceState.validGeofence(), geofenceState.geofence());
+                    if (geofenceState.validGeofence()) {
                         view.displaySelectedGeofenceOptions();
+                    } else {
+                        view.hideSelectedGeofenceOptions();
                     }
                 }, Timber::e);
 
