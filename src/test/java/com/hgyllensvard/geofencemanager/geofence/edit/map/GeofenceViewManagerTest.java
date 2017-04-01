@@ -72,7 +72,7 @@ public class GeofenceViewManagerTest {
         TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews().test();
 
         subject.onNext(GeofenceTestHelper.TEST_GEOFENCES_WITH_ID);
-        subject.onNext(Collections.singletonList(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
+        subject.onNext(Collections.singletonList(GeofenceTestHelper.GEOFENCE_ONE));
 
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(testSubscriber, 1);
 
@@ -91,8 +91,8 @@ public class GeofenceViewManagerTest {
         TestSubscriber<GeofenceViewUpdate> testSubscriber = geofenceViewManager.observeGeofenceViews()
                 .test();
 
-        Geofence updatedGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID.withName("A new Name");
-        subject.onNext(Collections.singletonList(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
+        Geofence updatedGeofence = GeofenceTestHelper.GEOFENCE_ONE.withName("A new Name");
+        subject.onNext(Collections.singletonList(GeofenceTestHelper.GEOFENCE_ONE));
         subject.onNext(Collections.singletonList(updatedGeofence));
 
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(testSubscriber, 1);

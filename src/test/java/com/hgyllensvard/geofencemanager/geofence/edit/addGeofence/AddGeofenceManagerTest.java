@@ -77,7 +77,7 @@ public class AddGeofenceManagerTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(actionResult -> actionResult.geofence().equals(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
+                .assertValue(actionResult -> actionResult.geofence().equals(GeofenceTestHelper.GEOFENCE_ONE));
 
         assertThat(selectedGeofenceId.selectedGeofenceState().geofenceId()).isEqualTo(GeofenceTestHelper.ID_ONE);
     }

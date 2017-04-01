@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqldelight.SqlDelightStatement;
 
@@ -76,7 +77,7 @@ public class GeofenceRepository {
                 .share();
     }
 
-    public Single<Geofence> getGeofence(long identifier) {
+    public Single<GeofenceResult> getGeofence(long identifier) {
         return Single.fromCallable(() -> {
 
             SqlDelightStatement query = GeofenceModel.FACTORY.select_with_id(identifier);
@@ -86,14 +87,14 @@ public class GeofenceRepository {
                 try {
                     if (cursor.moveToFirst()) {
                         final GeofenceModel eventModel = GeofenceModel.SELECT_ALL_MAPPER.map(cursor);
-                        return geofenceMapper.toGeofence(eventModel);
+                        return GeofenceResult.success(geofenceMapper.toGeofence(eventModel));
                     }
                 } finally {
                     cursor.close();
                 }
             }
 
-            return Geofence.sDummyGeofence;
+            return GeofenceResult.fail();
         });
     }
 }

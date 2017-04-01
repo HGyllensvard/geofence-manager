@@ -4,11 +4,11 @@ package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 import com.google.android.gms.location.GeofencingEvent;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import timber.log.Timber;
@@ -74,8 +74,10 @@ public class GeofenceTriggeredManager {
         return subject.flatMap(Observable::fromIterable)
                 .map(this::convertToGeofenceIdentifier)
                 .filter(identifier -> identifier != INVALID_ID)
-                .flatMap(this::fetchGeofence)
-                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence))
+                .flatMap(geofenceId -> geofenceManager.getGeofence(geofenceId)
+                        .toObservable())
+                .filter(GeofenceResult::success)
+                .map(GeofenceResult::geofence)
                 .subscribeOn(Schedulers.io());
     }
 
@@ -84,19 +86,7 @@ public class GeofenceTriggeredManager {
             return Long.valueOf(geofence.getRequestId());
         } catch (NumberFormatException e) {
             Timber.e(e, "Geofence: %s contained an invalid id", geofence);
-            return -1L;
+            return INVALID_ID;
         }
-    }
-
-    /**
-     * @return The geofence related to the identifier that is sent in.
-     * If any error occurs while fetching the geofence a static dummy
-     * geofence is returned.
-     */
-    private Observable<Geofence> fetchGeofence(long identifier) {
-        return geofenceManager.getGeofence(identifier)
-                .doOnError(throwable -> Timber.e(throwable, "Error when fetching geofence from database"))
-                .onErrorResumeNext(throwable -> Single.just(Geofence.sDummyGeofence))
-                .toObservable();
     }
 }

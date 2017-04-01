@@ -17,6 +17,8 @@ public class SelectedGeofence {
     private SelectedGeofenceId selectedGeofenceId;
     private GeofenceManager geofenceManager;
 
+    private Observable<SelectedGeofenceState> geofenceStateObservable;
+
     @Inject
     public SelectedGeofence(
             SelectedGeofenceId selectedGeofenceId,
@@ -24,31 +26,37 @@ public class SelectedGeofence {
     ) {
         this.selectedGeofenceId = selectedGeofenceId;
         this.geofenceManager = geofenceManager;
-    }
 
-    public Single<Geofence> selectedGeofence() {
-        return Single.fromCallable(() -> selectedGeofenceId.selectedGeofenceState())
+        geofenceStateObservable = Observable.defer(() -> selectedGeofenceId.observeSelectedGeofenceId()
                 .flatMap(selectedGeofenceState -> {
                     if (!selectedGeofenceState.isGeofenceSelected()) {
-                        return Single.just(Geofence.sDummyGeofence);
+                        return Observable.just(SelectedGeofenceState.noSelection());
                     }
 
-                    return geofenceManager.getGeofence(selectedGeofenceState.geofenceId());
-                });
+                    return geofenceManager.getGeofence(selectedGeofenceState.geofenceId())
+                            .toObservable()
+                            .map(geofenceResult -> {
+                                if (!geofenceResult.success()) {
+                                    return SelectedGeofenceState.noSelection();
+                                }
+
+                                return SelectedGeofenceState.selectedGeofence(geofenceResult.geofence());
+                            });
+                }))
+                .replay(1)
+                .refCount();
+    }
+
+    public Single<SelectedGeofenceState> selectedGeofence() {
+        return geofenceStateObservable
+                .take(1)
+                .single(SelectedGeofenceState.noSelection());
     }
 
     public Maybe<Geofence> selectedValidGeofence() {
         return selectedGeofence()
-                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence));
-    }
-
-    /**
-     * @return Observable that will only emit a new item once a
-     * valid existing geofence has been selected.
-     */
-    public Observable<Geofence> observeValidSelectedGeofence() {
-        return observeSelectedGeofence()
-                .filter(geofence -> !geofence.equals(Geofence.sDummyGeofence));
+                .filter(SelectedGeofenceState::validGeofence)
+                .map(SelectedGeofenceState::geofence);
     }
 
     /**
@@ -57,18 +65,18 @@ public class SelectedGeofence {
      * currently no selected Geofence. This can then be used to know
      * if a Geofence is selected or not.
      */
-    public Observable<Geofence> observeSelectedGeofence() {
-        return selectedGeofenceId.observeSelectedGeofenceId()
-                .flatMap(geofenceState -> {
-                    if (!geofenceState.isGeofenceSelected()) {
-                        return Observable.just(Geofence.sDummyGeofence);
-                    }
+    public Observable<SelectedGeofenceState> observeSelectedGeofence() {
+        return geofenceStateObservable;
+    }
 
-                    return geofenceManager.getGeofence(geofenceState.geofenceId())
-                            .toObservable();
-
-                })
-                .distinctUntilChanged();
+    /**
+     * @return Observable that will only emit a new item once a
+     * valid existing geofence has been selected.
+     */
+    public Observable<Geofence> observeValidSelectedGeofence() {
+        return observeSelectedGeofence()
+                .filter(SelectedGeofenceState::validGeofence)
+                .map(SelectedGeofenceState::geofence);
     }
 
     public Single<Boolean> delete() {

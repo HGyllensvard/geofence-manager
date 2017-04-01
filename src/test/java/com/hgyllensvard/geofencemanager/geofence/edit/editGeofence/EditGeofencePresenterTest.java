@@ -20,10 +20,10 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_STATE_NO_ID;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.LAT_LNG_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -92,7 +92,7 @@ public class EditGeofencePresenterTest {
 
     @Test
     public void displaySelectedGeofenceOptions() {
-        when(selectedGeofence.observeSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
+        when(selectedGeofence.observeSelectedGeofence()).thenReturn(Observable.just(GEOFENCE_ONE_STATE_NO_ID));
 
         editGeofencePresenter.bindView(editGeofenceViews);
 

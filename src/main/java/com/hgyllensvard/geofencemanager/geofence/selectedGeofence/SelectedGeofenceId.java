@@ -6,6 +6,7 @@ import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
@@ -33,16 +34,15 @@ public class SelectedGeofenceId {
      * <p>
      * If you're only interested in the currently selected Geofence, see {@link SelectedGeofence}
      */
-    public Observable<SelectedGeofenceIdState> observeValidSelectedGeofenceId() {
+    public Observable<Long> observeValidSelectedGeofenceId() {
         return observeSelectedGeofenceId()
-                .doOnEach(selectedGeofenceIdStateNotification -> Timber.wtf("Cool A: %s", selectedGeofenceIdStateNotification))
                 .filter(SelectedGeofenceIdState::isGeofenceSelected)
-                .doOnEach(selectedGeofenceIdStateNotification -> Timber.wtf("Cool B: %s", selectedGeofenceIdStateNotification));
+                .map(SelectedGeofenceIdState::geofenceId);
     }
 
     /**
      * @return Observable returning the id of the current {@link Geofence} selected.
-     * If no Geofence is selected a no_id is set to notify of this change.
+     * Check {@link SelectedGeofenceIdState} if the id is valid or not.
      */
     public Observable<SelectedGeofenceIdState> observeSelectedGeofenceId() {
         return subject

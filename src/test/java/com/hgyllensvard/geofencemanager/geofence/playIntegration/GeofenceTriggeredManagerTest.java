@@ -2,8 +2,10 @@ package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import com.google.android.gms.location.GeofencingEvent;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,12 +19,14 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_RESULT;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO_RESULT;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE_STR;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO_STR;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_TWO_WITH_ID;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +95,7 @@ public class GeofenceTriggeredManagerTest {
         when(event.getTriggeringGeofences()).thenReturn(googleGeofences);
         mockGeofenceTransitionTrigger(triggerEnter);
 
-        when(geofenceManager.getGeofence(any(Long.class))).thenReturn(Single.error(new RuntimeException()));
+        when(geofenceManager.getGeofence(any(Long.class))).thenReturn(Single.just(GeofenceResult.fail()));
 
         TestObserver<Geofence> testSubscriber = geofenceEventTriggerManager.observeEnteredGeofences().test();
 
@@ -112,8 +116,8 @@ public class GeofenceTriggeredManagerTest {
         testSubscriber
                 .assertNoErrors()
                 .assertValueCount(2)
-                .assertValues(TEST_GEOFENCE_ONE_WITH_ID,
-                        TEST_GEOFENCE_TWO_WITH_ID);
+                .assertValues(GEOFENCE_ONE,
+                        GEOFENCE_TWO);
     }
 
     private void setupGoogleGeofences(int transitionType) {
@@ -132,8 +136,8 @@ public class GeofenceTriggeredManagerTest {
     }
 
     private void setupGeofenceManagerMock() {
-        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(TEST_GEOFENCE_ONE_WITH_ID));
-        when(geofenceManager.getGeofence(ID_TWO)).thenReturn(Single.just(TEST_GEOFENCE_TWO_WITH_ID));
+        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(GEOFENCE_ONE_RESULT));
+        when(geofenceManager.getGeofence(ID_TWO)).thenReturn(Single.just(GEOFENCE_TWO_RESULT));
     }
 
     private void mockGeofenceTransitionTrigger(int geofenceTransitionTrigger) {

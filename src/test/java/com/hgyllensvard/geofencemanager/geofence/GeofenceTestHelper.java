@@ -4,6 +4,8 @@ package com.hgyllensvard.geofencemanager.geofence;
 import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceState;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,8 @@ public class GeofenceTestHelper {
     public static final int FILL_COLOUR = 1;
 
     public static final int STROKE_COLOUR = 2;
+
+    public static final SelectedGeofenceState NO_SELECTION = SelectedGeofenceState.noSelection();
 
     public static final GeofenceMapOptions GEOFENCE_MAP_OPTIONS = GeofenceMapOptions.create()
             .fillColor(1)
@@ -30,8 +34,13 @@ public class GeofenceTestHelper {
     public static final int RADIUS_ONE = 30;
     public static final boolean IS_ACTIVE_ONE = true;
 
-    public static final Geofence TEST_GEOFENCE_ONE = Geofence.create(NAME_ONE, LAT_LNG_ONE, RADIUS_ONE, IS_ACTIVE_ONE);
-    public static final Geofence TEST_GEOFENCE_ONE_WITH_ID = TEST_GEOFENCE_ONE.withId(ID_ONE);
+    public static final Geofence GEOFENCE_ONE_NO_ID = Geofence.create(NAME_ONE, LAT_LNG_ONE, RADIUS_ONE, IS_ACTIVE_ONE);
+    public static final Geofence GEOFENCE_ONE = GEOFENCE_ONE_NO_ID.withId(ID_ONE);
+
+    public static final GeofenceResult GEOFENCE_ONE_RESULT = GeofenceResult.success(GEOFENCE_ONE);
+
+    public static final SelectedGeofenceState GEOFENCE_ONE_STATE_NO_ID = SelectedGeofenceState.selectedGeofence(GEOFENCE_ONE_NO_ID);
+    public static final SelectedGeofenceState GEOFENCE_ONE_STATE = SelectedGeofenceState.selectedGeofence(GEOFENCE_ONE);
 
     public static final long ID_TWO = 2;
     public static final String ID_TWO_STR = String.valueOf(ID_TWO);
@@ -42,9 +51,13 @@ public class GeofenceTestHelper {
     public static final int RADIUS_TWO = 35;
     public static final boolean IS_ACTIVE_TWO = false;
 
-    public static final Geofence TEST_GEOFENCE_TWO = Geofence.create(NAME_TWO, LAT_LNG_TWO, RADIUS_TWO, IS_ACTIVE_TWO);
-    public static final Geofence TEST_GEOFENCE_TWO_WITH_ID = TEST_GEOFENCE_TWO.withId(ID_TWO);
+    public static final Geofence GEOFENCE_TWO_NO_ID = Geofence.create(NAME_TWO, LAT_LNG_TWO, RADIUS_TWO, IS_ACTIVE_TWO);
+    public static final Geofence GEOFENCE_TWO = GEOFENCE_TWO_NO_ID.withId(ID_TWO);
 
-    public static final List<Geofence> TEST_GEOFENCES = Arrays.asList(TEST_GEOFENCE_ONE, TEST_GEOFENCE_TWO);
-    public static final List<Geofence> TEST_GEOFENCES_WITH_ID = Arrays.asList(TEST_GEOFENCE_ONE_WITH_ID, TEST_GEOFENCE_TWO_WITH_ID);
+    public static final GeofenceResult GEOFENCE_TWO_RESULT = GeofenceResult.success(GEOFENCE_TWO);
+
+    public static final SelectedGeofenceState GEOFENCE_TWO_STATE = SelectedGeofenceState.selectedGeofence(GEOFENCE_TWO);
+
+    public static final List<Geofence> TEST_GEOFENCES = Arrays.asList(GEOFENCE_ONE_NO_ID, GEOFENCE_TWO_NO_ID);
+    public static final List<Geofence> TEST_GEOFENCES_WITH_ID = Arrays.asList(GEOFENCE_ONE, GEOFENCE_TWO);
 }

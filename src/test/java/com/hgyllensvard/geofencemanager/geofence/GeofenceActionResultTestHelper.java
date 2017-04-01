@@ -9,5 +9,5 @@ public class GeofenceActionResultTestHelper {
 
     public static final GeofenceActionResult FAILED_GEOFENCE_ACTION = GeofenceActionResult.failure(new RuntimeException("TestFailure"));
 
-    public static final Single<GeofenceActionResult> SUCCESS_SINGLE_GEOFENCE_ONE = Single.just(GeofenceActionResult.success(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID));
+    public static final Single<GeofenceActionResult> SUCCESS_SINGLE_GEOFENCE_ONE = Single.just(GeofenceActionResult.success(GeofenceTestHelper.GEOFENCE_ONE));
 }

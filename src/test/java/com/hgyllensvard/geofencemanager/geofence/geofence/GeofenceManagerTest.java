@@ -29,8 +29,8 @@ public class GeofenceManagerTest {
 
     private GeofenceManager geofenceManager;
 
-    private Geofence testGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE;
-    private Geofence insertedTestGeofence = GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
+    private Geofence testGeofence = GeofenceTestHelper.GEOFENCE_ONE_NO_ID;
+    private Geofence insertedTestGeofence = GeofenceTestHelper.GEOFENCE_ONE;
 
     @Before
     public void setUp() {
@@ -85,7 +85,7 @@ public class GeofenceManagerTest {
 
     @Test
     public void succeedCheckGeofenceExist() {
-        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(testGeofence));
+        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(GeofenceResult.success(testGeofence)));
 
         geofenceManager.exist(GeofenceTestHelper.ID_ONE)
                 .test()
@@ -95,7 +95,7 @@ public class GeofenceManagerTest {
 
     @Test
     public void succeedCheckGeofenceDoesNotExist() {
-        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(Geofence.sDummyGeofence));
+        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(GeofenceResult.fail()));
 
         geofenceManager.exist(GeofenceTestHelper.ID_ONE)
                 .test()

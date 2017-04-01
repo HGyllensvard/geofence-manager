@@ -19,7 +19,7 @@ import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.IS_AC
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.LAT_LNG_TWO;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_TWO;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.RADIUS_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +51,7 @@ public class EditGeofencePresenterManagerTest {
     @Test
     public void updateSelectedGeofence_validInput() {
         selectedGeofenceId.selectedGeofence(ID_ONE);
-        when(selectedGeofence.selectedValidGeofence()).thenReturn(Maybe.just(TEST_GEOFENCE_ONE_WITH_ID));
+        when(selectedGeofence.selectedValidGeofence()).thenReturn(Maybe.just(GEOFENCE_ONE));
 
         editGeofencePresenterManager.updateSelectedGeofence(NAME_TWO, LAT_LNG_TWO);
 

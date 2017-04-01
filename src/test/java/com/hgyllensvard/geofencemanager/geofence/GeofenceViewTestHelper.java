@@ -12,8 +12,8 @@ public class GeofenceViewTestHelper {
     public static final int FILL_COLOR = 1;
     public static final int STROKE_COLOR = 2;
 
-    public static final GeofenceView GEOFENCE_VIEW_ONE = GeofenceView.create(GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID, FILL_COLOR, STROKE_COLOR);
-    public static final GeofenceView GEOFENCE_VIEW_TWO = GeofenceView.create(GeofenceTestHelper.TEST_GEOFENCE_TWO_WITH_ID, FILL_COLOR, STROKE_COLOR);
+    public static final GeofenceView GEOFENCE_VIEW_ONE = GeofenceView.create(GeofenceTestHelper.GEOFENCE_ONE, FILL_COLOR, STROKE_COLOR);
+    public static final GeofenceView GEOFENCE_VIEW_TWO = GeofenceView.create(GeofenceTestHelper.GEOFENCE_TWO, FILL_COLOR, STROKE_COLOR);
 
     public static final List<GeofenceView> GEOFENCE_VIEWS = Collections.singletonList(GEOFENCE_VIEW_ONE);
     public static final List<GeofenceView> GEOFENCE_VIEWS_UPDATED = Collections.singletonList(GEOFENCE_VIEW_ONE);

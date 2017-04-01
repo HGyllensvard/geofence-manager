@@ -2,8 +2,10 @@ package com.hgyllensvard.geofencemanager.geofence;
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
+import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceState;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +13,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_RESULT;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_STATE;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO_RESULT;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO_STATE;
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NO_SELECTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -47,7 +56,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(Geofence.sDummyGeofence);
+                .assertValue(SelectedGeofenceState.noSelection());
 
         verify(geofenceManager, never()).getGeofence(any(Long.class));
     }
@@ -61,7 +70,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(Geofence.sDummyGeofence);
+                .assertValue(SelectedGeofenceState.noSelection());
 
         verify(geofenceManager, times(1)).getGeofence(ID_ONE);
     }
@@ -75,7 +84,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(TEST_GEOFENCE_ONE_WITH_ID);
+                .assertValue(GEOFENCE_ONE_STATE);
     }
 
     @Test
@@ -97,7 +106,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(TEST_GEOFENCE_ONE_WITH_ID);
+                .assertValue(GEOFENCE_ONE);
     }
 
     @Test
@@ -109,7 +118,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(TEST_GEOFENCE_ONE_WITH_ID);
+                .assertValue(GEOFENCE_ONE);
     }
 
     @Test
@@ -121,7 +130,7 @@ public class SelectedGeofenceTest {
                 .test()
                 .assertNoErrors()
                 .assertValueCount(1)
-                .assertValue(TEST_GEOFENCE_ONE_WITH_ID);
+                .assertValue(GEOFENCE_ONE_STATE);
     }
 
     @Test
@@ -166,15 +175,46 @@ public class SelectedGeofenceTest {
         assertThat(selectedGeofenceId.selectedGeofenceId()).isEqualTo(Geofence.NO_ID);
     }
 
+    @Test
+    public void observeSelectedGeofence_multipleSubscriptions_sendEventToBoth() {
+        mockGeofenceOne();
+        mockGeofenceTwo();
+
+        TestObserver<SelectedGeofenceState> geofenceStateOne = selectedGeofence.observeSelectedGeofence().test();
+
+        selectedGeofenceId.selectedGeofence(ID_ONE);
+        selectedGeofenceId.selectedGeofence(ID_TWO);
+
+        geofenceStateOne.dispose();
+
+        TestObserver<SelectedGeofenceState> geofenceStateTwo = selectedGeofence.observeSelectedGeofence().test();
+
+        selectedGeofenceId.setNoSelection();
+
+        geofenceStateOne
+                .assertNoErrors()
+                .assertValueCount(3)
+                .assertValues(NO_SELECTION, GEOFENCE_ONE_STATE, GEOFENCE_TWO_STATE);
+
+        geofenceStateTwo
+                .assertNoErrors()
+                .assertValueCount(2)
+                .assertValues(GEOFENCE_TWO_STATE, NO_SELECTION);
+    }
+
     private void selectGeofenceIdOne() {
         selectedGeofenceId.selectedGeofence(ID_ONE);
     }
 
     private void mockGeofenceOne() {
-        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(TEST_GEOFENCE_ONE_WITH_ID));
+        when(geofenceManager.getGeofence(ID_ONE)).thenReturn(Single.just(GEOFENCE_ONE_RESULT));
+    }
+
+    private void mockGeofenceTwo() {
+        when(geofenceManager.getGeofence(ID_TWO)).thenReturn(Single.just(GEOFENCE_TWO_RESULT));
     }
 
     private void mockNoGeofence() {
-        when(geofenceManager.getGeofence(any(Long.class))).thenReturn(Single.just(Geofence.sDummyGeofence));
+        when(geofenceManager.getGeofence(any(Long.class))).thenReturn(Single.just(GeofenceResult.fail()));
     }
 }

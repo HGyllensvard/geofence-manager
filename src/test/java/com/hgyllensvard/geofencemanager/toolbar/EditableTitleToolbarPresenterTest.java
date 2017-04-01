@@ -13,7 +13,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
 import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.TEST_GEOFENCE_ONE_WITH_ID;
+import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,7 +60,7 @@ public class EditableTitleToolbarPresenterTest {
 
     @Test
     public void bindView_getSelectedGeofence_updateViewTitle() {
-        when(selectedGeofence.observeValidSelectedGeofence()).thenReturn(Observable.just(TEST_GEOFENCE_ONE_WITH_ID));
+        when(selectedGeofence.observeValidSelectedGeofence()).thenReturn(Observable.just(GEOFENCE_ONE));
 
         presenter.bindView(view);
 

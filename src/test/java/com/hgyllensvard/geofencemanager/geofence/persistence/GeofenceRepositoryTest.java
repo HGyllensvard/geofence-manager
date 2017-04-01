@@ -5,6 +5,7 @@ import com.hgyllensvard.geofencemanager.buildingBlocks.di.ContextModule;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.TestApplication;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 import com.squareup.sqlbrite.BriteDatabase;
 
 import org.junit.After;
@@ -118,10 +119,10 @@ public class GeofenceRepositoryTest {
         Geofence geofence = repository.insert(testGeofence)
                 .blockingGet();
 
-        Geofence fetchedGeofence = repository.getGeofence(geofence.id())
+        GeofenceResult fetchedGeofence = repository.getGeofence(geofence.id())
                 .blockingGet();
 
-        assertThat(fetchedGeofence).isEqualTo(geofence);
+        assertThat(fetchedGeofence).isEqualTo(GeofenceResult.success(geofence));
     }
 
     @Test
@@ -129,7 +130,7 @@ public class GeofenceRepositoryTest {
         repository.getGeofence(1)
                 .test()
                 .assertNoErrors()
-                .assertValue(Geofence.sDummyGeofence);
+                .assertValue(GeofenceResult.fail());
     }
 
     @Test

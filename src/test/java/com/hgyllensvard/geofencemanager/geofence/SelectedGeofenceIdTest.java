@@ -39,7 +39,7 @@ public class SelectedGeofenceIdTest {
 
     @Test
     public void observeValidSelectedGeofence_updateSelectionMultipleTimes() {
-        TestObserver<SelectedGeofenceIdState> selectedGeofence = selectedGeofenceId.observeValidSelectedGeofenceId().test();
+        TestObserver<Long> selectedGeofence = selectedGeofenceId.observeValidSelectedGeofenceId().test();
 
         assertUpdateIdTo(ID_ONE);
         assertUpdateIdTo(ID_TWO);
@@ -48,7 +48,7 @@ public class SelectedGeofenceIdTest {
         selectedGeofence
                 .assertNoErrors()
                 .assertValueCount(2)
-                .assertValues(ID_ONE, ID_TWO);
+                .assertValues(GeofenceTestHelper.ID_ONE, GeofenceTestHelper.ID_TWO);
     }
 
     @Test
