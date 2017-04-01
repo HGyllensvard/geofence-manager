@@ -14,12 +14,12 @@ import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Maybe;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.IS_ACTIVE_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.LAT_LNG_TWO;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_TWO;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.RADIUS_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.IS_ACTIVE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.LAT_LNG_TWO;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.NAME_TWO;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.RADIUS_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

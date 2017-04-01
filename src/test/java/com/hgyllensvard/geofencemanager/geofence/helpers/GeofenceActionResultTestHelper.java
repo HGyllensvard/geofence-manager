@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.helpers;
 
 
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;

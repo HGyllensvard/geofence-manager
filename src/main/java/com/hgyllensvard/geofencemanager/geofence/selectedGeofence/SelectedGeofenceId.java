@@ -10,13 +10,15 @@ import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
+import static com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceIdState.NO_ID_SELECTED;
+
 @Singleton
 public class SelectedGeofenceId {
 
     private BehaviorSubject<SelectedGeofenceIdState> subject;
 
     public SelectedGeofenceId() {
-        subject = BehaviorSubject.createDefault(SelectedGeofenceIdState.noSelection());
+        subject = BehaviorSubject.createDefault(NO_ID_SELECTED);
     }
 
     public synchronized SelectedGeofenceIdState selectedGeofenceState() {
@@ -55,7 +57,7 @@ public class SelectedGeofenceId {
 
     public synchronized void setNoSelection() {
         Timber.d("No selected Geofence");
-        subject.onNext(SelectedGeofenceIdState.noSelection());
+        subject.onNext(NO_ID_SELECTED);
     }
 
     public synchronized boolean selectedGeofence(long geofenceId) {

@@ -20,10 +20,10 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_STATE_NO_ID;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.LAT_LNG_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE_STATE_NO_ID;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.LAT_LNG_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.NAME_ONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;

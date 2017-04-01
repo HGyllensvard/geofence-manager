@@ -1,6 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
-import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
@@ -15,8 +16,8 @@ import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Single;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceActionResultTestHelper.FAILED_GEOFENCE_ACTION;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceActionResultTestHelper.SUCCESS_SINGLE_GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceActionResultTestHelper.FAILED_GEOFENCE_ACTION;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceActionResultTestHelper.SUCCESS_SINGLE_GEOFENCE_ONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -40,7 +41,7 @@ public class AddGeofenceManagerTest {
 
         addGeofenceManager = new AddGeofenceManager(
                 geofenceManager,
-                GeofenceTestHelper.GEOFENCE_MAP_OPTIONS,
+                GeofenceMapOptionsTestHelper.GEOFENCE_MAP_OPTIONS,
                 selectedGeofenceId);
     }
 

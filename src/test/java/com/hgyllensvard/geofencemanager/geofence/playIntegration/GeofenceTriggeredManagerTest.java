@@ -2,7 +2,6 @@ package com.hgyllensvard.geofencemanager.geofence.playIntegration;
 
 import com.google.android.gms.location.GeofencingEvent;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
@@ -19,14 +18,14 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.observers.TestObserver;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE_RESULT;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO_RESULT;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_ONE_STR;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.ID_TWO_STR;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_TWO;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE_RESULT;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_TWO_RESULT;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE_STR;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_TWO;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_TWO_STR;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_TWO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 

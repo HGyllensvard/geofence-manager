@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.helpers;
 
 
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
@@ -7,13 +7,13 @@ import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewUpdate;
 import java.util.Collections;
 import java.util.List;
 
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper.FILL_COLOUR;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper.STROKE_COLOUR;
+
 public class GeofenceViewTestHelper {
 
-    public static final int FILL_COLOR = 1;
-    public static final int STROKE_COLOR = 2;
-
-    public static final GeofenceView GEOFENCE_VIEW_ONE = GeofenceView.create(GeofenceTestHelper.GEOFENCE_ONE, FILL_COLOR, STROKE_COLOR);
-    public static final GeofenceView GEOFENCE_VIEW_TWO = GeofenceView.create(GeofenceTestHelper.GEOFENCE_TWO, FILL_COLOR, STROKE_COLOR);
+    public static final GeofenceView GEOFENCE_VIEW_ONE = GeofenceView.create(GeofenceTestHelper.GEOFENCE_ONE, FILL_COLOUR, STROKE_COLOUR);
+    public static final GeofenceView GEOFENCE_VIEW_TWO = GeofenceView.create(GeofenceTestHelper.GEOFENCE_TWO, FILL_COLOUR, STROKE_COLOUR);
 
     public static final List<GeofenceView> GEOFENCE_VIEWS = Collections.singletonList(GEOFENCE_VIEW_ONE);
     public static final List<GeofenceView> GEOFENCE_VIEWS_UPDATED = Collections.singletonList(GEOFENCE_VIEW_ONE);

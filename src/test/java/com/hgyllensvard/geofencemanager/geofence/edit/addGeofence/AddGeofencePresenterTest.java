@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.addGeofence;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
 

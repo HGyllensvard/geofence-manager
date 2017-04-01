@@ -12,8 +12,8 @@ import org.mockito.MockitoAnnotations;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.NAME_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.NAME_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

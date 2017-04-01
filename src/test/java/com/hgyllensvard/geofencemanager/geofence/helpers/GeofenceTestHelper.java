@@ -1,8 +1,7 @@
-package com.hgyllensvard.geofencemanager.geofence;
+package com.hgyllensvard.geofencemanager.geofence.helpers;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceResult;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceState;
@@ -11,19 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GeofenceTestHelper {
-
-    public static final int FILL_COLOUR = 1;
-
-    public static final int STROKE_COLOUR = 2;
-
-    public static final SelectedGeofenceState NO_SELECTION = SelectedGeofenceState.noSelection();
-
-    public static final GeofenceMapOptions GEOFENCE_MAP_OPTIONS = GeofenceMapOptions.create()
-            .fillColor(1)
-            .strokeColor(2)
-            .geofenceCreatedName(GeofenceTestHelper.NAME_ONE)
-            .geofenceCreatedRadius(GeofenceTestHelper.RADIUS_ONE)
-            .build();
 
     public static final long ID_ONE = 1;
     public static final String ID_ONE_STR = String.valueOf(ID_ONE);
@@ -56,6 +42,7 @@ public class GeofenceTestHelper {
 
     public static final GeofenceResult GEOFENCE_TWO_RESULT = GeofenceResult.success(GEOFENCE_TWO);
 
+    public static final SelectedGeofenceState GEOFENCE_TWO_STATE_NO_ID = SelectedGeofenceState.selectedGeofence(GEOFENCE_TWO_NO_ID);
     public static final SelectedGeofenceState GEOFENCE_TWO_STATE = SelectedGeofenceState.selectedGeofence(GEOFENCE_TWO);
 
     public static final List<Geofence> TEST_GEOFENCES = Arrays.asList(GEOFENCE_ONE_NO_ID, GEOFENCE_TWO_NO_ID);

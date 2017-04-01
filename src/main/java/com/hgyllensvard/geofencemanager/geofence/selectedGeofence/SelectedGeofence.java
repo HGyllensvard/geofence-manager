@@ -11,6 +11,8 @@ import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
+import static com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceState.NO_GEOFENCE_SELECTED;
+
 @Singleton
 public class SelectedGeofence {
 
@@ -30,14 +32,14 @@ public class SelectedGeofence {
         geofenceStateObservable = Observable.defer(() -> selectedGeofenceId.observeSelectedGeofenceId()
                 .flatMap(selectedGeofenceState -> {
                     if (!selectedGeofenceState.isGeofenceSelected()) {
-                        return Observable.just(SelectedGeofenceState.noSelection());
+                        return Observable.just(NO_GEOFENCE_SELECTED);
                     }
 
                     return geofenceManager.getGeofence(selectedGeofenceState.geofenceId())
                             .toObservable()
                             .map(geofenceResult -> {
                                 if (!geofenceResult.success()) {
-                                    return SelectedGeofenceState.noSelection();
+                                    return NO_GEOFENCE_SELECTED;
                                 }
 
                                 return SelectedGeofenceState.selectedGeofence(geofenceResult.geofence());
@@ -50,7 +52,7 @@ public class SelectedGeofence {
     public Single<SelectedGeofenceState> selectedGeofence() {
         return geofenceStateObservable
                 .take(1)
-                .single(SelectedGeofenceState.noSelection());
+                .single(NO_GEOFENCE_SELECTED);
     }
 
     public Maybe<Geofence> selectedValidGeofence() {

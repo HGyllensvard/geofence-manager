@@ -1,7 +1,8 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
-import com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper;
-import com.hgyllensvard.geofencemanager.geofence.GeofenceViewTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceViewTestHelper;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
@@ -20,7 +21,9 @@ import io.reactivex.Flowable;
 import io.reactivex.processors.PublishProcessor;
 import io.reactivex.subscribers.TestSubscriber;
 
-import static com.hgyllensvard.geofencemanager.geofence.GeofenceTestHelper.GEOFENCE_MAP_OPTIONS;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper.FILL_COLOUR;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper.GEOFENCE_MAP_OPTIONS;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper.STROKE_COLOUR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -97,7 +100,7 @@ public class GeofenceViewManagerTest {
 
         GeofenceViewUpdate geofenceViewUpdate = getGeofenceViewUpdate(testSubscriber, 1);
 
-        GeofenceView updatedGeofenceView = GeofenceView.create(updatedGeofence, GeofenceTestHelper.FILL_COLOUR, GeofenceTestHelper.STROKE_COLOUR);
+        GeofenceView updatedGeofenceView = GeofenceView.create(updatedGeofence, FILL_COLOUR, STROKE_COLOUR);
         assertThat(geofenceViewUpdate.geofenceViews()).contains(updatedGeofenceView);
         assertThat(geofenceViewUpdate.selectedGeofenceViews()).contains(updatedGeofenceView);
         assertThat(geofenceViewUpdate.removedGeofenceViews()).isEmpty();
