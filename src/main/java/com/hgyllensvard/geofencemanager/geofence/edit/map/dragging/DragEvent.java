@@ -1,6 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.map.dragging;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.auto.value.AutoValue;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
@@ -11,17 +12,17 @@ public abstract class DragEvent {
 
     public abstract Geofence geofence();
 
-    public abstract LatLng newPosition();
+    public abstract Marker marker();
 
-    public static DragEvent dragStarted(Geofence geofence, LatLng latLng) {
-        return new AutoValue_DragEvent(DragAction.DRAG_STARTED, geofence, latLng);
+    public static DragEvent dragStarted(Geofence geofence, Marker marker) {
+        return new AutoValue_DragEvent(DragAction.DRAG_STARTED, geofence, marker);
     }
 
-    public static DragEvent dragging(Geofence geofence, LatLng latLng) {
-        return new AutoValue_DragEvent(DragAction.DRAGGING, geofence, latLng);
+    public static DragEvent dragging(Geofence geofence, Marker marker) {
+        return new AutoValue_DragEvent(DragAction.DRAGGING, geofence, marker);
     }
 
-    public static DragEvent draggingEnded(Geofence geofence, LatLng latLng) {
-        return new AutoValue_DragEvent(DragAction.DRAG_ENDED, geofence, latLng);
+    public static DragEvent draggingEnded(Geofence geofence, Marker marker) {
+        return new AutoValue_DragEvent(DragAction.DRAG_ENDED, geofence, marker);
     }
 }

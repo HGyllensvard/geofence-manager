@@ -1,7 +1,10 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceActionResult;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
+import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
@@ -20,10 +23,11 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceActionResultTestHelper.SUCCESS_SINGLE_GEOFENCE_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE;
 import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.GEOFENCE_ONE_STATE_NO_ID;
 import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.LAT_LNG_ONE;
-import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.NAME_ONE;
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.NAME_TWO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -36,7 +40,7 @@ public class EditGeofencePresenterTest {
     public final RxSchedulersOverriderRule rxSchedulersOverriderRule = new RxSchedulersOverriderRule();
 
     @Mock
-    EditGeofencePresenterManager editGeofencePresenterManager;
+    GeofenceManager geofenceManager;
 
     @Mock
     EditGeofenceViews editGeofenceViews;
@@ -64,10 +68,10 @@ public class EditGeofencePresenterTest {
         setupDefaultMocks();
 
         editGeofencePresenter = new EditGeofencePresenter(
-                editGeofencePresenterManager,
                 selectedGeofenceId,
                 toolbarTitleManager,
-                selectedGeofence);
+                selectedGeofence,
+                geofenceManager);
     }
 
     @Test
@@ -100,23 +104,40 @@ public class EditGeofencePresenterTest {
     }
 
     @Test
-    public void unbindView_SaveGeofence() {
+    public void unbindView_SaveGeofence_bothTitleAndGeofenceExist() {
         when(selectedGeofenceId.isGeofenceSelected()).thenReturn(true);
         when(selectedGeofenceId.selectedGeofenceId()).thenReturn(ID_ONE);
-        when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(LAT_LNG_ONE);
-        when(toolbarTitleManager.title()).thenReturn(ToolbarTitle.create(NAME_ONE));
+        when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(GeofenceTestHelper.GEOFENCE_ONE);
+        when(toolbarTitleManager.title()).thenReturn(ToolbarTitle.create(NAME_TWO));
+
+        Geofence updatedGeofence = GEOFENCE_ONE.withName(NAME_TWO);
+        when(geofenceManager.updateGeofence(updatedGeofence)).thenReturn(Single.just(GeofenceActionResult.success(updatedGeofence)));
 
         editGeofencePresenter.bindView(editGeofenceViews);
         editGeofencePresenter.unbindView();
 
-        verify(editGeofencePresenterManager, times(1)).updateSelectedGeofence(NAME_ONE, LAT_LNG_ONE);
+        verify(geofenceManager, times(1)).updateGeofence(updatedGeofence);
+    }
+
+    @Test
+    public void unbindView_SaveGeofence_onlyGeofenceExist() {
+        when(selectedGeofenceId.isGeofenceSelected()).thenReturn(true);
+        when(selectedGeofenceId.selectedGeofenceId()).thenReturn(ID_ONE);
+        when(editGeofenceViews.getGeofencePosition(ID_ONE)).thenReturn(GeofenceTestHelper.GEOFENCE_ONE);
+        when(toolbarTitleManager.title()).thenReturn(null);
+        when(geofenceManager.updateGeofence(GEOFENCE_ONE)).thenReturn(SUCCESS_SINGLE_GEOFENCE_ONE);
+
+        editGeofencePresenter.bindView(editGeofenceViews);
+        editGeofencePresenter.unbindView();
+
+        verify(geofenceManager, times(1)).updateGeofence(GEOFENCE_ONE);
     }
 
     @Test
     public void unbindView_ViewNull_DoNotAttemptToSave() {
         editGeofencePresenter.unbindView();
 
-        verify(editGeofencePresenterManager, never()).updateSelectedGeofence(any(String.class), any(LatLng.class));
+        verify(geofenceManager, never()).updateGeofence(any(Geofence.class));
     }
 
 
@@ -127,7 +148,7 @@ public class EditGeofencePresenterTest {
         when(selectedGeofenceId.isGeofenceSelected()).thenReturn(false);
         editGeofencePresenter.unbindView();
 
-        verify(editGeofencePresenterManager, never()).updateSelectedGeofence(any(String.class), any(LatLng.class));
+        verify(geofenceManager, never()).updateGeofence(any(Geofence.class));
     }
 
     /**

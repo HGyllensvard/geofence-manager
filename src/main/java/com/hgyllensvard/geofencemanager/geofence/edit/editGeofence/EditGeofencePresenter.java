@@ -3,8 +3,9 @@ package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.RxPresenterAdapter;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
+import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofence;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;
 import com.hgyllensvard.geofencemanager.toolbar.ToolbarTitle;
@@ -19,19 +20,19 @@ import timber.log.Timber;
 
 public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews> {
 
-    private final EditGeofencePresenterManager editGeofencePresenterManager;
     private final SelectedGeofenceId selectedGeofenceId;
     private final ToolbarTitleManager toolbarTitleManager;
     private final SelectedGeofence selectedGeofence;
+    private final GeofenceManager geofenceManager;
 
     @Inject
     EditGeofencePresenter(
-            EditGeofencePresenterManager editGeofencePresenterManager,
             SelectedGeofenceId selectedGeofenceId,
             ToolbarTitleManager toolbarTitleManager,
-            SelectedGeofence selectedGeofence
+            SelectedGeofence selectedGeofence,
+            GeofenceManager geofenceManager
     ) {
-        this.editGeofencePresenterManager = editGeofencePresenterManager;
+        this.geofenceManager = geofenceManager;
         this.selectedGeofenceId = selectedGeofenceId;
         this.toolbarTitleManager = toolbarTitleManager;
         this.selectedGeofence = selectedGeofence;
@@ -55,16 +56,27 @@ public class EditGeofencePresenter extends RxPresenterAdapter<EditGeofenceViews>
     public void unbindView() {
         if (view != null && selectedGeofenceId.isGeofenceSelected()) {
             ToolbarTitle toolbarTitle = toolbarTitleManager.title();
-            LatLng position = view.getGeofencePosition(selectedGeofenceId.selectedGeofenceId());
+            Geofence geofence = view.getGeofencePosition(selectedGeofenceId.selectedGeofenceId());
 
-            if (toolbarTitle == null) {
-                Timber.w("Toolbar title was null, don't save the geofence changes.");
-            } else {
-                editGeofencePresenterManager.updateSelectedGeofence(toolbarTitle.title(), position);
-            }
+            attemptUpdateGeofence(toolbarTitle, geofence);
         }
 
         super.unbindView();
+    }
+
+    private void attemptUpdateGeofence(ToolbarTitle toolbarTitle, Geofence geofence) {
+        if (geofence == null) {
+            Timber.w("Geofence was null, can't save the geofence changes.");
+        } else {
+            if (toolbarTitle != null) {
+                geofence = geofence.withName(toolbarTitle.title());
+            }
+
+            geofenceManager.updateGeofence(geofence)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(actionResult -> Timber.i("Result for updating geofence: %s", actionResult),
+                            Timber::e);
+        }
     }
 
     private void subscribeSelectedGeofence() {

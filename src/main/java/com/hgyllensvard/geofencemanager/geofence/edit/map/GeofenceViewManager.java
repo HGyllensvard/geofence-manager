@@ -3,6 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 import android.annotation.SuppressLint;
 
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.geofence.GeofenceManager;
 import com.hgyllensvard.geofencemanager.geofence.selectedGeofence.SelectedGeofenceId;

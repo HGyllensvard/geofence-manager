@@ -1,7 +1,7 @@
 package com.hgyllensvard.geofencemanager.geofence.helpers;
 
 
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewUpdate;
 
 import java.util.Collections;

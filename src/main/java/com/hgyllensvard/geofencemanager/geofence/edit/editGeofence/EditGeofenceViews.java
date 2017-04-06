@@ -3,8 +3,8 @@ package com.hgyllensvard.geofencemanager.geofence.edit.editGeofence;
 
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import io.reactivex.Observable;
 
@@ -25,5 +25,5 @@ public interface EditGeofenceViews extends View {
     void exitView();
     
     @Nullable
-    LatLng getGeofencePosition(long geofenceId);
+    Geofence getGeofencePosition(long geofenceId);
 }

@@ -14,6 +14,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.dragging.DragEvent;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.exception.MapNotInitialisedException;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceMapView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceMapViewFactory;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.RequestPermissionResult;
@@ -33,7 +36,8 @@ public class MapView {
 
     private final SupportMapFragment mapFragment;
     private final LocationManager locationManager;
-    private final GeofenceViewMapsManager geofenceMapManagers;
+    private final GeofenceViewMapsManager geofenceMapViewManager;
+    private final GeofenceMapViewFactory geofenceMapViewFactory;
 
     private Observable<LatLng> longClickObservable;
     private Observable<Long> selectMarkerObservable;
@@ -48,12 +52,14 @@ public class MapView {
             AppCompatActivity activity,
             @IdRes int mapContainer,
             LocationManager locationManager,
-            GeofenceViewMapsManager geofenceMapManagers
+            GeofenceViewMapsManager geofenceMapViewManager,
+            GeofenceMapViewFactory geofenceMapViewFactory
     ) {
         this.activity = activity;
         this.mapContainer = mapContainer;
         this.locationManager = locationManager;
-        this.geofenceMapManagers = geofenceMapManagers;
+        this.geofenceMapViewManager = geofenceMapViewManager;
+        this.geofenceMapViewFactory = geofenceMapViewFactory;
 
         disposables = new CompositeDisposable();
         mapFragment = SupportMapFragment.newInstance();
@@ -118,6 +124,7 @@ public class MapView {
                                 .commit();
                     }
 
+                    geofenceMapViewManager.clear();
                     disposables.clear();
                 })
                 .doOnNext(ignored -> {
@@ -144,8 +151,8 @@ public class MapView {
         Disposable disposable = observeMarkerDragged()
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(dragEvent -> {
-                            GeofenceViewMapManager viewMapManager = geofenceMapManagers.get(dragEvent.geofence().id());
-                            viewMapManager.updatePosition(dragEvent.newPosition());
+                            GeofenceMapView viewMapManager = geofenceMapViewManager.get(dragEvent.geofence().id());
+                            viewMapManager.markerUpdate(dragEvent.marker());
                         },
                         Timber::e);
 
@@ -165,7 +172,7 @@ public class MapView {
 
     public void removedGeofenceViews(List<GeofenceView> geofenceViews) {
         for (GeofenceView geofenceView : geofenceViews) {
-            GeofenceViewMapManager viewMapManager = geofenceMapManagers.remove(geofenceView.id());
+            GeofenceMapView viewMapManager = geofenceMapViewManager.remove(geofenceView.id());
             if (viewMapManager != null) {
                 viewMapManager.remove();
             }
@@ -173,28 +180,28 @@ public class MapView {
     }
 
     @Nullable
-    public LatLng getGeofencePosition(long geofenceId) {
-        GeofenceViewMapManager mapManager = geofenceMapManagers.get(geofenceId);
+    public Geofence getGeofencePosition(long geofenceId) {
+        GeofenceMapView mapManager = geofenceMapViewManager.get(geofenceId);
 
         if (mapManager == null) {
             return null;
         }
 
-        return mapManager.position();
+        return mapManager.getGeofence();
     }
 
     public void updateGeofenceViews(List<GeofenceView> geofenceViews) {
         for (GeofenceView geofenceView : geofenceViews) {
-            GeofenceViewMapManager viewMapManager = updateGeofenceViewMapManager(geofenceView);
+            GeofenceMapView viewMapManager = updateGeofenceViewMapManager(geofenceView);
             viewMapManager.display(googleMap);
         }
     }
 
     @NonNull
-    private GeofenceViewMapManager updateGeofenceViewMapManager(GeofenceView geofenceView) {
-        GeofenceViewMapManager viewMapManager = new GeofenceViewMapManager(geofenceView);
-        geofenceMapManagers.put(geofenceView.id(), viewMapManager);
-        return viewMapManager;
+    private GeofenceMapView updateGeofenceViewMapManager(GeofenceView geofenceView) {
+        GeofenceMapView geofenceMapView = geofenceMapViewFactory.createGeofenceMapView(geofenceView);
+        geofenceMapViewManager.put(geofenceView.id(), geofenceMapView);
+        return geofenceMapView;
     }
 
     private Observable<Boolean> loadMapAsync() {
@@ -232,7 +239,7 @@ public class MapView {
     private Observable<Long> createSelectedGeofenceObservable() {
         return Observable.create(emitter -> {
             googleMap.setOnMarkerClickListener(marker -> {
-                emitter.onNext(geofenceMapManagers.findGeofenceId(marker.getId()));
+                emitter.onNext(geofenceMapViewManager.findGeofenceId(marker.getId()));
 
                 // Not the most effective solution, but I rather take implementation elegance here
                 return false;
@@ -255,18 +262,18 @@ public class MapView {
                 @Override
                 public void onMarkerDragStart(Marker marker) {
                     Timber.v("Dragging started");
-                    emitter.onNext(DragEvent.dragStarted(findGeofence(marker), marker.getPosition()));
+                    emitter.onNext(DragEvent.dragStarted(findGeofence(marker), marker));
                 }
 
                 @Override
                 public void onMarkerDrag(Marker marker) {
-                    emitter.onNext(DragEvent.dragging(findGeofence(marker), marker.getPosition()));
+                    emitter.onNext(DragEvent.dragging(findGeofence(marker), marker));
                 }
 
                 @Override
                 public void onMarkerDragEnd(Marker marker) {
                     Timber.v("Dragging ended");
-                    emitter.onNext(DragEvent.draggingEnded(findGeofence(marker), marker.getPosition()));
+                    emitter.onNext(DragEvent.draggingEnded(findGeofence(marker), marker));
                 }
             });
 
@@ -275,10 +282,10 @@ public class MapView {
     }
 
     private Geofence findGeofence(Marker marker) {
-        GeofenceViewMapManager mapManager = geofenceMapManagers.findGeofenceViewMapManager(marker.getId());
+        GeofenceMapView mapManager = geofenceMapViewManager.findGeofenceViewMapManager(marker.getId());
 
         if (mapManager == null) {
-            throw new IllegalArgumentException(String.format("Marker: %s does not have a corresponding GeofenceViewMapManager which is should have.", marker));
+            throw new IllegalArgumentException(String.format("Marker: %s does not have a corresponding GeofenceMapView which is should have.", marker));
         }
 
         return mapManager.getGeofence();

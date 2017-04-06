@@ -63,6 +63,10 @@ public abstract class Geofence {
         return toBuilder().latLng(latLng).build();
     }
 
+    public Geofence withRadius(float radius) {
+        return toBuilder().radius(radius).build();
+    }
+
     @AutoValue.Builder
     abstract static class Builder {
         abstract Builder id(long id);

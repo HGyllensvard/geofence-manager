@@ -5,8 +5,11 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.di.PerActivity;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceMapOptions;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewMapsManager;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceMapViewFactory;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.util.MapCalculationsUtils;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationManager;
 import com.hgyllensvard.geofencemanager.geofence.permission.LocationPermissionRequester;
 
@@ -21,13 +24,30 @@ public class GeofenceManagerModule {
     MapView providesMapView(
             AppCompatActivity appCompatActivity,
             LocationManager locationManager,
-            GeofenceViewMapsManager geofenceMapManagers
+            GeofenceViewMapsManager geofenceMapManagers,
+            GeofenceMapViewFactory geofenceMapViewFactory
     ) {
         return new MapView(
                 appCompatActivity,
                 R.id.geofence_map_container,
                 locationManager,
-                geofenceMapManagers);
+                geofenceMapManagers,
+                geofenceMapViewFactory);
+    }
+
+    @Provides
+    @PerActivity
+    GeofenceMapViewFactory geofenceMapViewFactory(
+            MapCalculationsUtils mapCalculationsUtils,
+            GeofenceMapOptions geofenceMapOptions
+    ) {
+        return new GeofenceMapViewFactory(mapCalculationsUtils, geofenceMapOptions);
+    }
+
+    @Provides
+    @PerActivity
+    MapCalculationsUtils mapCalculationsUtils() {
+        return new MapCalculationsUtils();
     }
 
     @Provides

@@ -7,12 +7,12 @@ import android.widget.RelativeLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.ActivityFlowManager;
 import com.hgyllensvard.geofencemanager.GeofenceManagerInjector;
 import com.hgyllensvard.geofencemanager.R;
 import com.hgyllensvard.geofencemanager.R2;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapView;
+import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 import com.jakewharton.rxbinding.view.RxView;
 
 import javax.inject.Inject;
@@ -27,9 +27,6 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
 
     @BindView(R2.id.edit_geofence_menu)
     FloatingActionMenu editGeofenceMenu;
-
-    @BindView(R2.id.geofence_menu_rename_geofence)
-    FloatingActionButton renameGeofenceMenuAction;
 
     @BindView(R2.id.geofence_menu_delete_geofence)
     FloatingActionButton deleteGeofenceMenuAction;
@@ -139,7 +136,7 @@ public class EditGeofenceView extends RelativeLayout implements EditGeofenceView
     }
 
     @Override
-    public LatLng getGeofencePosition(long geofenceId) {
+    public Geofence getGeofencePosition(long geofenceId) {
         return mapView.getGeofencePosition(geofenceId);
     }
 }

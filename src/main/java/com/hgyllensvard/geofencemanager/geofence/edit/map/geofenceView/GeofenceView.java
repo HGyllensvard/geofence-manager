@@ -1,4 +1,4 @@
-package com.hgyllensvard.geofencemanager.geofence.edit.map;
+package com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView;
 
 import android.support.annotation.ColorInt;
 

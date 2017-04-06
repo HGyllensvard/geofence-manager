@@ -1,6 +1,6 @@
 package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
-import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceMapOptionsTestHelper;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper;
 import com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceViewTestHelper;
 import com.hgyllensvard.geofencemanager.RxSchedulersOverriderRule;

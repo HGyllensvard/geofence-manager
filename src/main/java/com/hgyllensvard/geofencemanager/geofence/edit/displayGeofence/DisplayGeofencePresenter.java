@@ -4,7 +4,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.displayGeofence;
 import android.support.annotation.NonNull;
 
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.PresenterAdapter;
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewManager;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceViewUpdate;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapCameraManager;

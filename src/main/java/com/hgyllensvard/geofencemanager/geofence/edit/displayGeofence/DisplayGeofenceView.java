@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.hgyllensvard.geofencemanager.GeofenceManagerInjector;
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 import com.hgyllensvard.geofencemanager.geofence.edit.map.MapView;
 
 import java.util.List;

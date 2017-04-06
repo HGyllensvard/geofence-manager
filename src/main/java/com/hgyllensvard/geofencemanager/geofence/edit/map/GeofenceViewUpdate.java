@@ -2,6 +2,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.map;
 
 
 import com.google.auto.value.AutoValue;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 
 import java.util.Collections;
 import java.util.List;

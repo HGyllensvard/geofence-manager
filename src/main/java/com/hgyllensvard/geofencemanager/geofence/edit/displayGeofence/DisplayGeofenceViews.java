@@ -3,7 +3,7 @@ package com.hgyllensvard.geofencemanager.geofence.edit.displayGeofence;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.hgyllensvard.geofencemanager.buildingBlocks.ui.View;
-import com.hgyllensvard.geofencemanager.geofence.edit.map.GeofenceView;
+import com.hgyllensvard.geofencemanager.geofence.edit.map.geofenceView.GeofenceView;
 
 import java.util.List;
 
