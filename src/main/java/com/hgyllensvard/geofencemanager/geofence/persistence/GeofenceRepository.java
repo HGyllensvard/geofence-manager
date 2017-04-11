@@ -64,19 +64,6 @@ public class GeofenceRepository {
                 .subscribeOn(Schedulers.io());
     }
 
-    private void createGeofenceFlowable() {
-        SqlDelightStatement query = GeofenceModel.FACTORY.select_all();
-
-        geofenceFlowable = RxJavaInterop.toV2Flowable(database.createQuery(
-                GeofenceModel.TABLE_NAME,
-                query.statement,
-                new String[]{})
-                .mapToList(GeofenceModel.SELECT_ALL_MAPPER::map))
-                .map(geofenceMapper::toGeofences)
-                .subscribeOn(Schedulers.io())
-                .share();
-    }
-
     public Single<GeofenceResult> getGeofence(long identifier) {
         return Single.fromCallable(() -> {
 
@@ -96,5 +83,18 @@ public class GeofenceRepository {
 
             return GeofenceResult.fail();
         });
+    }
+
+    private void createGeofenceFlowable() {
+        SqlDelightStatement query = GeofenceModel.FACTORY.select_all();
+
+        geofenceFlowable = Flowable.defer(() -> RxJavaInterop.toV2Flowable(database.createQuery(
+                GeofenceModel.TABLE_NAME,
+                query.statement,
+                query.args)
+                .mapToList(GeofenceModel.SELECT_ALL_MAPPER::map))
+                .map(geofenceMapper::toGeofences)
+                .subscribeOn(Schedulers.io())
+                .share());
     }
 }

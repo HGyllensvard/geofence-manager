@@ -36,7 +36,7 @@ public class GeofenceManager {
     }
 
     /**
-     * @param geofenceToAdd Geofence to persist and add to the active geofences.
+     * @param geofenceToAdd Geofence to persist and add to the enabled geofences.
      * @return The GeofenceActionResult will hld a boolean for success or not.
      * If success is true the result will also contain the Geofence with the
      * database id.
@@ -67,10 +67,14 @@ public class GeofenceManager {
     public Single<GeofenceActionResult> updateGeofence(Geofence geofence) {
         Timber.v("Updating Geofence with id: %s to: %s", geofence.id(), geofence);
         return Single.fromCallable(() -> playServicesGeofenceManager.removeGeofence(geofence.id()))
-                .flatMap(successfullyRemoved -> geofenceRepository.update(geofence))
+                .flatMap(ignored -> geofenceRepository.update(geofence))
                 .flatMap(successfullyUpdatedGeofence -> {
                     if (successfullyUpdatedGeofence) {
-                        return activateGeofenceToPlay(geofence);
+                        if (geofence.enabled()) {
+                            return activateGeofenceToPlay(geofence);
+                        } else {
+                            return Single.just(GeofenceActionResult.success(geofence));
+                        }
                     } else {
                         return Single.just(GeofenceActionResult.failure(new FailedToUpdateGeofenceException(geofence)));
                     }

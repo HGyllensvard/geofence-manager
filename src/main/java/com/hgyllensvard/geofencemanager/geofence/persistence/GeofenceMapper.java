@@ -37,7 +37,7 @@ class GeofenceMapper {
                 .latitude(download.latLng().latitude)
                 .longitude(download.latLng().longitude)
                 .radius(download.radius())
-                .enabled(download.active() ? 1 : 0);
+                .enabled(download.enabled() ? 1 : 0);
 
         if (download.id() != Geofence.NO_ID) {
             marshal._id(download.id());

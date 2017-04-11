@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.hgyllensvard.geofencemanager.geofence.geofence.Geofence;
 
 import io.reactivex.Single;
+import timber.log.Timber;
 
 import static android.R.attr.radius;
 
@@ -26,7 +27,14 @@ public class PlayServicesGeofenceManager {
     }
 
     public Single<Boolean> removeGeofence(long geofenceId) {
-        return removePlayGeofenceManager.removeGeofence(String.valueOf(geofenceId));
+        return removePlayGeofenceManager.removeGeofence(String.valueOf(geofenceId))
+                .doOnEvent((successfullyRemoved, throwable) -> {
+                    if (successfullyRemoved) {
+                        Timber.i("Successfully removed geofence with id: %s", geofenceId);
+                    } else {
+                        Timber.w(throwable, "Failed to delete geofence with id: %s", geofenceId);
+                    }
+                });
     }
 
     private com.google.android.gms.location.Geofence assembleGeofence(long geofenceId, LatLng latLng, double radius) {

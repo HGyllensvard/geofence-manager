@@ -18,7 +18,7 @@ public abstract class Geofence {
 
     public abstract float radius();
 
-    public abstract boolean active();
+    public abstract boolean enabled();
 
     public static Geofence create(
             long id,
@@ -32,7 +32,7 @@ public abstract class Geofence {
                 .name(name)
                 .latLng(latLng)
                 .radius(radius)
-                .active(active)
+                .enabled(active)
                 .build();
     }
 
@@ -67,6 +67,10 @@ public abstract class Geofence {
         return toBuilder().radius(radius).build();
     }
 
+    public Geofence asEnabled(boolean enabled) {
+        return toBuilder().enabled(enabled).build();
+    }
+
     @AutoValue.Builder
     abstract static class Builder {
         abstract Builder id(long id);
@@ -77,7 +81,7 @@ public abstract class Geofence {
 
         abstract Builder radius(float radius);
 
-        abstract Builder active(boolean active);
+        abstract Builder enabled(boolean active);
 
         abstract Geofence build();
     }

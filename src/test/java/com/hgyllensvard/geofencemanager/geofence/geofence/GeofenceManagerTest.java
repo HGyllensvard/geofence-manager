@@ -14,6 +14,10 @@ import org.mockito.MockitoAnnotations;
 
 import io.reactivex.Single;
 
+import static com.hgyllensvard.geofencemanager.geofence.helpers.GeofenceTestHelper.ID_ONE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class GeofenceManagerTest {
@@ -85,9 +89,9 @@ public class GeofenceManagerTest {
 
     @Test
     public void succeedCheckGeofenceExist() {
-        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(GeofenceResult.success(testGeofence)));
+        when(geofenceRepository.getGeofence(ID_ONE)).thenReturn(Single.just(GeofenceResult.success(testGeofence)));
 
-        geofenceManager.exist(GeofenceTestHelper.ID_ONE)
+        geofenceManager.exist(ID_ONE)
                 .test()
                 .assertNoErrors()
                 .assertValue(true);
@@ -95,9 +99,9 @@ public class GeofenceManagerTest {
 
     @Test
     public void succeedCheckGeofenceDoesNotExist() {
-        when(geofenceRepository.getGeofence(GeofenceTestHelper.ID_ONE)).thenReturn(Single.just(GeofenceResult.fail()));
+        when(geofenceRepository.getGeofence(ID_ONE)).thenReturn(Single.just(GeofenceResult.fail()));
 
-        geofenceManager.exist(GeofenceTestHelper.ID_ONE)
+        geofenceManager.exist(ID_ONE)
                 .test()
                 .assertNoErrors()
                 .assertValue(false);
@@ -122,5 +126,19 @@ public class GeofenceManagerTest {
         geofenceManager.updateGeofence(insertedTestGeofence)
                 .test()
                 .assertValue(value -> value.equals(GeofenceActionResult.success(insertedTestGeofence)));
+    }
+
+    @Test
+    public void updateGeofence_notEnabled_doNotActivate() {
+        Geofence disabledGeofence = insertedTestGeofence.asEnabled(false);
+
+        when(playServicesGeofenceManager.removeGeofence(1)).thenReturn(Single.just(true));
+        when(geofenceRepository.update(disabledGeofence)).thenReturn(Single.just(true));
+
+        geofenceManager.updateGeofence(disabledGeofence)
+                .test()
+                .assertValue(value -> value.equals(GeofenceActionResult.success(disabledGeofence)));
+
+        verify(playServicesGeofenceManager, never()).activateGeofence(any(Geofence.class));
     }
 }
